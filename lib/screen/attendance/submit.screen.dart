@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
-enum SubmitAttendanceType { wfh, wfo }
+enum SubmitAttendanceType { wfa, wfo }
 
 class SubmitAttendance extends StatelessWidget {
   const SubmitAttendance({super.key, required this.type});
@@ -107,7 +107,7 @@ class SubmitAttendance extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            "Work From ${type == SubmitAttendanceType.wfo ? 'Office' : 'Home'}"),
+                            "Work From ${type == SubmitAttendanceType.wfo ? 'Office' : 'Anywhere'}"),
                         Text("Longitude: ${snapshot.data!.longitude}"),
                         Text("Latitude: ${snapshot.data!.latitude}"),
                       ],
@@ -121,7 +121,7 @@ class SubmitAttendance extends StatelessWidget {
                             snapshot.hasData ? (snapshot.data! > 100) : true;
                         var enable =
                             (!outOfRange && type == SubmitAttendanceType.wfo) ||
-                                type == SubmitAttendanceType.wfh;
+                                type == SubmitAttendanceType.wfa;
                         return Column(
                           children: [
                             if (outOfRange && !enable)

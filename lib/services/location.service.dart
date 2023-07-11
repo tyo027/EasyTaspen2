@@ -31,7 +31,7 @@ class LocationService {
   }
 
   static Future<Position?> getCurrentPosition(
-      {SubmitAttendanceType type = SubmitAttendanceType.wfh}) async {
+      {SubmitAttendanceType type = SubmitAttendanceType.wfa}) async {
     bool isLocationAccessable = await _isLocationAccessable();
 
     if (!isLocationAccessable) return null;
@@ -63,7 +63,7 @@ class LocationService {
   }
 
   static Future<double?> getDistanceTo(
-      {SubmitAttendanceType type = SubmitAttendanceType.wfh}) async {
+      {SubmitAttendanceType type = SubmitAttendanceType.wfa}) async {
     Position? position = await getCurrentPosition(type: type);
     if (position == null) {
       return null;

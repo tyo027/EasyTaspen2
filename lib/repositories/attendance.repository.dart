@@ -19,10 +19,10 @@ class AttendanceRepository extends Repository {
         "kdcabang": user.ba,
         "lat": position.latitude,
         "long": position.longitude,
-        "keterangan": type.name,
+        "keterangan": type.name.toUpperCase(),
         "work_from": type == SubmitAttendanceType.wfo ? 1 : 2,
         "file": await MultipartFile.fromFile(await assetPath(),
-            filename: "black.jpeg"),
+            filename: "approve-2.png"),
       });
 
       await dio.post("v2/SubmitAbsen", data: data);
@@ -30,13 +30,13 @@ class AttendanceRepository extends Repository {
       // print(response);
       // return AuthenticationModel.fromJson(response.data);
     } catch (e) {
-      print(e);
+      // print(e);
       return false;
     }
   }
 
   Future<String> assetPath() async {
-    final byteData = await rootBundle.load('assets/images/black.jpeg');
+    final byteData = await rootBundle.load('assets/images/approve-2.png');
     final buffer = byteData.buffer;
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;

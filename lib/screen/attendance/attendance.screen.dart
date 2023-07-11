@@ -25,10 +25,10 @@ class AttendanceScreen extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () =>
-              navigator.push(SubmitAttendance.route(SubmitAttendanceType.wfh)),
+              navigator.push(SubmitAttendance.route(SubmitAttendanceType.wfa)),
           child: Container(
             margin: const EdgeInsets.all(5),
-            child: SvgPicture.asset("assets/svgs/wfh.svg"),
+            child: SvgPicture.asset("assets/svgs/wfa.svg"),
           ),
         ),
         GestureDetector(
