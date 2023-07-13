@@ -23,6 +23,13 @@ class LaporanScreen extends StatelessWidget {
           if (state.user == null) {
             return Container();
           }
+
+          if (!state.user!.isActive) {
+            return const Center(
+              child: Text("Data belum tersedia"),
+            );
+          }
+
           return FutureBuilder(
             future: _getAttendances(nik: state.user!.nik),
             initialData: null,

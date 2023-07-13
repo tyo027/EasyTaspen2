@@ -5,11 +5,15 @@ import 'package:device_uuid/device_uuid.dart';
 import 'package:easy/Widget/templatelogo.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
+import 'package:easy/models/location.model.dart';
+import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
+import 'package:easy/screen/authentication/register.screen.dart';
 import 'package:easy/services/storage.service.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +31,7 @@ class LoginScreen extends StatelessWidget {
   ) async {
     if (isFilled) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return const Center(
@@ -42,29 +47,40 @@ class LoginScreen extends StatelessWidget {
             const SnackBar(content: Text("Gagal Mendapatkan DeviceID")));
         return;
       }
-      var sameDeviceLogin = await DeviceRepository()
-          .checkLogin(username: username.toLowerCase(), uuid: uuid);
-      if (!sameDeviceLogin) {
-        navigator.pop();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Anda Tidak Dapat Login Pada Perangkat Ini")));
-        return;
-      }
-      var result = await AuthenticationRepository().login(username, password);
+      var auth = await DeviceRepository().login(
+          password: password, username: username.toLowerCase(), uuid: uuid);
+      if (auth.status) {
+        if (!auth.active) {
+          var user = UserModel(
+              ba: username,
+              jabatan: "-",
+              nama: auth.fullname,
+              nik: "-",
+              unitkerja: "-",
+              isActive: false);
 
-      if (result != null) {
+          var location = const LocationModel(
+              long: 106.86181245916899, lat: -6.173374841022986);
+
+          await Storage.write("user", json.encode(user.toJson()));
+          await Storage.write("location", json.encode(location.toJson()));
+          context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
+                user: user,
+              ));
+          return;
+        }
+
         var location =
-            await AuthenticationRepository().getCabangLocation(result.user.ba);
+            await AuthenticationRepository().getCabangLocation(auth.ba!);
         if (location == null) {
           navigator.pop();
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Tidak Dapat Menemukan Area Kantor")));
           return;
         }
-        await Storage.write("token", result.token);
+        await Storage.write("token", auth.token);
 
-        var userProfile =
-            await ProfileRepository().getProfile(nik: result.user.nik);
+        var userProfile = await ProfileRepository().getProfile(nik: auth.nik);
         if (userProfile == null) {
           navigator.pop();
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -73,18 +89,27 @@ class LoginScreen extends StatelessWidget {
           return;
         }
 
-        var user = result.user.copyWith(gender: userProfile.gender);
+        var user = UserModel(
+            nik: auth.nik,
+            nama: auth.fullname,
+            jabatan: auth.jabatan,
+            ba: auth.ba,
+            unitkerja: auth.unitKerja,
+            isActive: true,
+            gender: userProfile.gender);
 
         await Storage.write("user", json.encode(user.toJson()));
         await Storage.write("location", json.encode(location.toJson()));
         context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
               user: user,
             ));
-      } else {
-        navigator.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Username atau Password Anda Salah")));
+        return;
       }
+
+      navigator.pop();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(auth.message)));
+      return;
     }
   }
 
@@ -161,6 +186,27 @@ class LoginScreen extends StatelessWidget {
                   );
                 },
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              RichText(
+                  text: TextSpan(
+                children: [
+                  const TextSpan(
+                      text: "Dont have an account? ",
+                      style: TextStyle(color: Colors.black54)),
+                  TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          navigator.pushAndRemoveUntil(
+                              RegisterScreen.route(), (route) => false);
+                        },
+                      text: "Register",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.amber[800])),
+                ],
+              ))
             ],
           ),
         ),

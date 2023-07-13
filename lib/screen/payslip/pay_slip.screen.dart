@@ -95,6 +95,7 @@ class PasySlipScreen extends StatelessWidget {
             if (payslip == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Data tidak tersedia")));
+              navigator.pop();
               return;
             }
             context.read<PayslipBloc>().add(PaySlipChanged(payslip: payslip));

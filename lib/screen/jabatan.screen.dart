@@ -23,6 +23,13 @@ class JabatanScreen extends StatelessWidget {
           if (state.user == null) {
             return Container();
           }
+
+          if (!state.user!.isActive) {
+            return const Center(
+              child: Text("Data belum tersedia"),
+            );
+          }
+
           return FutureBuilder(
             future: _getJabatan(nik: state.user!.nik),
             initialData: null,

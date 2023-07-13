@@ -23,6 +23,13 @@ class IndividuScreen extends StatelessWidget {
           if (state.user == null) {
             return Container();
           }
+
+          if (!state.user!.isActive) {
+            return const Center(
+              child: Text("Data belum tersedia"),
+            );
+          }
+
           return FutureBuilder(
             future: _getProfile(nik: state.user!.nik),
             initialData: null,

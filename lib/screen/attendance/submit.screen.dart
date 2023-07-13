@@ -57,14 +57,19 @@ class SubmitAttendance extends StatelessWidget {
         );
       },
     );
-    var isSubmitSucces = await AttendanceRepository()
-        .submit(user: user, position: position, type: type);
-    navigator.pop();
-    if (!isSubmitSucces) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Absen Gagal Disimpan"),
-      ));
-      return;
+
+    if (user.isActive) {
+      var isSubmitSucces = await AttendanceRepository()
+          .submit(user: user, position: position, type: type);
+      navigator.pop();
+      if (!isSubmitSucces) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Absen Gagal Disimpan"),
+        ));
+        return;
+      }
+    } else {
+      await Future.delayed(const Duration(seconds: 2));
     }
 
     NotificationService.showNotification(

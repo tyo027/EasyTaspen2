@@ -19,6 +19,15 @@ class AuthenticationBloc
   FutureOr<void> onCheckRequested(
       AuthenticationCheckRequested event, Emitter emit) async {
     await Future.delayed(const Duration(seconds: 3));
+
+    if (Storage.has("user")) {
+      var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+      if (!user.isActive) {
+        emit(AuthenticationState.authenticated(user: user));
+        return;
+      }
+    }
+
     if (!Storage.has("token") ||
         !Storage.has("user") ||
         !Storage.has("location")) {
