@@ -13,6 +13,7 @@ class AuthResponse {
   final String nik;
   final String jabatan;
   final String unitKerja;
+  final String gender;
 
   AuthResponse(
       {required this.status,
@@ -24,7 +25,8 @@ class AuthResponse {
       this.ba = "",
       this.nik = "-",
       this.jabatan = "-",
-      this.unitKerja = ""});
+      this.unitKerja = "",
+      this.gender = ""});
 }
 
 class DeviceRepository {
@@ -59,22 +61,30 @@ class DeviceRepository {
           ba: data['ba'] ?? "",
           nik: data['nik'] ?? "",
           jabatan: data['jabatan'] ?? "",
-          unitKerja: data['unit_kerja'] ?? "");
+          unitKerja: data['unit_kerja'] ?? "",
+          gender: data['gender'] ?? "");
     } on DioError catch (e) {
       return AuthResponse(status: false, message: e.response?.data["message"]);
     }
   }
 
-  Future<String?> register(
-      {required String fullname,
-      required String userName,
-      required String password,
-      required String uuid}) async {
+  Future<String?> register({
+    required String fullname,
+    required String userName,
+    required String password,
+    required String uuid,
+    required String gender,
+    required String job,
+    required String phone,
+  }) async {
     try {
       await dio.post("auth/register", data: {
         "fullname": fullname,
         "username": userName,
         "password": password,
+        "gender": gender,
+        "job": job,
+        "phone": phone,
         "uuid": uuid
       });
     } on DioError catch (e) {

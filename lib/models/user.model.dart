@@ -6,7 +6,7 @@ class UserModel extends Equatable {
   final String jabatan;
   final String ba;
   final String unitkerja;
-  final String? gender;
+  final String gender;
   final bool isActive;
 
   const UserModel(
@@ -15,7 +15,7 @@ class UserModel extends Equatable {
       required this.jabatan,
       required this.ba,
       required this.unitkerja,
-      this.gender,
+      this.gender = "",
       required this.isActive});
 
   UserModel copyWith(

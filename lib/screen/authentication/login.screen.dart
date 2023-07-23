@@ -53,10 +53,11 @@ class LoginScreen extends StatelessWidget {
         if (!auth.active) {
           var user = UserModel(
               ba: username,
-              jabatan: "-",
+              jabatan: auth.jabatan,
               nama: auth.fullname,
               nik: "-",
-              unitkerja: "-",
+              gender: auth.gender,
+              unitkerja: auth.unitKerja,
               isActive: false);
 
           var location = const LocationModel(

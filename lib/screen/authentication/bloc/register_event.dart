@@ -33,3 +33,30 @@ class RegisterPasswordChanged extends RegisterEvent {
   @override
   List<Object> get props => [password];
 }
+
+class RegisterGenderChanged extends RegisterEvent {
+  final String gender;
+
+  const RegisterGenderChanged({required this.gender});
+
+  @override
+  List<Object> get props => [gender];
+}
+
+class RegisterPhoneChanged extends RegisterEvent {
+  final String phone;
+
+  const RegisterPhoneChanged({required this.phone});
+
+  @override
+  List<Object> get props => [phone];
+}
+
+class RegisterJobChanged extends RegisterEvent {
+  final String job;
+
+  const RegisterJobChanged({required this.job});
+
+  @override
+  List<Object> get props => [job];
+}

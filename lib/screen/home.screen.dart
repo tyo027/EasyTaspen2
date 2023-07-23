@@ -26,32 +26,41 @@ class HomeScreen extends StatelessWidget {
   Widget homeMenu(BuildContext context) {
     return Column(
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () => navigator.push(ProfileScreen.route()),
-              child: Container(
-                margin: const EdgeInsets.all(5),
-                child: SvgPicture.asset("assets/svgs/profile.svg"),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => navigator.push(AttendanceScreen.route()),
-              child: Container(
-                margin: const EdgeInsets.all(5),
-                child: SvgPicture.asset("assets/svgs/absensi.svg"),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => navigator.push(PasySlipScreen.route()),
-              child: Container(
-                margin: const EdgeInsets.all(5),
-                child: SvgPicture.asset("assets/svgs/payslip.svg"),
-              ),
-            ),
-          ],
+        BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state.user != null) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => navigator.push(ProfileScreen.route()),
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      child: SvgPicture.asset("assets/svgs/profile.svg"),
+                    ),
+                  ),
+                  if (state.user!.isActive)
+                    GestureDetector(
+                      onTap: () => navigator.push(AttendanceScreen.route()),
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: SvgPicture.asset("assets/svgs/absensi.svg"),
+                      ),
+                    ),
+                  if (state.user!.isActive)
+                    GestureDetector(
+                      onTap: () => navigator.push(PasySlipScreen.route()),
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: SvgPicture.asset("assets/svgs/payslip.svg"),
+                      ),
+                    ),
+                ],
+              );
+            }
+            return Container();
+          },
         ),
         const Spacer(),
         GestureDetector(

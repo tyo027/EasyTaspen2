@@ -11,6 +11,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterFullnameChanged>(onFullnameChanged);
     on<RegisterUserNameChanged>(onUsernameChanged);
     on<RegisterPasswordChanged>(onPasswordChanged);
+    on<RegisterGenderChanged>(onGenderChanged);
+    on<RegisterPhoneChanged>(onPhoneChanged);
+    on<RegisterJobChanged>(onJobChanged);
   }
 
   FutureOr<void> onFullnameChanged(
@@ -26,5 +29,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   FutureOr<void> onPasswordChanged(
       RegisterPasswordChanged event, Emitter emit) async {
     emit(state.copyWith(password: event.password));
+  }
+
+  FutureOr<void> onGenderChanged(
+      RegisterGenderChanged event, Emitter emit) async {
+    emit(state.copyWith(gender: event.gender));
+  }
+
+  FutureOr<void> onPhoneChanged(
+      RegisterPhoneChanged event, Emitter emit) async {
+    emit(state.copyWith(phone: event.phone));
+  }
+
+  FutureOr<void> onJobChanged(RegisterJobChanged event, Emitter emit) async {
+    emit(state.copyWith(job: event.job));
   }
 }

@@ -21,8 +21,15 @@ class RegisterScreen extends StatelessWidget {
   static Route<void> route() =>
       MaterialPageRoute(builder: (_) => const RegisterScreen());
 
-  void register(bool isFilled, BuildContext context, String username,
-      String password, String fullname) async {
+  void register(
+      {required isFilled,
+      required BuildContext context,
+      required String username,
+      required String password,
+      required String fullname,
+      required String gender,
+      required String phone,
+      required String job}) async {
     if (!isFilled) return;
 
     showDialog(
@@ -44,7 +51,14 @@ class RegisterScreen extends StatelessWidget {
     }
 
     var registeredUser = await DeviceRepository().register(
-        fullname: fullname, userName: username, password: password, uuid: uuid);
+      fullname: fullname,
+      userName: username,
+      password: password,
+      uuid: uuid,
+      job: job,
+      gender: gender,
+      phone: phone,
+    );
 
     if (registeredUser != null) {
       navigator.pop();
@@ -55,10 +69,11 @@ class RegisterScreen extends StatelessWidget {
 
     var user = UserModel(
         ba: username,
-        jabatan: "-",
+        jabatan: job,
         nama: fullname,
         nik: "-",
-        unitkerja: "-",
+        unitkerja: phone,
+        gender: gender,
         isActive: false);
 
     var location =
@@ -137,6 +152,73 @@ class RegisterScreen extends StatelessWidget {
                   },
                 ),
               ),
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black45),
+                    borderRadius: BorderRadius.circular(20)),
+                child: BlocBuilder<RegisterBloc, RegisterState>(
+                  builder: (context, state) {
+                    return DropdownButton(
+                        hint: const Text("Select gender"),
+                        isExpanded: true,
+                        underline: const SizedBox(),
+                        value: state.gender == "" ? null : state.gender,
+                        items: const [
+                          DropdownMenuItem(
+                            value: "LAKI-LAKI",
+                            child: Text("Laki-laki"),
+                          ),
+                          DropdownMenuItem(
+                            value: "PEREMPUAN",
+                            child: Text("Perempuan"),
+                          )
+                        ],
+                        onChanged: (value) => value != null
+                            ? context
+                                .read<RegisterBloc>()
+                                .add(RegisterGenderChanged(gender: value))
+                            : null);
+                  },
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black45),
+                    borderRadius: BorderRadius.circular(20)),
+                child: BlocBuilder<RegisterBloc, RegisterState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      onChanged: (value) => context
+                          .read<RegisterBloc>()
+                          .add(RegisterPhoneChanged(phone: value)),
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'Phone'),
+                    );
+                  },
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black45),
+                    borderRadius: BorderRadius.circular(20)),
+                child: BlocBuilder<RegisterBloc, RegisterState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      onChanged: (value) => context
+                          .read<RegisterBloc>()
+                          .add(RegisterJobChanged(job: value)),
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'Job Title'),
+                    );
+                  },
+                ),
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -144,12 +226,22 @@ class RegisterScreen extends StatelessWidget {
                 builder: (context, state) {
                   var isFilled = (state.userName != "" &&
                       state.password != "" &&
-                      state.fullname != "");
+                      state.fullname != "" &&
+                      state.gender != "" &&
+                      state.phone != "" &&
+                      state.job != "");
 
                   return GestureDetector(
                     onTap: () async {
-                      register(isFilled, context, state.userName,
-                          state.password, state.fullname);
+                      register(
+                          isFilled: isFilled,
+                          context: context,
+                          username: state.userName,
+                          fullname: state.fullname,
+                          gender: state.gender,
+                          job: state.job,
+                          password: state.password,
+                          phone: state.phone);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(16),

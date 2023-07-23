@@ -1,6 +1,7 @@
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/models/profile.model.dart';
+import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +12,30 @@ class IndividuScreen extends StatelessWidget {
   static Route<void> route() =>
       MaterialPageRoute(builder: (_) => const IndividuScreen());
 
-  Future<ProfileModel?> _getProfile({required String nik}) async {
+  Future<ProfileModel?> _getProfile(
+      {required String nik, required UserModel user}) async {
+    if (!user.isActive) {
+      return Future.value(ProfileModel(
+          alamat: "-",
+          area: "Pusat",
+          birthdate: "-",
+          birthplace: "-",
+          blood: "-",
+          gender: user.gender,
+          grade: "-",
+          jamsostek: "-",
+          ktp: "-",
+          marital: "-",
+          name: user.nama,
+          npwp: "-",
+          work: '-',
+          position: user.jabatan,
+          religion: '-',
+          school: '-',
+          strata: '-',
+          tmt: '-',
+          unit: '-'));
+    }
     return ProfileRepository().getProfile(nik: nik);
   }
 
@@ -24,14 +48,8 @@ class IndividuScreen extends StatelessWidget {
             return Container();
           }
 
-          if (!state.user!.isActive) {
-            return const Center(
-              child: Text("Data belum tersedia"),
-            );
-          }
-
           return FutureBuilder(
-            future: _getProfile(nik: state.user!.nik),
+            future: _getProfile(nik: state.user!.nik, user: state.user!),
             initialData: null,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
