@@ -50,6 +50,10 @@ class DeviceRepository {
         "uuid": uuid,
       });
 
+      if (response.data['status'] == false) {
+        return AuthResponse(status: false, message: response.data['message']);
+      }
+
       var data = response.data['data'];
 
       return AuthResponse(
@@ -65,31 +69,8 @@ class DeviceRepository {
           gender: data['gender'] ?? "");
     } on DioError catch (e) {
       return AuthResponse(status: false, message: e.response?.data["message"]);
+    } catch (e) {
+      return AuthResponse(status: false, message: "Up's something went wrong!");
     }
-  }
-
-  Future<String?> register({
-    required String fullname,
-    required String userName,
-    required String password,
-    required String uuid,
-    required String gender,
-    required String job,
-    required String phone,
-  }) async {
-    try {
-      await dio.post("auth/register", data: {
-        "fullname": fullname,
-        "username": userName,
-        "password": password,
-        "gender": gender,
-        "job": job,
-        "phone": phone,
-        "uuid": uuid
-      });
-    } on DioError catch (e) {
-      return e.response?.data['message'];
-    }
-    return null;
   }
 }

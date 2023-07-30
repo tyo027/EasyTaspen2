@@ -18,9 +18,9 @@ class AttendanceModel extends Equatable {
   static AttendanceModel fromJson(Map<String, dynamic> json) => AttendanceModel(
       attendanceTime: json['tgl'],
       statusSap: json['sap_flag'],
-      type: json['work'] == "wfa"
-          ? SubmitAttendanceType.wfa
-          : SubmitAttendanceType.wfo);
+      type: json['work'] == "WFO"
+          ? SubmitAttendanceType.wfo
+          : SubmitAttendanceType.wfa);
 
   @override
   List<Object> get props => [attendanceTime, statusSap, type];
