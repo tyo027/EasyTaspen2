@@ -11,9 +11,7 @@ import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
-import 'package:easy/screen/authentication/register.screen.dart';
 import 'package:easy/services/storage.service.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -72,7 +70,7 @@ class LoginScreen extends StatelessWidget {
         }
 
         var location =
-            await AuthenticationRepository().getCabangLocation(auth.ba!);
+            await AuthenticationRepository().getCabangLocation(auth.ba);
         if (location == null) {
           navigator.pop();
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -187,27 +185,6 @@ class LoginScreen extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              RichText(
-                  text: TextSpan(
-                children: [
-                  const TextSpan(
-                      text: "Dont have an account? ",
-                      style: TextStyle(color: Colors.black54)),
-                  TextSpan(
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          navigator.pushAndRemoveUntil(
-                              RegisterScreen.route(), (route) => false);
-                        },
-                      text: "Register",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.amber[800])),
-                ],
-              ))
             ],
           ),
         ),
