@@ -5,7 +5,14 @@ abstract class AuthenticationEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthenticationCheckRequested extends AuthenticationEvent {}
+class AuthenticationCheckRequested extends AuthenticationEvent {
+  final bool check;
+
+  AuthenticationCheckRequested({this.check = false});
+
+  @override
+  List<Object?> get props => [check];
+}
 
 class AuthenticationLoginRequested extends AuthenticationEvent {
   final UserModel user;
@@ -19,3 +26,5 @@ class AuthenticationLoginRequested extends AuthenticationEvent {
 }
 
 class AuthenticationLogoutRequested extends AuthenticationEvent {}
+
+class AuthenticationExpiredRequested extends AuthenticationEvent {}

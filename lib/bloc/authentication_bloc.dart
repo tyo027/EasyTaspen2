@@ -14,11 +14,12 @@ class AuthenticationBloc
     on<AuthenticationCheckRequested>(onCheckRequested);
     on<AuthenticationLoginRequested>(onLoginRequested);
     on<AuthenticationLogoutRequested>(onLogoutRequested);
+    on<AuthenticationExpiredRequested>(onExpiredRequested);
   }
 
   FutureOr<void> onCheckRequested(
       AuthenticationCheckRequested event, Emitter emit) async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (Storage.has("user")) {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
@@ -34,12 +35,19 @@ class AuthenticationBloc
       emit(const AuthenticationState.unauthenticated());
     } else {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+      if (event.check) await Storage.activate();
+      print(Storage.status());
+      if (!Storage.status()) {
+        emit(const AuthenticationState.expired());
+        return;
+      }
       emit(AuthenticationState.authenticated(user: user));
     }
   }
 
   FutureOr<void> onLoginRequested(
       AuthenticationLoginRequested event, Emitter emit) async {
+    Storage.activate();
     emit(AuthenticationState.authenticated(user: event.user));
   }
 
@@ -48,6 +56,13 @@ class AuthenticationBloc
     Storage.remove("token");
     Storage.remove("user");
     Storage.remove("location");
+    Storage.deactivate();
     emit(const AuthenticationState.unauthenticated());
+  }
+
+  FutureOr<void> onExpiredRequested(
+      AuthenticationExpiredRequested event, Emitter emit) async {
+    Storage.deactivate();
+    emit(const AuthenticationState.expired());
   }
 }

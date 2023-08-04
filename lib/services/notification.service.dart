@@ -80,36 +80,50 @@ class NotificationService {
     int second = 0,
     bool forceNextDay = false,
   }) async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        _nextWorkingDay(
-          hour: hour,
-          minute: minute,
-          second: second,
-          forceNextDay: forceNextDay,
-        ),
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-              androidChannelId, androidChannelName,
-              channelDescription: channelDescription),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+    const workingDays = 5;
+
+    for (var weekday = 1; weekday <= workingDays; weekday++) {
+      int id0 = id * 100 + weekday;
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+          id0,
+          title,
+          body,
+          _zonedDay(
+              hour: hour,
+              minute: minute,
+              second: second,
+              forceNextDay: forceNextDay,
+              weekday: weekday),
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+                androidChannelId, androidChannelName,
+                channelDescription: channelDescription),
+          ),
+          androidScheduleMode: AndroidScheduleMode.alarmClock,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+    }
   }
 
-  static _nextWorkingDay({
-    int hour = 0,
-    int minute = 0,
-    int second = 0,
-    bool forceNextDay = false,
-  }) {
+  static _zonedDay(
+      {int hour = 0,
+      int minute = 0,
+      int second = 0,
+      bool forceNextDay = false,
+      int? weekday}) {
     final now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
         tz.local, now.year, now.month, now.day, hour, minute, second);
+
+    if (weekday != null) {
+      while (scheduledDate.weekday != weekday) {
+        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      }
+
+      return scheduledDate;
+    }
+
     if (forceNextDay) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
@@ -157,7 +171,7 @@ class NotificationService {
         .where((element) => element.androidChannelName == channelName)
         .forEach((element) async {
       await flutterLocalNotificationsPlugin.cancel(element.id);
-      await loadAllNotification(forceNextDay: true, channelName: channelName);
+      await loadAllNotification(channelName: channelName);
     });
   }
 }

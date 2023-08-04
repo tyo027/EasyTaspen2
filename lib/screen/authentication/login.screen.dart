@@ -11,9 +11,11 @@ import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
+import 'package:easy/services/biometric.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -167,21 +169,73 @@ class LoginScreen extends StatelessWidget {
                 builder: (context, state) {
                   var isFilled = (state.userName != "" && state.password != "");
 
-                  return GestureDetector(
-                    onTap: () async {
-                      login(isFilled, context, state.userName, state.password);
+                  return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, authState) {
+                      return Row(
+                        children: [
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () async {
+                                login(isFilled, context, state.userName,
+                                    state.password);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                    color: isFilled
+                                        ? Colors.amber[300]
+                                        : Colors.grey,
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: const Center(
+                                  child: Text(
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                      'Login'),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (authState.status == AuthenticationStatus.expired)
+                            const SizedBox(
+                              width: 16,
+                            ),
+                          if (authState.status == AuthenticationStatus.expired)
+                            GestureDetector(
+                              onTap: () async {
+                                var isAuthenticate =
+                                    await BiometricService.authenticate();
+                                if (!isAuthenticate) {
+                                  return;
+                                }
+
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return const Center(
+                                      child: SizedBox(
+                                          height: 50,
+                                          width: 50,
+                                          child: CircularProgressIndicator()),
+                                    );
+                                  },
+                                );
+                                context.read<AuthenticationBloc>().add(
+                                    AuthenticationCheckRequested(check: true));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.amber[300],
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Center(
+                                    child: SvgPicture.asset(
+                                        'assets/svgs/face-id.svg')),
+                              ),
+                            )
+                        ],
+                      );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                          color: isFilled ? Colors.amber[300] : Colors.grey,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: const Center(
-                        child: Text(
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                            'Login'),
-                      ),
-                    ),
                   );
                 },
               ),

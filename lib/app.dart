@@ -5,6 +5,7 @@ import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/flash.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/screen/authentication/login.screen.dart';
+import 'package:easy/tick.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_version_checker/flutter_app_version_checker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,6 +56,7 @@ class _AppState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
+    Tick.start(context);
     return MaterialApp(
       navigatorKey: navigatorKey,
       onGenerateRoute: (settings) => FlashScreen.route(),
@@ -64,24 +66,32 @@ class _AppState extends State<AppView> {
         future: cekVersion(context),
         initialData: null,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) {
-              switch (state.status) {
-                case AuthenticationStatus.authenticated:
-                  navigator.pushAndRemoveUntil(
-                      HomeScreen.route(), (route) => false);
-                  break;
-
-                case AuthenticationStatus.unauthenticated:
-                  navigator.pushAndRemoveUntil(
-                      LoginScreen.route(), (route) => false);
-                  break;
-
-                case AuthenticationStatus.unknown:
-                  break;
-              }
+          return Listener(
+            onPointerDown: (event) {
+              Tick.reset();
             },
-            child: child,
+            child: BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) async {
+                switch (state.status) {
+                  case AuthenticationStatus.authenticated:
+                    navigator.pushAndRemoveUntil(
+                        HomeScreen.route(), (route) => false);
+                    break;
+
+                  case AuthenticationStatus.unauthenticated:
+                  case AuthenticationStatus.expired:
+                    navigator.pushAndRemoveUntil(
+                        LoginScreen.route(), (route) => false);
+                    break;
+
+                  case AuthenticationStatus.unknown:
+                    break;
+                }
+
+                Tick.reset();
+              },
+              child: child,
+            ),
           );
         },
       ),
