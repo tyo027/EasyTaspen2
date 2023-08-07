@@ -5,6 +5,7 @@ import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/attendance.repository.dart';
+import 'package:easy/screen/attendance/camera.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/services/biometric.service.dart';
 import 'package:easy/services/location.service.dart';
@@ -46,6 +47,7 @@ class SubmitAttendance extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Data Biometric Tidak Sesuai"),
       ));
+      navigator.push(Camera.route(user: user, position: position, type: type));
       return;
     }
     showDialog(

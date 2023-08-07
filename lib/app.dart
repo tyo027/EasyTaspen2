@@ -5,7 +5,8 @@ import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/flash.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/screen/authentication/login.screen.dart';
-import 'package:easy/tick.dart';
+import 'package:easy/services/storage.service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_version_checker/flutter_app_version_checker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,31 @@ class AppView extends StatefulWidget {
   State<AppView> createState() => _AppState();
 }
 
-class _AppState extends State<AppView> {
+class _AppState extends State<AppView> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        context.read<AuthenticationBloc>().add(AuthenticationCheckRequested());
+        break;
+      case AppLifecycleState.inactive:
+        // TODO: Handle this case.
+        break;
+      case AppLifecycleState.paused:
+        // TODO: Handle this case.
+        break;
+      case AppLifecycleState.detached:
+        // TODO: Handle this case.
+        break;
+    }
+  }
+
   Future<Void?> cekVersion(BuildContext context) async {
     final checker = AppVersionChecker();
     var version = await checker.checkUpdate();
@@ -56,7 +81,6 @@ class _AppState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    Tick.start(context);
     return MaterialApp(
       navigatorKey: navigatorKey,
       onGenerateRoute: (settings) => FlashScreen.route(),
@@ -68,7 +92,7 @@ class _AppState extends State<AppView> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return Listener(
             onPointerDown: (event) {
-              Tick.reset();
+              if (Storage.status()) Storage.activate();
             },
             child: BlocListener<AuthenticationBloc, AuthenticationState>(
               listener: (context, state) async {
@@ -87,8 +111,6 @@ class _AppState extends State<AppView> {
                   case AuthenticationStatus.unknown:
                     break;
                 }
-
-                Tick.reset();
               },
               child: child,
             ),

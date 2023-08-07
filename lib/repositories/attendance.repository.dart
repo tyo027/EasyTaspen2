@@ -12,7 +12,8 @@ class AttendanceRepository extends Repository {
   Future<bool> submit(
       {required UserModel user,
       required Position position,
-      required SubmitAttendanceType type}) async {
+      required SubmitAttendanceType type,
+      String? imagePath}) async {
     try {
       var data = FormData.fromMap({
         "nik": user.nik,
@@ -21,8 +22,8 @@ class AttendanceRepository extends Repository {
         "long": position.longitude,
         "keterangan": type.name.toUpperCase(),
         "work_from": type == SubmitAttendanceType.wfo ? 1 : 2,
-        "file": await MultipartFile.fromFile(await assetPath(),
-            filename: "approve-2.png"),
+        "file": await MultipartFile.fromFile(imagePath ?? await assetPath(),
+            filename: imagePath != null ? null : "approve-2.png"),
       });
 
       await dio.post("v2/SubmitAbsen", data: data);

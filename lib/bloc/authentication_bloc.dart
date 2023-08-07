@@ -36,7 +36,6 @@ class AuthenticationBloc
     } else {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
       if (event.check) await Storage.activate();
-      print(Storage.status());
       if (!Storage.status()) {
         emit(const AuthenticationState.expired());
         return;
