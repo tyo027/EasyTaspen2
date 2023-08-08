@@ -22,3 +22,13 @@ class LoginPasswordChanged extends LoginEvent {
   @override
   List<Object?> get props => [password];
 }
+
+class LoginPasswordShowChanged extends LoginEvent {
+  final bool isPasswordShow;
+
+  LoginPasswordShowChanged({required this.isPasswordShow});
+
+  @override
+  List<Object?> get props => [isPasswordShow];
+}
+

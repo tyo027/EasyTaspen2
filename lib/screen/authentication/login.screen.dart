@@ -153,11 +153,22 @@ class LoginScreen extends StatelessWidget {
                   builder: (context, state) {
                     return TextFormField(
                       onChanged: (value) => context
-                          .read<LoginBloc>()
-                          .add(LoginPasswordChanged(password: value)),
-                      obscureText: true,
+                        .read<LoginBloc>()
+                        .add(LoginPasswordChanged(password: value)),
+                      obscureText: !state.isPasswordShow,
                       decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: 'Password'),
+                        border: InputBorder.none,
+                        hintText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            state.isPasswordShow ? Icons.visibility_off : Icons.visibility),
+                          onPressed: () {
+                            context
+                              .read<LoginBloc>()
+                              .add(LoginPasswordShowChanged(isPasswordShow: !state.isPasswordShow)
+                          }
+                        ),
+                      )
                     );
                   },
                 ),

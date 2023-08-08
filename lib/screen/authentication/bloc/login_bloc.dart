@@ -9,6 +9,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginState()) {
     on<LoginUserNameChanged>(onUserNameChanged);
     on<LoginPasswordChanged>(onPasswordChanged);
+    on<LoginPasswordShowChanged>(onPasswordShowChanged);
   }
 
   FutureOr<void> onUserNameChanged(
@@ -19,5 +20,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   FutureOr<void> onPasswordChanged(
       LoginPasswordChanged event, Emitter emit) async {
     emit(state.copyWith(password: event.password));
+  }
+
+  FutureOr<void> onPasswordShowChanged(
+      LoginPasswordShowChanged event, Emitter emit) async {
+    emit(state.copyWith(isPasswordShow: event.isPasswordShow));
   }
 }
