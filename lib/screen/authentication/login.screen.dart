@@ -161,11 +161,12 @@ class LoginScreen extends StatelessWidget {
                         hintText: 'Password',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            state.isPasswordShow ? Icons.visibility_off : Icons.visibility),
+                            state.isPasswordShow ? Icons.visibility_off : Icons.visibility
+                          ),
                           onPressed: () {
                             context
                               .read<LoginBloc>()
-                              .add(LoginPasswordShowChanged(isPasswordShow: !state.isPasswordShow)
+                              .add(LoginPasswordShowChanged(isPasswordShow: !state.isPasswordShow));
                           }
                         ),
                       )
