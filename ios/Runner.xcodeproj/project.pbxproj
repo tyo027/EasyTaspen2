@@ -372,7 +372,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.taspen.easy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taspen.easy2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -511,7 +511,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.taspen.easy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taspen.easy2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -542,7 +542,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.taspen.easy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taspen.easy2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

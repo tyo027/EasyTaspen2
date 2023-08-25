@@ -73,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                   content: const Text("LogOut Sekarang"),
                   actions: [
                     CupertinoDialogAction(
-                      child: const Text("YES"),
+                      child: const Text("YA"),
                       onPressed: () {
                         context
                             .read<AuthenticationBloc>()
@@ -81,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                       },
                     ),
                     CupertinoDialogAction(
-                      child: const Text("NO"),
+                      child: const Text("TIDAK"),
                       onPressed: () {
                         navigator.pop();
                       },

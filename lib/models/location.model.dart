@@ -9,6 +9,11 @@ class LocationModel extends Equatable {
     required this.lat,
   });
 
+  LocationModel copyWith({double? long, double? lat}) => LocationModel(
+        long: long ?? this.long,
+        lat: lat ?? this.lat,
+      );
+
   static LocationModel fromJson(Map<String, dynamic> json) => LocationModel(
         long: double.parse(json['long']),
         lat: double.parse(json['lat']),
@@ -18,10 +23,6 @@ class LocationModel extends Equatable {
         'long': long.toString(),
         'lat': lat.toString(),
       };
-  // @override
-  // String toString() {
-  //   return "{'long': '$nik', 'NAMA': '$nama','JABATAN': '$jabatan','BA': '$ba','UNITKERJA': '$unitkerja'}";
-  // }
 
   @override
   List<Object> get props => [

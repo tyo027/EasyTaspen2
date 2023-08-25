@@ -1,5 +1,6 @@
 import 'package:easy/models/authentication.model.dart';
 import 'package:easy/models/location.model.dart';
+import 'package:easy/models/mpp.model.dart';
 import 'package:easy/repositories/repository.dart';
 
 class AuthenticationRepository extends Repository {
@@ -22,6 +23,17 @@ class AuthenticationRepository extends Repository {
       // print(response.data["result"][0]);
       return LocationModel.fromJson(response.data["result"][0]);
     } catch (e) {
+      return null;
+    }
+  }
+
+  Future<MppModel?> getMpp(String nik) async {
+    try {
+      var response = await dio.post("v2/CustomAbsen", data: {"nik": nik});
+      //print(response.data["data"]);
+      return MppModel.fromJson(response.data["data"]);
+    } catch (e) {
+      print(e);
       return null;
     }
   }

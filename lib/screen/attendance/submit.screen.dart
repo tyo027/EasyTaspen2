@@ -10,6 +10,7 @@ import 'package:easy/screen/home.screen.dart';
 import 'package:easy/services/biometric.service.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -44,10 +45,35 @@ class SubmitAttendance extends StatelessWidget {
     await cancelNotification();
     var authenticate = await BiometricService.authenticate();
     if (!authenticate) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Data Biometric Tidak Sesuai"),
-      ));
-      navigator.push(Camera.route(user: user, position: position, type: type));
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: const Text("Biometrik Gagal Direkam"),
+            content: const Text("Absen Dengan Foto"),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text("YA"),
+                onPressed: () {
+                  navigator.push(
+                      Camera.route(user: user, position: position, type: type));
+                },
+              ),
+              CupertinoDialogAction(
+                child: const Text("ULANG"),
+                onPressed: () {
+                  navigator.pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //   content: Text("Data Biometric Tidak Sesuai"),
+      // ));
+      //navigator.push(Camera.route(user: user, position: position, type: type));
       return;
     }
     showDialog(

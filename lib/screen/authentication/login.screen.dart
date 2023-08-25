@@ -6,6 +6,7 @@ import 'package:easy/Widget/templatelogo.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/models/location.model.dart';
+import 'package:easy/models/mpp.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
@@ -71,15 +72,25 @@ class LoginScreen extends StatelessWidget {
           return;
         }
 
-        var location =
-            await AuthenticationRepository().getCabangLocation(auth.ba);
-        if (location == null) {
-          navigator.pop();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Tidak Dapat Menemukan Area Kantor")));
-          return;
-        }
         await Storage.write("token", auth.token);
+        var location = LocationModel(long: 0, lat: 0);
+
+        var mpp = await AuthenticationRepository().getMpp(auth.nik);
+        if (mpp != null && mpp.custom == 1) {
+          location = location.copyWith(lat: mpp.lat, long: mpp.long);
+        } else {
+          var cabLocation =
+              await AuthenticationRepository().getCabangLocation(auth.ba);
+          if (cabLocation == null) {
+            navigator.pop();
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Tidak Dapat Menemukan Area Kantor")));
+            return;
+          }
+          location =
+              location.copyWith(lat: cabLocation.lat, long: cabLocation.long);
+        }
+        print(mpp);
 
         var userProfile = await ProfileRepository().getProfile(nik: auth.nik);
         if (userProfile == null) {
@@ -152,25 +163,23 @@ class LoginScreen extends StatelessWidget {
                 child: BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, state) {
                     return TextFormField(
-                      onChanged: (value) => context
-                        .read<LoginBloc>()
-                        .add(LoginPasswordChanged(password: value)),
-                      obscureText: !state.isPasswordShow,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Password',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            state.isPasswordShow ? Icons.visibility_off : Icons.visibility
-                          ),
-                          onPressed: () {
-                            context
-                              .read<LoginBloc>()
-                              .add(LoginPasswordShowChanged(isPasswordShow: !state.isPasswordShow));
-                          }
-                        ),
-                      )
-                    );
+                        onChanged: (value) => context
+                            .read<LoginBloc>()
+                            .add(LoginPasswordChanged(password: value)),
+                        obscureText: !state.isPasswordShow,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Password',
+                          suffixIcon: IconButton(
+                              icon: Icon(state.isPasswordShow
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                              onPressed: () {
+                                context.read<LoginBloc>().add(
+                                    LoginPasswordShowChanged(
+                                        isPasswordShow: !state.isPasswordShow));
+                              }),
+                        ));
                   },
                 ),
               ),

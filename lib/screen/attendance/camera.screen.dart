@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:easy/services/notification.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image/image.dart' as img;
 
 class Camera extends StatefulWidget {
   final UserModel user;
@@ -42,7 +45,7 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
   final UserModel user;
   final Position position;
   final SubmitAttendanceType type;
-
+  String? _filePath;
   CameraController? _cameraController;
 
   _CameraState(this.user, this.position, this.type);
@@ -51,18 +54,32 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    if (cameraDescriptions.isEmpty) {
-      return;
-    }
-
-    _initializeCamera(cameraDescriptions[0]);
+    _initializeCamera();
 
     WidgetsBinding.instance.addObserver(this);
   }
 
-  _initializeCamera(CameraDescription cameraDescription) {
-    _cameraController =
-        CameraController(cameraDescription, ResolutionPreset.medium);
+  _initializeCamera() {
+    if (cameraDescriptions.isEmpty) {
+      return;
+    }
+
+    CameraDescription? cameraDescription = null;
+    cameraDescriptions.forEach(
+      (element) {
+        if (element.lensDirection == CameraLensDirection.front) {
+          cameraDescription = element;
+        }
+      },
+    );
+
+    if (cameraDescription == null) {
+      return;
+    }
+    _cameraController = CameraController(
+      cameraDescription!,
+      ResolutionPreset.medium,
+    );
 
     _cameraController!.initialize().then((_) {
       if (!mounted) {
@@ -95,7 +112,7 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      _initializeCamera(cameraDescriptions[0]);
+      _initializeCamera();
     }
   }
 
@@ -144,28 +161,75 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
                 child: const Icon(Icons.arrow_back_rounded),
               ),
             ),
-            Expanded(
-                child: Container(
+            Container(
               margin: const EdgeInsets.all(16),
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                   color: Colors.black, borderRadius: BorderRadius.circular(24)),
-              child: Center(child: Text('')
-                  // CameraPreview(_cameraController)
-                  ),
-            )),
-            const Center(child: Text("Ambil foto wajah untuk absensi!")),
+              child: Center(
+                  child: _filePath == null
+                      ? CameraPreview(_cameraController!)
+                      : Image.file(File(_filePath!))),
+            ),
+            Spacer(),
+            GestureDetector(
+              onTap: () async {
+                if (_filePath != null) {
+                  _filePath = null;
+                  setState(() {});
+                  return;
+                }
+                final CameraController? cameraController = _cameraController;
+
+                if (cameraController == null ||
+                    !cameraController.value.isInitialized) {
+                  print('Error: select a camera first.');
+                  return null;
+                }
+
+                if (cameraController.value.isTakingPicture) {
+                  // A capture is already pending, do nothing.
+                  return null;
+                }
+
+                try {
+                  final XFile file = await cameraController.takePicture();
+                  _filePath = file.path;
+                  await (img.Command()
+                        ..decodeImageFile(_filePath!)
+                        ..flip(direction: img.FlipDirection.horizontal)
+                        ..writeToFile(_filePath!))
+                      .executeThread();
+                  setState(() {});
+                } on CameraException catch (e) {
+                  print("Error: camera");
+                  return null;
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.symmetric(horizontal: 35),
+                width: 400,
+                decoration: BoxDecoration(
+                    color: Colors.amberAccent,
+                    borderRadius: BorderRadius.circular(20)),
+                child:
+                    Center(child: Text(_filePath == null ? "Foto" : "Ulang")),
+              ),
+            ),
             BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
                 return GestureDetector(
-                  onTap: () => _submit(context),
+                  onTap: () => _filePath == null ? null : _submit(context),
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     margin: const EdgeInsets.symmetric(
                         horizontal: 35, vertical: 30),
                     width: 400,
                     decoration: BoxDecoration(
-                        color: Colors.grey,
+                        color: _filePath == null
+                            ? Colors.grey
+                            : Colors.amberAccent,
                         borderRadius: BorderRadius.circular(20)),
                     child: const Center(child: Text("Attendance")),
                   ),
@@ -177,18 +241,6 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
       );
 
   _submit(BuildContext context) async {
-    final CameraController? cameraController = _cameraController;
-
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      print('Error: select a camera first.');
-      return null;
-    }
-
-    if (cameraController.value.isTakingPicture) {
-      // A capture is already pending, do nothing.
-      return null;
-    }
-
     showDialog(
       context: context,
       builder: (context) {
@@ -199,22 +251,15 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
       },
     );
 
-    try {
-      final XFile file = await cameraController.takePicture();
+    var isSubmitSucces = await AttendanceRepository().submit(
+        user: user, position: position, type: type, imagePath: _filePath);
 
-      var isSubmitSucces = await AttendanceRepository().submit(
-          user: user, position: position, type: type, imagePath: file.path);
-
-      navigator.pop();
-      if (!isSubmitSucces) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Absen Gagal Disimpan"),
-        ));
-        return;
-      }
-    } on CameraException catch (e) {
-      print("Error: camera");
-      return null;
+    navigator.pop();
+    if (!isSubmitSucces) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Absen Gagal Disimpan"),
+      ));
+      return;
     }
 
     NotificationService.showNotification(
