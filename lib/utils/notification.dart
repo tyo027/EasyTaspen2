@@ -18,6 +18,8 @@ class Notification {
   });
 }
 
+var now = DateTime.now();
+
 var scheduledNotifications = [
   Notification(
     id: 1,
@@ -62,7 +64,7 @@ var scheduledNotifications = [
     title: "Sudah saatnya pulang kerja",
     body: "Jangan lupa absen pulang ya",
     hour: 17,
-    minute: 10,
+    minute: 30,
   ),
   Notification(
     id: 6,
@@ -70,7 +72,7 @@ var scheduledNotifications = [
     androidChannelName: "NOTIF_PULANG_KERJA",
     title: "Sudah saatnya pulang kerja",
     body: "Jangan lupa absen pulang ya",
-    hour: 17,
-    minute: 20,
+    hour: 18,
+    minute: 00,
   )
 ];

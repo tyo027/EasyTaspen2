@@ -68,41 +68,50 @@ class NotificationService {
         id++, title, body, notificationDetails);
   }
 
-  static showRepeatEveryWorkingDays({
-    required int id,
-    required String androidChannelId,
-    required String androidChannelName,
-    String? title,
-    String? body,
-    String? channelDescription,
-    int hour = 0,
-    int minute = 0,
-    int second = 0,
-    bool forceNextDay = false,
-  }) async {
-    const workingDays = 5;
+  static showRepeatEveryWorkingDays(
+      {required int id,
+      required String androidChannelId,
+      required String androidChannelName,
+      String? title,
+      String? body,
+      String? channelDescription,
+      int hour = 0,
+      int minute = 0,
+      int second = 0,
+      bool forceNextDay = false,
+      int? weekday}) async {
+    var workingDays = weekday ?? 5;
 
-    for (var weekday = 1; weekday <= workingDays; weekday++) {
-      int id0 = id * 100 + weekday;
+    for (var weekdays = weekday ?? 1; weekdays <= workingDays; weekdays++) {
+      int id0 = id * 100 + weekdays;
+
+      if (weekdays.toString() == "5") {
+        minute = minute - 30;
+      }
+      var datetime = _zonedDay(
+          hour: hour,
+          minute: minute,
+          second: second,
+          forceNextDay: forceNextDay,
+          weekday: weekdays);
+
+      print('Load notif $id0 $datetime $weekday $forceNextDay');
+
       await flutterLocalNotificationsPlugin.zonedSchedule(
-          id0,
-          title,
-          body,
-          _zonedDay(
-              hour: hour,
-              minute: minute,
-              second: second,
-              forceNextDay: forceNextDay,
-              weekday: weekday),
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-                androidChannelId, androidChannelName,
-                channelDescription: channelDescription),
-          ),
-          androidScheduleMode: AndroidScheduleMode.alarmClock,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+        id0,
+        title,
+        body,
+        datetime,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+              androidChannelId, androidChannelName,
+              channelDescription: channelDescription),
+        ),
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        // matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime
+      );
     }
   }
 
@@ -116,6 +125,14 @@ class NotificationService {
     tz.TZDateTime scheduledDate = tz.TZDateTime(
         tz.local, now.year, now.month, now.day, hour, minute, second);
 
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    if (forceNextDay) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
     if (weekday != null) {
       while (scheduledDate.weekday != weekday) {
         scheduledDate = scheduledDate.add(const Duration(days: 1));
@@ -124,17 +141,10 @@ class NotificationService {
       return scheduledDate;
     }
 
-    if (forceNextDay) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-
-    while (scheduledDate.weekday == DateTime.sunday ||
-        scheduledDate.weekday == DateTime.saturday) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
+    // while (scheduledDate.weekday == DateTime.sunday ||
+    //     scheduledDate.weekday == DateTime.saturday) {
+    //   scheduledDate = scheduledDate.add(const Duration(days: 1));
+    // }
     return scheduledDate;
   }
 
@@ -144,35 +154,45 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(timezone));
   }
 
-  static loadAllNotification({
-    bool forceNextDay = false,
-    String channelName = "",
-  }) async {
+  static loadAllNotification(
+      {bool forceNextDay = false,
+      String channelName = "",
+      int? weekday}) async {
     scheduledNotifications
         .where((element) => channelName == ""
             ? true
             : element.androidChannelName == channelName)
         .forEach((notification) async {
       await showRepeatEveryWorkingDays(
-        id: notification.id,
-        androidChannelId: notification.androidChannelId,
-        androidChannelName: notification.androidChannelName,
-        title: notification.title,
-        body: notification.body,
-        hour: notification.hour,
-        minute: notification.minute,
-        forceNextDay: forceNextDay,
-      );
+          id: notification.id,
+          androidChannelId: notification.androidChannelId,
+          androidChannelName: notification.androidChannelName,
+          title: notification.title,
+          body: notification.body,
+          hour: notification.hour,
+          minute: notification.minute,
+          forceNextDay: forceNextDay,
+          weekday: weekday);
     });
   }
 
   static cancelNotifications(String channelName) async {
+    final now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day);
+
     scheduledNotifications
         .where((element) => element.androidChannelName == channelName)
         .forEach((element) async {
-      await flutterLocalNotificationsPlugin.cancel(element.id);
-      await loadAllNotification(channelName: channelName);
+      int id0 = element.id * 100 + scheduledDate.weekday;
+      print('cancel notification $id0');
+      await flutterLocalNotificationsPlugin.cancel(id0);
     });
+
+    await loadAllNotification(
+        channelName: channelName,
+        weekday: scheduledDate.weekday,
+        forceNextDay: true);
   }
 }
 

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy/models/attendance.model.dart';
+import 'package:easy/models/rekapkehadiran.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/repository.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
@@ -54,6 +55,22 @@ class AttendanceRepository extends Repository {
       return attendanceModelFromJson(response.data);
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<RekapKehadiranModel?> getRekapKehadiran(
+      {required String nik,
+      required String tglMulai,
+      required String tglAkhir}) async {
+    try {
+      var response = await dio.post("v2/postRekapKehadiran", data: {
+        "nik": nik,
+        "tgl_mulai": tglMulai,
+        "tgl_akhir": tglAkhir,
+      });
+      return rekapKehadiranModelFromJson(response.data);
+    } catch (e) {
+      return null;
     }
   }
 }

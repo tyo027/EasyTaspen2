@@ -102,7 +102,7 @@ class PasySlipScreen extends StatelessWidget {
             navigator.pop();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
             margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
             width: double.infinity,
             decoration: BoxDecoration(
@@ -110,13 +110,6 @@ class PasySlipScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20)),
             child: Row(
               children: [
-                Icon(
-                  Icons.calendar_month_outlined,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
                 Expanded(child: BlocBuilder<PayslipBloc, PayslipState>(
                   builder: (context, state) {
                     return Text(state.thnbln == ""
@@ -124,6 +117,13 @@ class PasySlipScreen extends StatelessWidget {
                         : "${state.thnbln.substring(0, 4)} / ${state.thnbln.substring(4, 6)}");
                   },
                 )),
+                Icon(
+                  Icons.calendar_month_outlined,
+                  color: Colors.grey[600],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
               ],
             ),
           ),

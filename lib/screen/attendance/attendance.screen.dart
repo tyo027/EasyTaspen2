@@ -2,6 +2,7 @@ import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
 import 'package:easy/screen/laporan.screen.dart';
+import 'package:easy/screen/laporanscreen/laporans.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -24,23 +25,34 @@ class AttendanceScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: () =>
-              navigator.push(SubmitAttendance.route(SubmitAttendanceType.wfa)),
+          onTap: () => {
+            // navigator.push(SubmitAttendance.route(SubmitAttendanceType.wfa))
+          },
           child: Container(
             margin: const EdgeInsets.all(5),
-            child: SvgPicture.asset("assets/svgs/wfa.svg"),
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+            child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  Colors.grey,
+                  BlendMode.saturation,
+                ),
+                child: SvgPicture.asset(
+                  "assets/svgs/wfa.svg",
+                )),
           ),
         ),
         GestureDetector(
-          onTap: () =>
-              navigator.push(SubmitAttendance.route(SubmitAttendanceType.wfo)),
+          onTap: () => {
+            navigator.push(SubmitAttendance.route(SubmitAttendanceType.wfo))
+          },
           child: Container(
             margin: const EdgeInsets.all(5),
             child: SvgPicture.asset("assets/svgs/wfo.svg"),
           ),
         ),
         GestureDetector(
-          onTap: () => navigator.push(LaporanScreen.route()),
+          onTap: () => navigator.push(LaporansScreen.route()),
           child: Container(
             margin: const EdgeInsets.all(5),
             child: SvgPicture.asset("assets/svgs/laporan.svg"),
