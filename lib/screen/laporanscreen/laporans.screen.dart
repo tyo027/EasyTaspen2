@@ -56,7 +56,10 @@ class LaporansScreen extends StatelessWidget {
                   : DateTime.now(),
             );
             if (date == null) return;
-            var thnbln = "${date.year}${date.month.toString().padLeft(2, '0')}";
+            var tglMulai =
+                "${date.year}${date.month.toString().padLeft(2, '0')}";
+            var tglAkhir =
+                "${date.year}${date.month.toString().padLeft(2, '0')}";
             showDialog(
               context: context,
               builder: (context) {
@@ -70,24 +73,23 @@ class LaporansScreen extends StatelessWidget {
             );
             context.read<KehadiranBloc>().add(
                   TglMulaiChanged(tglMulai: tglMulai),
-                  TglAkhirChanged(tglAkhir: tglAkhir),
                 );
-            var payslip = await _getRekapKehadiran(
+            var rekapkehadiran = await _getRekapKehadiran(
               nik: state.user!.nik,
               tglMulai: tglMulai,
+              tglAkhir: tglAkhir,
             );
 
-            if (payslip == null) {
+            if (rekapkehadiran == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Data tidak tersedia")));
-              navigator.pop();
+              //navigator.pop();
               return;
             }
-            context.read<PayslipBloc>().add(
+            context.read<KehadiranBloc>().add(
                   TglMulaiChanged(tglMulai: tglMulai),
-                  TglAkhirChanged(tglAkhir: tglAkhir),
                 );
-            navigator.pop();
+            //navigator.pop();
           },
           child: Container(
             padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
@@ -99,13 +101,13 @@ class LaporansScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
-                Expanded(child: BlocBuilder<KehadiranBloc, KehadiranState>(
-                  builder: (context, state) {
-                    return Text(state.tglMulai == ""
-                        ? "Dari/sampai"
-                        : "${state.tglMulai.substring(0, 4)} / ${state.tglMulai.substring(4, 6)}");
-                  },
-                )),
+                // Expanded(child: BlocBuilder<KehadiranBloc, KehadiranState>(
+                //   builder: (context, state) {
+                //     return Text(state.tglMulai == ""
+                //         ? "Dari/sampai"
+                //         : "${state.tglMulai.substring(0, 4)} / ${state.tglMulai.substring(4, 6)}");
+                //   },
+                // )),
                 Icon(
                   Icons.calendar_month_outlined,
                   color: Colors.grey[700],
@@ -159,17 +161,11 @@ class LaporansScreen extends StatelessWidget {
 
   Widget cariBtn() {
     return Container(
-      //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
       width: double.infinity,
-      // decoration: BoxDecoration(
-      //     border: Border.all(color: Colors.black45),
-      //     borderRadius: BorderRadius.circular(20)),
       child: Flexible(
         child: GestureDetector(
-          onTap: () async {
-            //login(isFilled, context, state.userName, state.password);
-          },
+          onTap: () async {},
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(

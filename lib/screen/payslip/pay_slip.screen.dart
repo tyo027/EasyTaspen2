@@ -106,8 +106,9 @@ class PasySlipScreen extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
             width: double.infinity,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black45),
-                borderRadius: BorderRadius.circular(20)),
+                color: Colors.blueGrey[50],
+                // border: Border.all(color: Colors.black45),
+                borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
                 Expanded(child: BlocBuilder<PayslipBloc, PayslipState>(
