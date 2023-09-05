@@ -182,8 +182,8 @@ class SubmitAttendance extends StatelessWidget {
                                             : Colors.grey,
                                         borderRadius:
                                             BorderRadius.circular(20)),
-                                    child:
-                                        const Center(child: Text("Attendance")),
+                                    child: const Center(
+                                        child: Text("Attendance/Absen")),
                                   ),
                                 );
                               },
