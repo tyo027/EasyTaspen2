@@ -2,30 +2,34 @@ part of 'kehadiran_bloc.dart';
 
 class KehadiranState extends Equatable {
   final String nik;
-  final String tglMulai;
-  final String tglAkhir;
+  final String jenis;
+  final DateTime? thnBln;
+  final DateTime? tglMulai;
+  final DateTime? tglAkhir;
 
   const KehadiranState({
-    required this.nik,
-    required this.tglMulai,
-    required this.tglAkhir,
+    this.jenis = 'REKAP_BULANAN',
+    this.nik = '',
+    this.thnBln,
+    this.tglMulai,
+    this.tglAkhir,
   });
 
   KehadiranState copyWith({
+    String? jenis,
     String? nik,
-    String? tglMulai,
-    String? tglAkhir,
+    DateTime? thnBln,
+    DateTime? tglMulai,
+    DateTime? tglAkhir,
   }) =>
       KehadiranState(
+        jenis: jenis ?? this.jenis,
+        thnBln: thnBln ?? this.thnBln,
         nik: nik ?? this.nik,
         tglMulai: tglMulai ?? this.tglMulai,
         tglAkhir: tglAkhir ?? this.tglAkhir,
       );
 
   @override
-  List<Object> get props => [
-        nik,
-        tglMulai,
-        tglAkhir,
-      ];
+  List<Object?> get props => [nik, tglMulai, tglAkhir, jenis, thnBln];
 }

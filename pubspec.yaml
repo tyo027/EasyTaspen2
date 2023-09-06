@@ -61,6 +61,8 @@ dependencies:
   # Camera
   camera: ^0.10.5+2
 
+  intl: ^0.17.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,6 @@
 part of 'kehadiran_bloc.dart';
 
-class KehadiranEvent extends Equatable {
+abstract class KehadiranEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
@@ -15,7 +15,7 @@ class NikChanged extends KehadiranEvent {
 }
 
 class TglMulaiChanged extends KehadiranEvent {
-  final String tglMulai;
+  final DateTime tglMulai;
 
   TglMulaiChanged({required this.tglMulai});
 
@@ -24,10 +24,28 @@ class TglMulaiChanged extends KehadiranEvent {
 }
 
 class TglAkhirChanged extends KehadiranEvent {
-  final String tglAkhir;
+  final DateTime tglAkhir;
 
   TglAkhirChanged({required this.tglAkhir});
 
   @override
   List<Object?> get props => [tglAkhir];
+}
+
+class JenisChanged extends KehadiranEvent {
+  final String jenis;
+
+  JenisChanged({required this.jenis});
+
+  @override
+  List<Object?> get props => [jenis];
+}
+
+class ThnBlnChanged extends KehadiranEvent {
+  final DateTime thnBln;
+
+  ThnBlnChanged({required this.thnBln});
+
+  @override
+  List<Object?> get props => [thnBln];
 }

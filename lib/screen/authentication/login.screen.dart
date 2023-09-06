@@ -6,7 +6,6 @@ import 'package:easy/Widget/templatelogo.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/models/location.model.dart';
-import 'package:easy/models/mpp.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
