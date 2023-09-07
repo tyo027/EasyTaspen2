@@ -1,3 +1,6 @@
+import 'package:easy/models/rekapkehadiran.model.dart';
+import 'package:easy/models/rekapkehadiranharian.model.dart';
+import 'package:easy/screen/laporanscreen/laporans.screen.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,7 +26,23 @@ class KehadiranBloc extends Bloc<KehadiranEvent, KehadiranState> {
     });
 
     on<JenisChanged>((event, emit) {
-      emit(state.copyWith(jenis: event.jenis));
+      emit(state.copyWith(type: event.type));
+    });
+
+    on<RekapKehadiranChanged>((event, emit) {
+      emit(state.copyWith(rekapKehadiran: event.rekapKehadiran));
+    });
+
+    on<KehadiranHarianChanged>((event, emit) {
+      emit(state.copyWith(kehadiranHarian: event.kehadiranHarian));
+    });
+
+    on<Loading>((event, emit) {
+      emit(state.copyWith(isProcessing: true));
+    });
+
+    on<Iddle>((event, emit) {
+      emit(state.copyWith(isProcessing: false));
     });
   }
 }

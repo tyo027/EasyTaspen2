@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy/models/attendance.model.dart';
 import 'package:easy/models/rekapkehadiran.model.dart';
+import 'package:easy/models/rekapkehadiranharian.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/repository.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
@@ -58,17 +59,33 @@ class AttendanceRepository extends Repository {
     }
   }
 
-  Future<RekapKehadiranModel?> getRekapKehadiran(
+  Future<List<RekapKehadiranModel>?> getRekapKehadiran(
       {required String nik,
       required String tglMulai,
       required String tglAkhir}) async {
     try {
-      var response = await dio.post("v2/postRekapKehadiran", data: {
+      var response = await dio.post("v2/getRekapKehadiran", data: {
         "nik": nik,
         "tgl_mulai": tglMulai,
         "tgl_akhir": tglAkhir,
       });
       return rekapKehadiranModelFromJson(response.data);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<List<RekapKehadiranHarianModel>?> getRekapKehadiranHarian(
+      {required String nik,
+      required String tglMulai,
+      required String tglAkhir}) async {
+    try {
+      var response = await dio.post("v2/getRekapKehadiranHarian", data: {
+        "nik": nik,
+        "tgl_mulai": tglMulai,
+        "tgl_akhir": tglAkhir,
+      });
+      return rekapKehadiranHarianModelFromJson(response.data);
     } catch (e) {
       return null;
     }

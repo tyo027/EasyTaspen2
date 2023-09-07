@@ -33,12 +33,12 @@ class TglAkhirChanged extends KehadiranEvent {
 }
 
 class JenisChanged extends KehadiranEvent {
-  final String jenis;
+  final LaporanType type;
 
-  JenisChanged({required this.jenis});
+  JenisChanged({required this.type});
 
   @override
-  List<Object?> get props => [jenis];
+  List<Object?> get props => [type];
 }
 
 class ThnBlnChanged extends KehadiranEvent {
@@ -48,4 +48,30 @@ class ThnBlnChanged extends KehadiranEvent {
 
   @override
   List<Object?> get props => [thnBln];
+}
+
+class RekapKehadiranChanged extends KehadiranEvent {
+  final List<RekapKehadiranModel> rekapKehadiran;
+
+  RekapKehadiranChanged({required this.rekapKehadiran});
+
+  @override
+  List<Object?> get props => [rekapKehadiran];
+}
+
+class KehadiranHarianChanged extends KehadiranEvent {
+  final List<RekapKehadiranHarianModel> kehadiranHarian;
+
+  KehadiranHarianChanged({required this.kehadiranHarian});
+
+  @override
+  List<Object?> get props => [kehadiranHarian];
+}
+
+class Loading extends KehadiranEvent {
+  Loading();
+}
+
+class Iddle extends KehadiranEvent {
+  Iddle();
 }

@@ -1,9 +1,16 @@
 import 'package:easy/Widget/userinfo.template.dart';
+import 'package:easy/bloc/authentication_bloc.dart';
+import 'package:easy/extension.dart';
+import 'package:easy/models/rekapkehadiran.model.dart';
+import 'package:easy/models/rekapkehadiranharian.model.dart';
+import 'package:easy/repositories/attendance.repository.dart';
 import 'package:easy/screen/laporanscreen/bloc/kehadiran_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
+
+enum LaporanType { REKAP_KEHADIRAN, KEHADIRAN_HARIAN }
 
 class LaporansScreen extends StatelessWidget {
   const LaporansScreen({super.key});
@@ -103,12 +110,58 @@ class LaporansScreen extends StatelessWidget {
     });
   }
 
-  void findMonthly(BuildContext context, DateTime dateTime) {
+  void findMonthly(BuildContext context, String? nik, DateTime dateTime) {
     // TODO: LOGIC MONTHLY AMBIL API
+
+    if (nik == null) return;
+
+    context.read<KehadiranBloc>().add(Loading());
+    context
+        .read<KehadiranBloc>()
+        .add(RekapKehadiranChanged(rekapKehadiran: const []));
+
+    var startTime = dateTime.copyWith(day: 1);
+    var endTime = startTime.copyWith(month: startTime.month + 1, day: 0);
+
+    AttendanceRepository()
+        .getRekapKehadiran(
+            nik: nik,
+            tglMulai: startTime.toString().substring(0, 10),
+            tglAkhir: endTime.toString().substring(0, 10))
+        .then((value) {
+      if (value != null) {
+        context
+            .read<KehadiranBloc>()
+            .add(RekapKehadiranChanged(rekapKehadiran: value));
+      }
+
+      context.read<KehadiranBloc>().add(Iddle());
+    });
   }
 
-  void findDaily(BuildContext context, DateTime start, DateTime end) {
+  void findDaily(
+      BuildContext context, String? nik, DateTime start, DateTime end) {
     // TODO: LOGIC DAILY AMBIL API
+    if (nik == null) return;
+    context.read<KehadiranBloc>().add(Loading());
+    context
+        .read<KehadiranBloc>()
+        .add(KehadiranHarianChanged(kehadiranHarian: const []));
+
+    AttendanceRepository()
+        .getRekapKehadiranHarian(
+            nik: nik,
+            tglMulai: start.toString().substring(0, 10),
+            tglAkhir: end.toString().substring(0, 10))
+        .then((value) {
+      if (value != null) {
+        context
+            .read<KehadiranBloc>()
+            .add(KehadiranHarianChanged(kehadiranHarian: value));
+      }
+
+      context.read<KehadiranBloc>().add(Iddle());
+    });
   }
 
   @override
@@ -148,7 +201,7 @@ class LaporansScreen extends StatelessWidget {
       builder: (context, state) {
         return GestureDetector(
           onTap: () async {
-            if (state.jenis == "REKAP_BULANAN") {
+            if (state.type == LaporanType.REKAP_KEHADIRAN) {
               findMounthDialog(context, state.thnBln);
             } else {
               findDateRangeDialog(context, state.tglMulai, state.tglAkhir);
@@ -208,7 +261,7 @@ class LaporansScreen extends StatelessWidget {
               children: [
                 BlocBuilder<KehadiranBloc, KehadiranState>(
                   builder: (context, state) {
-                    return Text(state.jenis == 'REKAP_BULANAN'
+                    return Text(state.type == LaporanType.REKAP_KEHADIRAN
                         ? state.thnBln == null
                             ? "Bulan / Tahun "
                             : DateFormat("MMMM yyyy").format(state.thnBln!)
@@ -238,65 +291,78 @@ class LaporansScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(10)),
         child: BlocBuilder<KehadiranBloc, KehadiranState>(
           builder: (context, state) {
-            return DropdownButton<String>(
+            return DropdownButton<LaporanType>(
                 isExpanded: true,
-                value: state.jenis,
+                value: state.type,
                 elevation: 16,
                 style: const TextStyle(color: Colors.black),
                 underline: Container(
                   height: 0,
                 ),
-                onChanged: (String? value) {
-                  if (value != null) {
-                    context
-                        .read<KehadiranBloc>()
-                        .add(JenisChanged(jenis: value));
+                onChanged: (LaporanType? type) {
+                  if (type != null) {
+                    context.read<KehadiranBloc>().add(JenisChanged(type: type));
                   }
                 },
-                items: const [
-                  DropdownMenuItem<String>(
-                    value: "REKAP_BULANAN",
-                    child: Text("Rekap Kehadiran Bulan"),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: "REKAP_HARIAN",
-                    child: Text("Rekap Kehadiran Harian"),
-                  )
-                ]);
+                items: LaporanType.values
+                    .map((type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(type.name
+                              .split('_')
+                              .map((e) => e.capitalize())
+                              .join(" ")),
+                        ))
+                    .toList());
           },
         ));
   }
 
   Widget cariBtn() {
-    return BlocBuilder<KehadiranBloc, KehadiranState>(
-      builder: (context, state) {
-        return GestureDetector(
-          onTap: () {
-            if (state.jenis == 'REKAP_BULANAN' && state.thnBln != null) {
-              findMonthly(context, state.thnBln!);
-            }
-            if (state.jenis == 'REKAP_HARIAN' &&
-                state.tglMulai != null &&
-                state.tglAkhir != null) {
-              findDaily(context, state.tglMulai!, state.tglAkhir!);
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-                color:
-                    (state.jenis == 'REKAP_BULANAN' && state.thnBln != null) ||
-                            (state.jenis == 'REKAP_HARIAN' &&
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, auth) {
+        return BlocBuilder<KehadiranBloc, KehadiranState>(
+          builder: (context, state) {
+            return GestureDetector(
+              onTap: () {
+                if (state.isProcessing) return;
+
+                context.read<KehadiranBloc>().add(Loading());
+
+                if (state.type == LaporanType.REKAP_KEHADIRAN &&
+                    state.thnBln != null) {
+                  findMonthly(context, auth.user?.nik, state.thnBln!);
+                }
+                if (state.type == LaporanType.KEHADIRAN_HARIAN &&
+                    state.tglMulai != null &&
+                    state.tglAkhir != null) {
+                  findDaily(context, auth.user?.nik, state.tglMulai!,
+                      state.tglAkhir!);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                    color: (state.type == LaporanType.REKAP_KEHADIRAN &&
+                                state.thnBln != null) ||
+                            (state.type == LaporanType.KEHADIRAN_HARIAN &&
                                 state.tglMulai != null &&
                                 state.tglAkhir != null)
                         ? Colors.blue[300]
                         : Colors.grey,
-                borderRadius: BorderRadius.circular(10)),
-            child: const Center(
-              child:
-                  Text(style: TextStyle(fontWeight: FontWeight.bold), 'Cari'),
-            ),
-          ),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Center(
+                  child: state.isProcessing
+                      ? const SizedBox(
+                          height: 17,
+                          width: 17,
+                          child: CircularProgressIndicator())
+                      : const Text(
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                          'Cari'),
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -304,12 +370,137 @@ class LaporansScreen extends StatelessWidget {
 
   Widget result() {
     return Expanded(
-        flex: 1,
+      flex: 1,
+      child: SingleChildScrollView(
         child: Container(
           width: double.infinity,
           margin: const EdgeInsets.only(bottom: 8),
-          color: Colors.amber,
-          child: Text('Result here'),
-        ));
+          child: BlocBuilder<KehadiranBloc, KehadiranState>(
+            builder: (context, state) {
+              if (state.isProcessing) return Container();
+
+              if (state.type == LaporanType.REKAP_KEHADIRAN &&
+                  state.rekapKehadiran != null &&
+                  state.rekapKehadiran!.isNotEmpty) {
+                return viewRekapKehadiran(state.rekapKehadiran!);
+              }
+
+              if (state.type == LaporanType.KEHADIRAN_HARIAN &&
+                  state.kehadiranHarian != null &&
+                  state.kehadiranHarian!.isNotEmpty) {
+                return viewKehadiranHarian(state.kehadiranHarian!);
+              }
+
+              return Container();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Table viewRekapKehadiran(List<RekapKehadiranModel> rekapKehadiran) {
+    return Table(
+      columnWidths: const {1: FixedColumnWidth(80)},
+      children: [
+        TableRow(
+            decoration: BoxDecoration(color: Colors.grey[200]),
+            children: ['Keterangan', 'Jumlah']
+                .map((e) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        e,
+                        textAlign: e == 'Jumlah' ? TextAlign.center : null,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ))
+                .toList()),
+        ...(rekapKehadiran
+            .where((element) => element.ATEXT.isNotEmpty)
+            .toList()
+            .asMap()
+            .entries
+            .map((e) {
+          var value = e.value;
+          return TableRow(
+              decoration: e.key % 2 == 1
+                  ? BoxDecoration(color: Colors.grey[100])
+                  : null,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(value.ATEXT),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    value.JUMLAH_HARI,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ]);
+        }).toList())
+      ],
+    );
+  }
+
+  Table viewKehadiranHarian(List<RekapKehadiranHarianModel> kehadiranHarian) {
+    return Table(
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      columnWidths: const {
+        1: FixedColumnWidth(80),
+        2: FixedColumnWidth(80),
+        3: FixedColumnWidth(80)
+      },
+      children: [
+        TableRow(
+            decoration: BoxDecoration(color: Colors.grey[200]),
+            children: ['Hari', 'SATZA', 'SCHKZ', 'Status']
+                .map((e) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        e,
+                        textAlign: e != 'Hari' ? TextAlign.center : null,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ))
+                .toList()),
+        ...(kehadiranHarian.asMap().entries.map((e) {
+          var value = e.value;
+          return TableRow(
+              decoration: e.key % 2 == 1
+                  ? BoxDecoration(color: Colors.grey[100])
+                  : null,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                      Text("${value.DAYTXT} \n${value.LDATE} ${value.LTIME}"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    value.SATZA,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    value.SCHKZ,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    value.STATUS,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ]);
+        }).toList())
+      ],
+    );
   }
 }
