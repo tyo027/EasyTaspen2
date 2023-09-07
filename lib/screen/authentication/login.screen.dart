@@ -47,49 +47,30 @@ class LoginScreen extends StatelessWidget {
             const SnackBar(content: Text("Gagal Mendapatkan DeviceID")));
         return;
       }
+
       var auth = await DeviceRepository().login(
           password: password, username: username.toLowerCase(), uuid: uuid);
       if (auth.status) {
-        if (!auth.active) {
-          var user = UserModel(
-              ba: username,
-              jabatan: auth.jabatan,
-              nama: auth.fullname,
-              nik: "-",
-              gender: auth.gender,
-              unitkerja: auth.unitKerja,
-              isActive: false);
-
-          var location = const LocationModel(
-              long: 106.86181245916899, lat: -6.173374841022986);
-
-          await Storage.write("user", json.encode(user.toJson()));
-          await Storage.write("location", json.encode(location.toJson()));
-          context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
-                user: user,
-              ));
-          return;
-        }
-
         await Storage.write("token", auth.token);
-        var location = LocationModel(long: 0, lat: 0);
+        var location = const LocationModel(long: 0, lat: 0);
 
         var mpp = await AuthenticationRepository().getMpp(auth.nik);
         if (mpp != null && mpp.custom == 1) {
           location = location.copyWith(lat: mpp.lat, long: mpp.long);
-        } else {
-          var cabLocation =
-              await AuthenticationRepository().getCabangLocation(auth.ba);
-          if (cabLocation == null) {
-            navigator.pop();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Tidak Dapat Menemukan Area Kantor")));
-            return;
-          }
-          location =
-              location.copyWith(lat: cabLocation.lat, long: cabLocation.long);
         }
-        print(mpp);
+
+        var rules = await AuthenticationRepository().getRules(auth.ba);
+
+        if (rules == null) {
+          navigator.pop();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Tidak Dapat Menemukan Data Kantor")));
+          return;
+        }
+
+        if (location.lat == 0) {
+          location = location.copyWith(lat: rules.lat, long: rules.long);
+        }
 
         var userProfile = await ProfileRepository().getProfile(nik: auth.nik);
         if (userProfile == null) {
@@ -107,10 +88,15 @@ class LoginScreen extends StatelessWidget {
             ba: auth.ba,
             unitkerja: auth.unitKerja,
             isActive: true,
-            gender: userProfile.gender);
+            gender: userProfile.gender,
+            latitude: location.lat,
+            longitude: location.long,
+            allowWFA: rules.allowWFA,
+            allowWFO: rules.allowWFO,
+            allowMock: rules.allowMock,
+            radius: rules.radius);
 
         await Storage.write("user", json.encode(user.toJson()));
-        await Storage.write("location", json.encode(location.toJson()));
         context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
               user: user,
             ));

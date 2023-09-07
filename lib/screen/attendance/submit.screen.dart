@@ -114,6 +114,9 @@ class SubmitAttendance extends StatelessWidget {
             builder: (context, snapshot) {
               if (!snapshot.hasData) return Container();
               var location = snapshot.data!;
+
+              var src = LocationService.getImageUrlRadius(
+                  snapshot.data!.latitude, snapshot.data!.longitude);
               return Column(
                 children: [
                   Container(
@@ -123,11 +126,14 @@ class SubmitAttendance extends StatelessWidget {
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20)),
-                      child: Image.network(
-                        LocationService.getImageUrlRadius(
-                            snapshot.data!.latitude, snapshot.data!.longitude),
-                        fit: BoxFit.cover,
-                      )),
+                      child: src != null
+                          ? Image.network(
+                              src,
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: Colors.black12,
+                            )),
                   const SizedBox(height: 30),
                   Container(
                     padding: const EdgeInsets.all(20),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:easy/models/user.model.dart';
+import 'package:easy/services/location.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,9 +30,7 @@ class AuthenticationBloc
       }
     }
 
-    if (!Storage.has("token") ||
-        !Storage.has("user") ||
-        !Storage.has("location")) {
+    if (!Storage.has("token") || !Storage.has("user")) {
       emit(const AuthenticationState.unauthenticated());
     } else {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
@@ -54,8 +53,8 @@ class AuthenticationBloc
       AuthenticationLogoutRequested event, Emitter emit) async {
     Storage.remove("token");
     Storage.remove("user");
-    Storage.remove("location");
     Storage.deactivate();
+    LocationService.reset();
     emit(const AuthenticationState.unauthenticated());
   }
 

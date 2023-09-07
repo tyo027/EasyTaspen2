@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:ffi';
 
-import 'package:easy/models/location.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
 import 'package:easy/services/storage.service.dart';
@@ -39,9 +39,8 @@ class LocationService {
     var position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
 
-    if (Storage.has("user") && type == SubmitAttendanceType.wfo) {
-      var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
-      if (user.nik == "4161") {
+    if (_user() != null && type == SubmitAttendanceType.wfo) {
+      if (_user()!.nik == "4161") {
         return Position(
             longitude: 106.8617388721709,
             latitude: -6.173554415448179,
@@ -52,12 +51,12 @@ class LocationService {
             speed: 0,
             speedAccuracy: 0);
       }
-    }
 
-    // if (position.isMocked) {
-    //   print("Fake gps");
-    //   return null;
-    // }
+      if (position.isMocked && !_user()!.allowMock) {
+        print("Fake gps");
+        return null;
+      }
+    }
 
     return position;
   }
@@ -68,10 +67,13 @@ class LocationService {
     if (position == null) {
       return null;
     }
-    var location =
-        LocationModel.fromJson(jsonDecode(Storage.read<String>("location")!));
-    return Geolocator.distanceBetween(
-        location.lat, location.long, position.latitude, position.longitude);
+
+    if (_user() == null) {
+      return null;
+    }
+
+    return Geolocator.distanceBetween(_user()!.latitude, _user()!.longitude,
+        position.latitude, position.longitude);
   }
 
   static Future<String?> getCurrentAddress() async {
@@ -90,12 +92,27 @@ class LocationService {
     return '${currentAddress.street}, ${currentAddress.subLocality}, ${currentAddress.locality}, ${currentAddress.postalCode}, ${currentAddress.country}';
   }
 
-  static String getImageUrlRadius(
+  static String? getImageUrlRadius(
     double latitude,
     double longitude,
   ) {
-    var location =
-        LocationModel.fromJson(jsonDecode(Storage.read<String>("location")!));
-    return "https://taspen-easy.vercel.app/api/map/${location.long}/${location.lat}/$longitude/$latitude/pk.eyJ1IjoidHlvMDI3IiwiYSI6ImNsaG5pemZlbDFseHQzZm1tOXVzbm13eDIifQ.DHsrYzrhTEfhBDpPUbrb5g";
+    if (_user() == null) return null;
+    return "https://taspen-easy.vercel.app/api/map/${_user()!.longitude}/${_user()!.latitude}/$longitude/$latitude/${_user()!.radius}/pk.eyJ1IjoidHlvMDI3IiwiYSI6ImNsaG5pemZlbDFseHQzZm1tOXVzbm13eDIifQ.DHsrYzrhTEfhBDpPUbrb5g";
+  }
+
+  static UserModel? _userData;
+
+  static UserModel? _user() {
+    if (_userData != null) return _userData;
+
+    if (Storage.has("user")) {
+      return UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+    }
+
+    return null;
+  }
+
+  static void reset() {
+    _userData = null;
   }
 }

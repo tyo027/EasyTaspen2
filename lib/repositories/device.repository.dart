@@ -50,6 +50,11 @@ class DeviceRepository {
         "uuid": uuid,
       });
 
+      if (response.statusCode != 200) {
+        return AuthResponse(
+            status: false, message: response.statusMessage ?? '');
+      }
+
       if (response.data['status'] == false) {
         return AuthResponse(status: false, message: response.data['message']);
       }
