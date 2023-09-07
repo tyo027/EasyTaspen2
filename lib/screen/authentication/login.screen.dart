@@ -139,8 +139,9 @@ class LoginScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 20),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black45),
-                    borderRadius: BorderRadius.circular(20)),
+                    color: Colors.blueGrey[50],
+                    // border: Border.all(color: Colors.black45),
+                    borderRadius: BorderRadius.circular(10)),
                 child: BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, state) {
                     return TextFormField(
@@ -157,8 +158,9 @@ class LoginScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 20),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black45),
-                    borderRadius: BorderRadius.circular(20)),
+                    color: Colors.blueGrey[50],
+                    // border: Border.all(color: Colors.black45),
+                    borderRadius: BorderRadius.circular(10)),
                 child: BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, state) {
                     return TextFormField(
@@ -204,8 +206,8 @@ class LoginScreen extends StatelessWidget {
                                 decoration: BoxDecoration(
                                     color: isFilled
                                         ? Colors.amber[300]
-                                        : Colors.grey,
-                                    borderRadius: BorderRadius.circular(20)),
+                                        : Colors.blueGrey[200],
+                                    borderRadius: BorderRadius.circular(10)),
                                 child: const Center(
                                   child: Text(
                                       style: TextStyle(
@@ -247,7 +249,7 @@ class LoginScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                     color: Colors.amber[300],
-                                    borderRadius: BorderRadius.circular(20)),
+                                    borderRadius: BorderRadius.circular(10)),
                                 child: Center(
                                     child: SvgPicture.asset(
                                         'assets/svgs/face-id.svg')),

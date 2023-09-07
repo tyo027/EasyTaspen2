@@ -1,7 +1,6 @@
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
-import 'package:easy/screen/laporan.screen.dart';
 import 'package:easy/screen/laporanscreen/laporans.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
