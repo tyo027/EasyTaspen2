@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:easy/repositories/authentication.repository.dart';
+import 'package:easy/repositories/repository.dart';
+import 'package:easy/services/storage.service.dart';
 
 class AuthResponse {
   final bool status;
@@ -29,24 +32,21 @@ class AuthResponse {
       this.gender = ""});
 }
 
-class DeviceRepository {
-  late Dio dio;
-  String baseUrl = "https://taspen-easy.vercel.app/api/";
-
-  DeviceRepository() {
-    dio = Dio(BaseOptions(baseUrl: baseUrl, headers: {
-      "secret-key": "F25BE3E73F6559C4",
-    }));
-  }
-
+class DeviceRepository extends Repository {
   Future<AuthResponse> login(
       {required String username,
       required String uuid,
       required String password}) async {
     try {
-      var response = await dio.post("auth", data: {
+      var userData = await AuthenticationRepository().login(username, password);
+      if (userData == null) {
+        return AuthResponse(
+            status: false, message: 'Username Atau Password Salah');
+      }
+      dio.options.headers["Authorization"] = "Bearer ${userData.token}";
+
+      var response = await dio.post("v2/DeviceId", data: {
         "username": username,
-        "password": password,
         "uuid": uuid,
       });
 
@@ -54,26 +54,29 @@ class DeviceRepository {
         return AuthResponse(
             status: false, message: response.statusMessage ?? '');
       }
+      // print(response.data);
+      // return AuthResponse(status: false);
 
       if (response.data['status'] == false) {
         return AuthResponse(status: false, message: response.data['message']);
       }
 
-      var data = response.data['data'];
-
       return AuthResponse(
-          status: true,
-          username: username,
-          fullname: data['fullname'],
-          active: data['active'],
-          token: data['token'] ?? "",
-          ba: data['ba'] ?? "",
-          nik: data['nik'] ?? "",
-          jabatan: data['jabatan'] ?? "",
-          unitKerja: data['unit_kerja'] ?? "",
-          gender: data['gender'] ?? "");
+        status: true,
+        username: username,
+        fullname: userData.user.nama,
+        active: true,
+        token: userData.token,
+        ba: userData.user.ba,
+        nik: userData.user.nik,
+        jabatan: userData.user.jabatan,
+        unitKerja: userData.user.unitkerja,
+        gender: userData.user.gender,
+      );
     } on DioError catch (e) {
-      return AuthResponse(status: false, message: e.response?.data["message"]);
+      // print(e.response);
+
+      return AuthResponse(status: false, message: e.message.toString());
     } catch (e) {
       return AuthResponse(status: false, message: "Up's something went wrong!");
     }

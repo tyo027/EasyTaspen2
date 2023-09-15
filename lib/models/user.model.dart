@@ -65,7 +65,7 @@ class UserModel extends Equatable {
         jabatan: json['JABATAN'],
         ba: json['BA'],
         unitkerja: json['UNITKERJA'],
-        gender: json['Gender'],
+        gender: json.containsKey("Gender") ? json['Gender'] : "",
         isActive: json.containsKey("IS_ACTIVE") ? json["IS_ACTIVE"] : true,
         latitude: json.containsKey("latitude") ? json["latitude"] : 0,
         longitude: json.containsKey("longitude") ? json["longitude"] : 0,

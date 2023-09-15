@@ -5,10 +5,11 @@ import 'package:easy/models/rule.model.dart';
 import 'package:easy/repositories/repository.dart';
 
 class AuthenticationRepository extends Repository {
-  Future<AuthenticationModel?> login(String userName, String password) async {
+  Future<AuthenticationModel?> login(String username, String password) async {
     try {
       var response = await dio.post("loginADNoToken",
-          data: {"username": userName, "password": password});
+          data: {"username": username, "password": password});
+      // print(response.data);
 
       return AuthenticationModel.fromJson(response.data);
     } catch (e) {

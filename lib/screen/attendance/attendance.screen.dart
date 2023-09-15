@@ -31,7 +31,7 @@ class AttendanceScreen extends StatelessWidget {
               onTap: () {
                 if (state.user == null) return;
 
-                print(state.user);
+                // print(state.user);
 
                 if (state.user!.allowWFA) {
                   navigator

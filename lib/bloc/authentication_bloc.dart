@@ -38,34 +38,33 @@ class AuthenticationBloc
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
 
       // Check for v1.1
-      if (user.radius == 0) {
-        var location = const LocationModel(long: 0, lat: 0);
 
-        var mpp = await AuthenticationRepository().getMpp(user.nik);
-        if (mpp != null && mpp.custom == 1) {
-          location = location.copyWith(lat: mpp.lat, long: mpp.long);
-        }
+      var location = const LocationModel(long: 0, lat: 0);
 
-        var rules = await AuthenticationRepository().getRules(user.ba);
-        if (rules == null) {
-          emit(const AuthenticationState.expired());
-          return;
-        }
-
-        if (location.lat == 0) {
-          location = location.copyWith(lat: rules.lat, long: rules.long);
-        }
-
-        user = user.copyWith(
-            latitude: location.lat,
-            longitude: location.long,
-            allowWFA: rules.allowWFA,
-            allowWFO: rules.allowWFO,
-            allowMock: rules.allowMock,
-            radius: rules.radius);
-
-        await Storage.write("user", json.encode(user.toJson()));
+      var mpp = await AuthenticationRepository().getMpp(user.nik);
+      if (mpp != null && mpp.custom == 1) {
+        location = location.copyWith(lat: mpp.lat, long: mpp.long);
       }
+
+      var rules = await AuthenticationRepository().getRules(user.ba);
+      if (rules == null) {
+        emit(const AuthenticationState.expired());
+        return;
+      }
+
+      if (location.lat == 0) {
+        location = location.copyWith(lat: rules.lat, long: rules.long);
+      }
+
+      user = user.copyWith(
+          latitude: location.lat,
+          longitude: location.long,
+          allowWFA: rules.allowWFA,
+          allowWFO: rules.allowWFO,
+          allowMock: rules.allowMock,
+          radius: rules.radius);
+
+      await Storage.write("user", json.encode(user.toJson()));
 
       if (event.check) await Storage.activate();
       if (!Storage.status()) {
