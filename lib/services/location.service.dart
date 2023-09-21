@@ -4,7 +4,6 @@ import 'dart:developer' as developer;
 import 'package:easy/models/user.model.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
 import 'package:easy/services/storage.service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:turf/helpers.dart' as turf;

@@ -5,8 +5,8 @@ import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/flash.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/screen/authentication/login.screen.dart';
+import 'package:easy/services/fcm.service.dart';
 import 'package:easy/services/storage.service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_version_checker/flutter_app_version_checker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,6 +81,7 @@ class _AppState extends State<AppView> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    FcmService.getToken().then((value) => print(value));
     return MaterialApp(
       navigatorKey: navigatorKey,
       onGenerateRoute: (settings) => FlashScreen.route(),

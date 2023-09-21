@@ -326,17 +326,17 @@ class LaporansScreen extends StatelessWidget {
               onTap: () {
                 if (state.isProcessing) return;
 
-                context.read<KehadiranBloc>().add(Loading());
-
                 if (state.type == LaporanType.REKAP_KEHADIRAN &&
                     state.thnBln != null) {
                   findMonthly(context, auth.user?.nik, state.thnBln!);
+                  context.read<KehadiranBloc>().add(Loading());
                 }
                 if (state.type == LaporanType.KEHADIRAN_HARIAN &&
                     state.tglMulai != null &&
                     state.tglAkhir != null) {
                   findDaily(context, auth.user?.nik, state.tglMulai!,
                       state.tglAkhir!);
+                  context.read<KehadiranBloc>().add(Loading());
                 }
               },
               child: Container(
@@ -455,7 +455,7 @@ class LaporansScreen extends StatelessWidget {
       children: [
         TableRow(
             decoration: BoxDecoration(color: Colors.grey[200]),
-            children: ['Hari', 'SATZA', 'SCHKZ', 'Status']
+            children: ['Hari', 'Absen', 'Status']
                 .map((e) => Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -477,13 +477,13 @@ class LaporansScreen extends StatelessWidget {
                   child:
                       Text("${value.DAYTXT} \n${value.LDATE} ${value.LTIME}"),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    value.SATZA,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Text(
+                //     value.SATZA,
+                //     textAlign: TextAlign.center,
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(

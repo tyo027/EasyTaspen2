@@ -113,7 +113,7 @@ class SubmitAttendance extends StatelessWidget {
             future: LocationService.getCurrentPosition(type: type),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                print("loading");
+                //print("loading");
                 return const Center(
                   child: SizedBox(
                     width: 50,

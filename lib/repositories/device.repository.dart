@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/repository.dart';
-import 'package:easy/services/storage.service.dart';
 
 class AuthResponse {
   final bool status;

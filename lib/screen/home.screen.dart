@@ -62,6 +62,26 @@ class HomeScreen extends StatelessWidget {
             return Container();
           },
         ),
+        // BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        //   builder: (context, state) {
+        //     if (state.user != null) {
+        //       return Row(
+        //         crossAxisAlignment: CrossAxisAlignment.center,
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           GestureDetector(
+        //             onTap: () => navigator.push(NotifScreen.route()),
+        //             child: Container(
+        //               margin: const EdgeInsets.all(5),
+        //               child: SvgPicture.asset("assets/svgs/profile.svg"),
+        //             ),
+        //           ),
+        //         ],
+        //       );
+        //     }
+        //     return Container();
+        //   },
+        // ),
         const Spacer(),
         GestureDetector(
           onTap: () {
@@ -69,8 +89,8 @@ class HomeScreen extends StatelessWidget {
               context: context,
               builder: (context) {
                 return CupertinoAlertDialog(
-                  title: const Text("LogOut Sekarang"),
-                  content: const Text("LogOut Sekarang"),
+                  title: const Text("Log Out Sekarang"),
+                  content: const Text("Log Out Sekarang"),
                   actions: [
                     CupertinoDialogAction(
                       child: const Text("YA"),
