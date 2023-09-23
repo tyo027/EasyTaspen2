@@ -45,51 +45,51 @@ class UserInfoTemplate extends StatelessWidget {
                   ),
                 ),
               const Spacer(),
-              if (!canBack)
-                GestureDetector(
-                  onTap: () => navigator.push(NotifScreen.route()),
-                  child: Stack(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        margin: const EdgeInsets.symmetric(horizontal: 25),
-                        child: const Icon(Icons.notifications_none_rounded),
-                      ),
-                      BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                        builder: (context, state) {
-                          if (state.user == null) {
-                            return Container();
-                          }
-                          return FutureBuilder(
-                            future: getCountNotification(state.user!.nik),
-                            initialData: 0,
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              return Positioned(
-                                left: 42,
-                                child: Container(
-                                    width: 23,
-                                    height: 23,
-                                    // padding: const EdgeInsets.all(3),
-                                    // margin: const EdgeInsets.symmetric(horizontal: 0),
-                                    decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius:
-                                            BorderRadius.circular(100)),
-                                    child: Center(
-                                      child: Text(
-                                        "${snapshot.data}",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                )
+              // if (!canBack)
+              //   GestureDetector(
+              //     onTap: () => navigator.push(NotifScreen.route()),
+              //     child: Stack(
+              //       children: [
+              //         Container(
+              //           padding: const EdgeInsets.all(6),
+              //           margin: const EdgeInsets.symmetric(horizontal: 25),
+              //           child: const Icon(Icons.notifications_none_rounded),
+              //         ),
+              //         BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              //           builder: (context, state) {
+              //             if (state.user == null) {
+              //               return Container();
+              //             }
+              //             return FutureBuilder(
+              //               future: getCountNotification(state.user!.nik),
+              //               initialData: 0,
+              //               builder:
+              //                   (BuildContext context, AsyncSnapshot snapshot) {
+              //                 return Positioned(
+              //                   left: 42,
+              //                   child: Container(
+              //                       width: 23,
+              //                       height: 23,
+              //                       // padding: const EdgeInsets.all(3),
+              //                       // margin: const EdgeInsets.symmetric(horizontal: 0),
+              //                       decoration: BoxDecoration(
+              //                           color: Colors.red,
+              //                           borderRadius:
+              //                               BorderRadius.circular(100)),
+              //                       child: Center(
+              //                         child: Text(
+              //                           "${snapshot.data}",
+              //                           style: TextStyle(color: Colors.white),
+              //                         ),
+              //                       )),
+              //                 );
+              //               },
+              //             );
+              //           },
+              //         ),
+              //       ],
+              //     ),
+              //   )
             ]),
           ),
           if (showUserInfo) userInfo(),
@@ -131,60 +131,67 @@ class UserInfoTemplate extends StatelessWidget {
             const SizedBox(
               width: 20,
             ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                  builder: (context, state) {
-                    if (state.user == null) {
-                      return Container();
-                    }
-                    return SizedBox(
-                      child: Text(
-                        state.user!.nama.capitalize(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+            Flexible(
+              child: SizedBox(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                        builder: (context, state) {
+                          if (state.user == null) {
+                            return Container();
+                          }
+                          return SizedBox(
+                            child: Text(
+                              state.user!.nama.capitalize(),
+                              // maxLines: 2,
+                              // overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                  builder: (context, state) {
-                    if (state.user == null) {
-                      return Container();
-                    }
-                    return SizedBox(
-                      child: Text(
-                        state.user!.jabatan.capitalize(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(),
+                      const SizedBox(
+                        height: 5,
                       ),
-                    );
-                  },
-                ),
-                BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                  builder: (context, state) {
-                    if (state.user == null) {
-                      return Container();
-                    }
-                    return SizedBox(
-                      child: Text(
-                        state.user!.unitkerja.capitalize(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(),
+                      BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                        builder: (context, state) {
+                          if (state.user == null) {
+                            return Container();
+                          }
+                          return SizedBox(
+                            child: Text(
+                              state.user!.jabatan.capitalize(),
+                              // maxLines: 2,
+                              // overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                      BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                        builder: (context, state) {
+                          if (state.user == null) {
+                            return Container();
+                          }
+                          return SizedBox(
+                            child: Text(
+                              state.user!.unitkerja.capitalize(),
+                              // maxLines: 2,
+                              // overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             )
           ],
         ));
