@@ -24,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
   Widget profileScreenMenu(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
-        if (state.user != null) {
+        if (state is Authenticated) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
                   child: SvgPicture.asset("assets/svgs/individu.svg"),
                 ),
               ),
-              if (state.user!.isActive)
+              if (state.user.isActive)
                 GestureDetector(
                   onTap: () => navigator.push(JabatanScreen.route()),
                   child: Container(
@@ -44,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
                     child: SvgPicture.asset("assets/svgs/jabatan.svg"),
                   ),
                 ),
-              if (state.user!.isActive)
+              if (state.user.isActive)
                 GestureDetector(
                   onTap: () => navigator.push(GolonganScreen.route()),
                   child: Container(

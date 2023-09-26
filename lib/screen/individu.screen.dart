@@ -44,26 +44,26 @@ class IndividuScreen extends StatelessWidget {
     return UserInfoTemplate(
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          if (state.user == null) {
-            return Container();
+          if (state is Authenticated) {
+            return FutureBuilder(
+              future: _getProfile(nik: state.user.nik, user: state.user),
+              initialData: null,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                  return const Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                return laporanItem(profileModel: snapshot.data);
+              },
+            );
           }
 
-          return FutureBuilder(
-            future: _getProfile(nik: state.user!.nik, user: state.user!),
-            initialData: null,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.data == null) {
-                return const Center(
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-              return laporanItem(profileModel: snapshot.data);
-            },
-          );
+          return Container();
         },
       ),
     );

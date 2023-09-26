@@ -8,7 +8,9 @@ import 'package:easy/screen/laporanscreen/bloc/kehadiran_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
+// import 'package:intl/intl.dart';
+// import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 
 enum LaporanType { REKAP_KEHADIRAN, KEHADIRAN_HARIAN }
 
@@ -26,8 +28,19 @@ class LaporansScreen extends StatelessWidget {
         headerTextColor: Colors.black,
         initialDate: initialDate,
         lastDate: DateTime.now(),
-        cancelText: const Text("Batal"),
-        confirmText: const Text("Pilih"),
+        cancelWidget: const Text(
+          "Batal",
+          style: TextStyle(color: Colors.black38),
+        ),
+        confirmWidget: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+              color: Colors.amber, borderRadius: BorderRadius.circular(10)),
+          child: const Text(
+            "Pilih",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
         roundedCornersRadius: 20,
         unselectedMonthTextColor: Colors.black,
         selectedMonthBackgroundColor: Colors.amber,
@@ -206,48 +219,6 @@ class LaporansScreen extends StatelessWidget {
             } else {
               findDateRangeDialog(context, state.tglMulai, state.tglAkhir);
             }
-
-            // var date = await showMonthPicker(
-            //   context: context,
-            //   initialDate: DateTime.now().day < 25
-            //       ? DateTime.now().add(const Duration(days: -25))
-            //       : DateTime.now(),
-            //   lastDate: DateTime.now().day < 25
-            //       ? DateTime.now().add(const Duration(days: -25))
-            //       : DateTime.now(),
-            // );
-            // if (date == null) return;
-            // var thnbln = "${date.year}${date.month.toString().padLeft(2, '0')}";
-            // showDialog(
-            //   context: context,
-            //   builder: (context) {
-            //     return const Center(
-            //       child: SizedBox(
-            //           height: 50,
-            //           width: 50,
-            //           child: CircularProgressIndicator()),
-            //     );
-            //   },
-            // );
-            // context.read<KehadiranBloc>().add(
-            //       TglMulaiChanged(tglMulai: tglMulai)
-            //     );
-            // var payslip = await _getRekapKehadiran(
-            //   nik: state.user!.nik,
-            //   tglMulai: tglMulai,
-            // );
-
-            // if (payslip == null) {
-            //   ScaffoldMessenger.of(context).showSnackBar(
-            //       const SnackBar(content: Text("Data tidak tersedia")));
-            //   navigator.pop();
-            //   return;
-            // }
-            // context.read<PayslipBloc>().add(
-            //       TglMulaiChanged(tglMulai: tglMulai),
-            //       TglAkhirChanged(tglAkhir: tglAkhir),
-            //     );
-            // navigator.pop();
           },
           child: Container(
             padding:
@@ -322,46 +293,49 @@ class LaporansScreen extends StatelessWidget {
       builder: (context, auth) {
         return BlocBuilder<KehadiranBloc, KehadiranState>(
           builder: (context, state) {
-            return GestureDetector(
-              onTap: () {
-                if (state.isProcessing) return;
+            if (auth is Authenticated) {
+              return GestureDetector(
+                onTap: () {
+                  if (state.isProcessing) return;
 
-                if (state.type == LaporanType.REKAP_KEHADIRAN &&
-                    state.thnBln != null) {
-                  findMonthly(context, auth.user?.nik, state.thnBln!);
-                  context.read<KehadiranBloc>().add(Loading());
-                }
-                if (state.type == LaporanType.KEHADIRAN_HARIAN &&
-                    state.tglMulai != null &&
-                    state.tglAkhir != null) {
-                  findDaily(context, auth.user?.nik, state.tglMulai!,
-                      state.tglAkhir!);
-                  context.read<KehadiranBloc>().add(Loading());
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                    color: (state.type == LaporanType.REKAP_KEHADIRAN &&
-                                state.thnBln != null) ||
-                            (state.type == LaporanType.KEHADIRAN_HARIAN &&
-                                state.tglMulai != null &&
-                                state.tglAkhir != null)
-                        ? Colors.blue[300]
-                        : Colors.grey,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Center(
-                  child: state.isProcessing
-                      ? const SizedBox(
-                          height: 17,
-                          width: 17,
-                          child: CircularProgressIndicator())
-                      : const Text(
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                          'Cari'),
+                  if (state.type == LaporanType.REKAP_KEHADIRAN &&
+                      state.thnBln != null) {
+                    findMonthly(context, auth.user.nik, state.thnBln!);
+                    context.read<KehadiranBloc>().add(Loading());
+                  }
+                  if (state.type == LaporanType.KEHADIRAN_HARIAN &&
+                      state.tglMulai != null &&
+                      state.tglAkhir != null) {
+                    findDaily(context, auth.user.nik, state.tglMulai!,
+                        state.tglAkhir!);
+                    context.read<KehadiranBloc>().add(Loading());
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                      color: (state.type == LaporanType.REKAP_KEHADIRAN &&
+                                  state.thnBln != null) ||
+                              (state.type == LaporanType.KEHADIRAN_HARIAN &&
+                                  state.tglMulai != null &&
+                                  state.tglAkhir != null)
+                          ? Colors.blue[300]
+                          : Colors.grey,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                    child: state.isProcessing
+                        ? const SizedBox(
+                            height: 17,
+                            width: 17,
+                            child: CircularProgressIndicator())
+                        : const Text(
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                            'Cari'),
+                  ),
                 ),
-              ),
-            );
+              );
+            }
+            return Container();
           },
         );
       },

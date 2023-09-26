@@ -3,7 +3,6 @@ import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
 import 'package:easy/repositories/notification.repository.dart';
-import 'package:easy/screen/notifscreen/notif.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -119,13 +118,12 @@ class UserInfoTemplate extends StatelessWidget {
                     BoxDecoration(borderRadius: BorderRadius.circular(40)),
                 child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
                   builder: (context, state) {
-                    if (state.user == null) {
-                      return Container();
+                    if (state is Authenticated) {
+                      return SvgPicture.asset(state.user.gender == "LAKI-LAKI"
+                          ? "assets/svgs/male.svg"
+                          : "assets/svgs/female.svg");
                     }
-
-                    return SvgPicture.asset(state.user!.gender == "LAKI-LAKI"
-                        ? "assets/svgs/male.svg"
-                        : "assets/svgs/female.svg");
+                    return Container();
                   },
                 )),
             const SizedBox(
@@ -141,18 +139,17 @@ class UserInfoTemplate extends StatelessWidget {
                     children: [
                       BlocBuilder<AuthenticationBloc, AuthenticationState>(
                         builder: (context, state) {
-                          if (state.user == null) {
-                            return Container();
+                          if (state is Authenticated) {
+                            return SizedBox(
+                              child: Text(
+                                state.user.nama.capitalize(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            );
                           }
-                          return SizedBox(
-                            child: Text(
-                              state.user!.nama.capitalize(),
-                              // maxLines: 2,
-                              // overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                          );
+
+                          return Container();
                         },
                       ),
                       const SizedBox(
@@ -160,32 +157,26 @@ class UserInfoTemplate extends StatelessWidget {
                       ),
                       BlocBuilder<AuthenticationBloc, AuthenticationState>(
                         builder: (context, state) {
-                          if (state.user == null) {
-                            return Container();
+                          if (state is Authenticated) {
+                            return SizedBox(
+                              child: Text(
+                                state.user.jabatan.capitalize(),
+                              ),
+                            );
                           }
-                          return SizedBox(
-                            child: Text(
-                              state.user!.jabatan.capitalize(),
-                              // maxLines: 2,
-                              // overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(),
-                            ),
-                          );
+                          return Container();
                         },
                       ),
                       BlocBuilder<AuthenticationBloc, AuthenticationState>(
                         builder: (context, state) {
-                          if (state.user == null) {
-                            return Container();
+                          if (state is Authenticated) {
+                            return SizedBox(
+                              child: Text(
+                                state.user.unitkerja.capitalize(),
+                              ),
+                            );
                           }
-                          return SizedBox(
-                            child: Text(
-                              state.user!.unitkerja.capitalize(),
-                              // maxLines: 2,
-                              // overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(),
-                            ),
-                          );
+                          return Container();
                         },
                       ),
                     ],

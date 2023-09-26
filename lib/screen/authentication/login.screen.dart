@@ -12,8 +12,6 @@ import 'package:easy/repositories/device.repository.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
 import 'package:easy/services/biometric.service.dart';
-import 'package:easy/services/permission.service.dart';
-import 'package:easy/services/permission.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +29,6 @@ class LoginScreen extends StatelessWidget {
     String username,
     String password,
   ) async {
-    await PermissionService.requestPermission();
     if (isFilled) {
       showDialog(
         barrierDismissible: false,
@@ -53,6 +50,7 @@ class LoginScreen extends StatelessWidget {
 
       var auth = await DeviceRepository().login(
           password: password, username: username.toLowerCase(), uuid: uuid);
+
       if (auth.status) {
         await Storage.write("token", auth.token);
         var location = const LocationModel(long: 0, lat: 0);
@@ -206,11 +204,11 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (authState.status == AuthenticationStatus.expired)
+                          if (authState is Expired)
                             const SizedBox(
                               width: 16,
                             ),
-                          if (authState.status == AuthenticationStatus.expired)
+                          if (authState is Expired)
                             GestureDetector(
                               onTap: () async {
                                 var isAuthenticate =

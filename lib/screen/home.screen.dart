@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            if (state.user != null) {
+            if (state is Authenticated) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
                       child: SvgPicture.asset("assets/svgs/profile.svg"),
                     ),
                   ),
-                  if (state.user!.isActive)
+                  if (state.user.isActive)
                     GestureDetector(
                       onTap: () => navigator.push(AttendanceScreen.route()),
                       child: Container(
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                         child: SvgPicture.asset("assets/svgs/absensi.svg"),
                       ),
                     ),
-                  if (state.user!.isActive)
+                  if (state.user.isActive)
                     GestureDetector(
                       onTap: () => navigator.push(PasySlipScreen.route()),
                       child: Container(

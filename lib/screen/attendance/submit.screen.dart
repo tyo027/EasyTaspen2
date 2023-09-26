@@ -178,30 +178,34 @@ class SubmitAttendance extends StatelessWidget {
                             BlocBuilder<AuthenticationBloc,
                                 AuthenticationState>(
                               builder: (context, state) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    submit(
-                                      enable,
-                                      context,
-                                      state.user!,
-                                      location,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 35, vertical: 30),
-                                    width: 400,
-                                    decoration: BoxDecoration(
-                                        color: enable
-                                            ? Colors.amberAccent
-                                            : Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: const Center(
-                                        child: Text("Attendance/Absen")),
-                                  ),
-                                );
+                                if (state is Authenticated) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      submit(
+                                        enable,
+                                        context,
+                                        state.user,
+                                        location,
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 35, vertical: 30),
+                                      width: 400,
+                                      decoration: BoxDecoration(
+                                          color: enable
+                                              ? Colors.amberAccent
+                                              : Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: const Center(
+                                          child: Text("Attendance/Absen")),
+                                    ),
+                                  );
+                                }
+
+                                return Container();
                               },
                             ),
                           ],

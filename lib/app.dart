@@ -1,16 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:ffi';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/flash.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/screen/authentication/login.screen.dart';
-import 'package:easy/services/fcm.service.dart';
-import 'package:easy/services/permission.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_version_checker/flutter_app_version_checker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,6 +37,13 @@ class _AppState extends State<AppView> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    context.read<AuthenticationBloc>().add(AuthenticationCheckRequested());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -60,87 +61,96 @@ class _AppState extends State<AppView> with WidgetsBindingObserver {
       case AppLifecycleState.detached:
         // TODO: Handle this case.
         break;
+      case AppLifecycleState.hidden:
+        // TODO: Handle this case.
+        break;
     }
-  }
-
-  Future<Void?> cekVersion(BuildContext context) async {
-    final checker = AppVersionChecker();
-    var version = await checker.checkUpdate();
-
-    //Jika ada update
-    if (version.canUpdate) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "Aplikasi Anda Telah Kadaluarsa, Silahkan Update Aplikasi Anda")));
-      await Future.delayed(const Duration(seconds: 5));
-      if (version.appURL != null) {
-        await launchUrl(Uri.parse(version.appURL!));
-      }
-    } else {
-      context.read<AuthenticationBloc>().add(AuthenticationCheckRequested());
-    }
-    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    FcmService.getToken().then((value) => print(value));
-    PermissionService.requestPermission();
     return MaterialApp(
       navigatorKey: navigatorKey,
       onGenerateRoute: (settings) => FlashScreen.route(),
       debugShowCheckedModeBanner: false,
       title: "TASPEN - EASY",
-      builder: (context, child) => FutureBuilder(
-        future: cekVersion(context),
-        initialData: null,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return Listener(
-            onPointerDown: (event) {
-              if (Storage.status()) Storage.activate();
-            },
-            child: BlocListener<AuthenticationBloc, AuthenticationState>(
-              listener: (context, state) async {
-                switch (state.status) {
-                  case AuthenticationStatus.authenticated:
-                    navigator.pushAndRemoveUntil(
-                        HomeScreen.route(), (route) => false);
-                    break;
-
-                  case AuthenticationStatus.unauthenticated:
-                  case AuthenticationStatus.expired:
-                    navigator.pushAndRemoveUntil(
-                        LoginScreen.route(), (route) => false);
-                    break;
-                  case AuthenticationStatus.unknown:
-                    break;
-                  case AuthenticationStatus.permissionDennied:
-                    showDialog(
-                      context: navigator.context,
-                      useRootNavigator: false,
-                      builder: (context) {
-                        return CupertinoAlertDialog(
-                          title: const Text("Izin Aplikasi Diperlukan"),
-                          content: const Text(
-                              "Notifikasi, Kamera, Microphone, Lokasi"),
-                          actions: [
-                            CupertinoDialogAction(
-                              child: const Text("Izinkan Sekarang"),
-                              onPressed: () {
-                                openAppSettings();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                    break;
-                }
-              },
-              child: child,
-            ),
-          );
+      builder: (context, child) => Listener(
+        onPointerDown: (event) {
+          if (Storage.status()) Storage.activate();
         },
+        child: BlocListener<AuthenticationBloc, AuthenticationState>(
+          listener: (context, state) async {
+            if (state is Authenticated) {
+              navigator.pushAndRemoveUntil(
+                  HomeScreen.route(), (route) => false);
+              return;
+            }
+
+            if (state is UnAuthenticated || state is Expired) {
+              navigator.pushAndRemoveUntil(
+                  LoginScreen.route(), (route) => false);
+              return;
+            }
+
+            if (state is NeedPermissions) {
+              navigator.pushAndRemoveUntil(
+                  FlashScreen.route(), (route) => false);
+              showDialog(
+                context: navigator.context,
+                useRootNavigator: false,
+                barrierDismissible: false,
+                builder: (context) {
+                  return CupertinoAlertDialog(
+                    title: const Text("Izin Aplikasi Diperlukan"),
+                    content:
+                        const Text("Notifikasi, Kamera, Microphone, Lokasi"),
+                    actions: [
+                      CupertinoDialogAction(
+                        child: const Text("Izinkan Sekarang"),
+                        onPressed: () {
+                          openAppSettings();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              return;
+            }
+
+            if (state is NeedUpdate) {
+              navigator.pushAndRemoveUntil(
+                  FlashScreen.route(), (route) => false);
+              showDialog(
+                context: navigator.context,
+                useRootNavigator: false,
+                barrierDismissible: false,
+                builder: (context) {
+                  return CupertinoAlertDialog(
+                    title: const Text("Update Aplikasi"),
+                    content: Text(
+                        "Aplikasi Anda Telah Kadaluarsa, Silahkan Update Aplikasi ke versi ${state.version.newVersion}"),
+                    actions: [
+                      CupertinoDialogAction(
+                        child: const Text("Update sekarang"),
+                        onPressed: () {
+                          if (state.version.appURL != null) {
+                            launchUrl(Uri.parse(state.version.appURL!));
+                            return;
+                          }
+
+                          navigator.pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          },
+          child: child,
+        ),
       ),
     );
   }

@@ -22,48 +22,49 @@ class NotifScreen extends StatelessWidget {
       showUserInfo: false,
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          if (state.user == null) {
-            return Container();
+          if (state is Authenticated) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                notifHeader(),
+                FutureBuilder(
+                  future: _getNotification(nik: state.user.nik),
+                  initialData: null,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    print(snapshot.data);
+                    if (snapshot.data.length == 0) {
+                      return const Center(child: Text("Data Belum Tersedia"));
+                    }
+                    return Expanded(
+                        child: ListView.separated(
+                      itemCount: snapshot.data.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider(
+                          height: 0,
+                          thickness: 1,
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return notifFill(
+                            notificationModel: snapshot.data[index]);
+                      },
+                    ));
+                  },
+                ),
+              ],
+            );
           }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              notifHeader(),
-              FutureBuilder(
-                future: _getNotification(nik: state.user!.nik),
-                initialData: null,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  print(snapshot.data);
-                  if (snapshot.data.length == 0) {
-                    return const Center(child: Text("Data Belum Tersedia"));
-                  }
-                  return Expanded(
-                      child: ListView.separated(
-                    itemCount: snapshot.data.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const Divider(
-                        height: 0,
-                        thickness: 1,
-                      );
-                    },
-                    itemBuilder: (BuildContext context, int index) {
-                      return notifFill(notificationModel: snapshot.data[index]);
-                    },
-                  ));
-                },
-              ),
-            ],
-          );
+          return Container();
         },
       ),
     );
@@ -79,12 +80,12 @@ class NotifScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("${notificationModel.title}",
+          Text(notificationModel.title,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               )),
-          Text("${notificationModel.date}",
+          Text(notificationModel.date,
               style: const TextStyle(
                   //fontSize: 14,
                   // fontWeight: FontWeight.w500,
@@ -92,7 +93,7 @@ class NotifScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Text("${notificationModel.body}",
+          Text(notificationModel.body,
               style: const TextStyle(
                   //fontSize: 16,
                   // fontWeight: FontWeight.w500,

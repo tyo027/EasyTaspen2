@@ -27,48 +27,47 @@ class AttendanceScreen extends StatelessWidget {
       children: [
         BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            return GestureDetector(
-              onTap: () {
-                if (state.user == null) return;
-
-                // print(state.user);
-
-                if (state.user!.allowWFA) {
-                  navigator
-                      .push(SubmitAttendance.route(SubmitAttendanceType.wfa));
-                }
-              },
-              child: Container(
-                margin: const EdgeInsets.all(5),
-                clipBehavior: Clip.hardEdge,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                child: filterSvg((state.user != null && state.user!.allowWFA),
-                    "assets/svgs/wfa.svg"),
-              ),
-            );
+            if (state is Authenticated) {
+              return GestureDetector(
+                onTap: () {
+                  if (state.user.allowWFA) {
+                    navigator
+                        .push(SubmitAttendance.route(SubmitAttendanceType.wfa));
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(5),
+                  clipBehavior: Clip.hardEdge,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                  child:
+                      filterSvg((state.user.allowWFA), "assets/svgs/wfa.svg"),
+                ),
+              );
+            }
+            return Container();
           },
         ),
         BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            return GestureDetector(
-              onTap: () {
-                if (state.user == null) return;
-
-                if (state.user!.allowWFO) {
-                  navigator
-                      .push(SubmitAttendance.route(SubmitAttendanceType.wfo));
-                }
-              },
-              child: Container(
-                margin: const EdgeInsets.all(5),
-                clipBehavior: Clip.hardEdge,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                child: filterSvg(state.user != null && state.user!.allowWFO,
-                    "assets/svgs/wfo.svg"),
-              ),
-            );
+            if (state is Authenticated) {
+              return GestureDetector(
+                onTap: () {
+                  if (state.user.allowWFO) {
+                    navigator
+                        .push(SubmitAttendance.route(SubmitAttendanceType.wfo));
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(5),
+                  clipBehavior: Clip.hardEdge,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                  child: filterSvg(state.user.allowWFO, "assets/svgs/wfo.svg"),
+                ),
+              );
+            }
+            return Container();
           },
         ),
         GestureDetector(

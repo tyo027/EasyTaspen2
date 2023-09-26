@@ -20,47 +20,41 @@ class JabatanScreen extends StatelessWidget {
     return UserInfoTemplate(
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          if (state.user == null) {
-            return Container();
-          }
-
-          if (!state.user!.isActive) {
-            return const Center(
-              child: Text("Data belum tersedia"),
+          if (state is Authenticated) {
+            return FutureBuilder(
+              future: _getJabatan(nik: state.user.nik),
+              initialData: null,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                if (snapshot.data.length == 0) {
+                  return const Center(child: Text("Data Belum Tersedia"));
+                }
+                return ListView.separated(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 12),
+                  itemCount: snapshot.data.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(
+                      height: 20,
+                    );
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return laporanItem(jabatanModel: snapshot.data[index]);
+                  },
+                );
+              },
             );
           }
 
-          return FutureBuilder(
-            future: _getJabatan(nik: state.user!.nik),
-            initialData: null,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-              if (snapshot.data.length == 0) {
-                return const Center(child: Text("Data Belum Tersedia"));
-              }
-              return ListView.separated(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 12),
-                itemCount: snapshot.data.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(
-                    height: 20,
-                  );
-                },
-                itemBuilder: (BuildContext context, int index) {
-                  return laporanItem(jabatanModel: snapshot.data[index]);
-                },
-              );
-            },
-          );
+          return Container();
         },
       ),
     );
