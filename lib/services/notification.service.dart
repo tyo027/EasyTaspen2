@@ -63,7 +63,15 @@ class NotificationService {
   }
 
   static showNotification({required String title, required String body}) async {
-    var notificationDetails = const NotificationDetails();
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+            'easy.notification.id', 'easy.notification.channel',
+            channelDescription: 'Easy notification',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    var notificationDetails =
+        const NotificationDetails(android: androidNotificationDetails);
     flutterLocalNotificationsPlugin.show(
         id++, title, body, notificationDetails);
   }
