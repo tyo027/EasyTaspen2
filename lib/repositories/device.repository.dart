@@ -72,10 +72,10 @@ class DeviceRepository extends Repository {
         unitKerja: userData.user.unitkerja,
         gender: userData.user.gender,
       );
-    } on DioError catch (e) {
-      // print(e.response);
-
-      return AuthResponse(status: false, message: e.message.toString());
+    } on DioException catch (e) {
+      return AuthResponse(
+          status: false,
+          message: e.response?.data['message'] ?? e.message.toString());
     } catch (e) {
       return AuthResponse(status: false, message: "Up's something went wrong!");
     }
