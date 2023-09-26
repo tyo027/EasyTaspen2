@@ -11,7 +11,7 @@ import firebase_messaging
 import flutter_local_notifications
 import flutter_timezone
 import geolocator_apple
-import package_info_plus_macos
+import package_info_plus
 import path_provider_foundation
 import url_launcher_macos
 
