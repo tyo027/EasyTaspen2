@@ -113,7 +113,6 @@ class SubmitAttendance extends StatelessWidget {
             future: LocationService.getCurrentPosition(type: type),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                //print("loading");
                 return const Center(
                   child: SizedBox(
                     width: 50,
@@ -122,97 +121,113 @@ class SubmitAttendance extends StatelessWidget {
                   ),
                 );
               }
-              //if (!snapshot.hasData) return Container();
-              var location = snapshot.data!;
 
-              var src = LocationService.getImageUrlRadius(
-                  snapshot.data!.latitude, snapshot.data!.longitude);
-              return Column(
-                children: [
-                  Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 35),
-                      width: 400,
-                      height: 200,
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: src != null
-                          ? Image.network(
-                              src,
-                              fit: BoxFit.cover,
-                            )
-                          : Container(
-                              color: Colors.black12,
-                            )),
-                  const SizedBox(height: 30),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    margin: const EdgeInsets.symmetric(horizontal: 35),
-                    width: 400,
-                    decoration: BoxDecoration(
-                        color: Colors.amberAccent,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "Work From ${type == SubmitAttendanceType.wfo ? 'Office' : 'Anywhere'}"),
-                        Text("Longitude: ${snapshot.data!.longitude}"),
-                        Text("Latitude: ${snapshot.data!.latitude}"),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  FutureBuilder(
-                      future: LocationService.getDistanceTo(type: type),
-                      builder: (context, snapshot) {
-                        var outOfRange =
-                            snapshot.hasData ? (snapshot.data! > 100) : true;
-                        var enable =
-                            (!outOfRange && type == SubmitAttendanceType.wfo) ||
-                                type == SubmitAttendanceType.wfa;
-                        return Column(
+              if (snapshot.data != null) {
+                var location = snapshot.data;
+                if (location is HasPosition) {
+                  var src = LocationService.getImageUrlRadius(
+                      location.position.latitude, location.position.longitude);
+                  return Column(
+                    children: [
+                      Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 35),
+                          width: 400,
+                          height: 200,
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: src != null
+                              ? Image.network(
+                                  src,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  color: Colors.black12,
+                                )),
+                      const SizedBox(height: 30),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        margin: const EdgeInsets.symmetric(horizontal: 35),
+                        width: 400,
+                        decoration: BoxDecoration(
+                            color: Colors.amberAccent,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (outOfRange && !enable)
-                              const Text("Anda Tidak Berada Di Area Kantor"),
-                            BlocBuilder<AuthenticationBloc,
-                                AuthenticationState>(
-                              builder: (context, state) {
-                                if (state is Authenticated) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      submit(
-                                        enable,
-                                        context,
-                                        state.user,
-                                        location,
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20),
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 35, vertical: 30),
-                                      width: 400,
-                                      decoration: BoxDecoration(
-                                          color: enable
-                                              ? Colors.amberAccent
-                                              : Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: const Center(
-                                          child: Text("Attendance/Absen")),
-                                    ),
-                                  );
-                                }
-
-                                return Container();
-                              },
-                            ),
+                            Text(
+                                "Work From ${type == SubmitAttendanceType.wfo ? 'Office' : 'Anywhere'}"),
+                            Text("Longitude: ${location.position.longitude}"),
+                            Text("Latitude: ${location.position.latitude}"),
                           ],
-                        );
-                      }),
-                ],
-              );
+                        ),
+                      ),
+                      const Spacer(),
+                      FutureBuilder(
+                          future: LocationService.getDistanceTo(type: type),
+                          builder: (context, snapshot) {
+                            var outOfRange = snapshot.hasData
+                                ? (snapshot.data! > 100)
+                                : true;
+                            var enable = (!outOfRange &&
+                                    type == SubmitAttendanceType.wfo) ||
+                                type == SubmitAttendanceType.wfa;
+                            return Column(
+                              children: [
+                                if (outOfRange && !enable)
+                                  const Text(
+                                      "Anda Tidak Berada Di Area Kantor"),
+                                BlocBuilder<AuthenticationBloc,
+                                    AuthenticationState>(
+                                  builder: (context, state) {
+                                    if (state is Authenticated) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          submit(
+                                            enable,
+                                            context,
+                                            state.user,
+                                            location.position,
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(20),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 35, vertical: 30),
+                                          width: 400,
+                                          decoration: BoxDecoration(
+                                              color: enable
+                                                  ? Colors.amberAccent
+                                                  : Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: const Center(
+                                              child: Text("Attendance/Absen")),
+                                        ),
+                                      );
+                                    }
+
+                                    return Container();
+                                  },
+                                ),
+                              ],
+                            );
+                          }),
+                    ],
+                  );
+                }
+
+                if (location is FakePosition) {
+                  return const Center(child: Text("Fake GPS Detected"));
+                }
+
+                if (location is PositionNotFound) {
+                  return const Center(
+                      child: Text("Up's we can't find your location!"));
+                }
+              }
+
+              return Container();
             }));
   }
 }

@@ -7,6 +7,17 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:turf/helpers.dart' as turf;
 
+class PositionResult {}
+
+class HasPosition extends PositionResult {
+  final Position position;
+  HasPosition({required this.position});
+}
+
+class FakePosition extends PositionResult {}
+
+class PositionNotFound extends PositionResult {}
+
 class LocationService {
   static Future<bool> _isLocationAccessable() async {
     bool isServiceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -30,68 +41,68 @@ class LocationService {
     return true;
   }
 
-  static Future<Position?> getCurrentPosition(
+  static Future<PositionResult> getCurrentPosition(
       {SubmitAttendanceType type = SubmitAttendanceType.wfa}) async {
     bool isLocationAccessable = await _isLocationAccessable();
 
-    if (!isLocationAccessable) return null;
+    if (!isLocationAccessable) return PositionNotFound();
 
     var position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
 
     if (_user() != null && type == SubmitAttendanceType.wfo) {
       if (_user()!.nik == "4161") {
-        return Position(
-            longitude: 106.8617388721709,
-            latitude: -6.173554415448179,
-            timestamp: DateTime.now(),
-            accuracy: 0,
-            altitude: 0,
-            heading: 0,
-            speed: 0,
-            speedAccuracy: 0,
-            altitudeAccuracy: 1,
-            headingAccuracy: 1);
+        return HasPosition(
+            position: Position(
+                longitude: 106.8617388721709,
+                latitude: -6.173554415448179,
+                timestamp: DateTime.now(),
+                accuracy: 0,
+                altitude: 0,
+                heading: 0,
+                speed: 0,
+                speedAccuracy: 0,
+                altitudeAccuracy: 1,
+                headingAccuracy: 1));
       }
 
       if (position.isMocked) {
-        // print("Fake gps");
-        return null;
+        return FakePosition();
       }
     }
 
-    return position;
+    return HasPosition(position: position);
   }
 
   static Future<double?> getDistanceTo(
       {SubmitAttendanceType type = SubmitAttendanceType.wfa}) async {
-    Position? position = await getCurrentPosition(type: type);
-    if (position == null) {
-      return null;
+    var position = await getCurrentPosition(type: type);
+
+    if (position is HasPosition) {
+      if (_user() == null) {
+        return null;
+      }
+
+      return Geolocator.distanceBetween(_user()!.latitude, _user()!.longitude,
+          position.position.latitude, position.position.longitude);
     }
 
-    if (_user() == null) {
-      return null;
-    }
-
-    return Geolocator.distanceBetween(_user()!.latitude, _user()!.longitude,
-        position.latitude, position.longitude);
+    return null;
   }
 
   static Future<String?> getCurrentAddress() async {
-    Position? position = await getCurrentPosition();
-    if (position == null) {
-      return null;
+    var position = await getCurrentPosition();
+    if (position is HasPosition) {
+      var addresses = await placemarkFromCoordinates(
+          position.position.latitude, position.position.longitude,
+          localeIdentifier: "id_ID");
+
+      var currentAddress = addresses[0];
+      // print(currentAddress);
+
+      return '${currentAddress.street}, ${currentAddress.subLocality}, ${currentAddress.locality}, ${currentAddress.postalCode}, ${currentAddress.country}';
     }
-
-    var addresses = await placemarkFromCoordinates(
-        position.latitude, position.longitude,
-        localeIdentifier: "id_ID");
-
-    var currentAddress = addresses[0];
-    // print(currentAddress);
-
-    return '${currentAddress.street}, ${currentAddress.subLocality}, ${currentAddress.locality}, ${currentAddress.postalCode}, ${currentAddress.country}';
+    return null;
   }
 
   static String? getImageUrlRadius(
