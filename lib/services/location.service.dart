@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-// import 'dart:developer' as developer;
 import 'package:easy/models/user.model.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
 import 'package:easy/services/storage.service.dart';
