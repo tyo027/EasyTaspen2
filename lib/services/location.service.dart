@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:developer' as developer;
+// import 'dart:developer' as developer;
 import 'package:easy/models/user.model.dart';
 import 'package:easy/screen/attendance/submit.screen.dart';
 import 'package:easy/services/storage.service.dart';
@@ -50,11 +50,13 @@ class LocationService {
             altitude: 0,
             heading: 0,
             speed: 0,
-            speedAccuracy: 0);
+            speedAccuracy: 0,
+            altitudeAccuracy: 1,
+            headingAccuracy: 1);
       }
 
-      if (position.isMocked && !_user()!.allowMock) {
-        print("Fake gps");
+      if (position.isMocked) {
+        // print("Fake gps");
         return null;
       }
     }
