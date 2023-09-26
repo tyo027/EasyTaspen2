@@ -4,6 +4,8 @@ import 'package:easy/models/location.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/services/location.service.dart';
+import 'package:easy/services/notification.service.dart';
+import 'package:easy/services/permission.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +24,14 @@ class AuthenticationBloc
 
   FutureOr<void> onCheckRequested(
       AuthenticationCheckRequested event, Emitter emit) async {
+    var hasAllowAllPermission = await PermissionService.requestPermission();
+    if (!hasAllowAllPermission) {
+      emit(AuthenticationState.permissionDennied());
+      return;
+    }
     await Future.delayed(const Duration(seconds: 1));
+    await NotificationService.init();
+    await NotificationService.loadAllNotification();
 
     if (Storage.has("user")) {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));

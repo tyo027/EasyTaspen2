@@ -14,7 +14,7 @@ class BiometricService {
 
     try {
       var isSuccess = await auth.authenticate(
-        localizedReason: "Gunakan FaceID untuk absen",
+        localizedReason: "Gunakan FaceID/Fingerprint untuk absen",
         options: const AuthenticationOptions(
           useErrorDialogs: false,
           biometricOnly: true,
