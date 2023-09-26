@@ -1,35 +1,29 @@
 part of 'authentication_bloc.dart';
 
-enum AuthenticationStatus {
-  unknown,
-  authenticated,
-  unauthenticated,
-  expired,
-  permissionDennied,
+class AuthenticationState extends Equatable {
+  @override
+  List<Object?> get props => [];
 }
 
-class AuthenticationState extends Equatable {
-  final AuthenticationStatus status;
-  final UserModel? user;
-  final String? message;
+class NeedPermissions extends AuthenticationState {}
 
-  const AuthenticationState._(
-      {this.status = AuthenticationStatus.unknown, this.user, this.message});
+class NeedUpdate extends AuthenticationState {
+  final AppCheckerResult version;
 
-  const AuthenticationState.unknown() : this._();
+  NeedUpdate({required this.version});
+}
 
-  const AuthenticationState.authenticated({UserModel? user})
-      : this._(user: user, status: AuthenticationStatus.authenticated);
+class Unknown extends AuthenticationState {}
 
-  const AuthenticationState.expired()
-      : this._(status: AuthenticationStatus.expired);
+class UnAuthenticated extends AuthenticationState {}
 
-  const AuthenticationState.unauthenticated({String? message})
-      : this._(status: AuthenticationStatus.unauthenticated, message: message);
+class Authenticated extends AuthenticationState {
+  final UserModel user;
 
-  const AuthenticationState.permissionDennied()
-      : this._(status: AuthenticationStatus.permissionDennied);
+  Authenticated({required this.user});
 
   @override
-  List<Object?> get props => [status, user, message];
+  List<Object?> get props => [user];
 }
+
+class Expired extends AuthenticationState {}

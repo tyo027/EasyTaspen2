@@ -7,6 +7,7 @@ import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
 import 'package:easy/services/permission.service.dart';
 import 'package:easy/services/storage.service.dart';
+import 'package:easy/services/version.service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,7 +16,7 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc() : super(const AuthenticationState.unknown()) {
+  AuthenticationBloc() : super(Unknown()) {
     on<AuthenticationCheckRequested>(onCheckRequested);
     on<AuthenticationLoginRequested>(onLoginRequested);
     on<AuthenticationLogoutRequested>(onLogoutRequested);
@@ -24,11 +25,20 @@ class AuthenticationBloc
 
   FutureOr<void> onCheckRequested(
       AuthenticationCheckRequested event, Emitter emit) async {
+    // Check permissions
     var hasAllowAllPermission = await PermissionService.requestPermission();
     if (!hasAllowAllPermission) {
-      emit(AuthenticationState.permissionDennied());
+      emit(NeedPermissions());
       return;
     }
+
+    // Check versions
+    var version = await VersionService().checkUpdate();
+    if (version.canUpdate) {
+      emit(NeedUpdate(version: version));
+      return;
+    }
+
     await Future.delayed(const Duration(seconds: 1));
     await NotificationService.init();
     await NotificationService.loadAllNotification();
@@ -36,13 +46,13 @@ class AuthenticationBloc
     if (Storage.has("user")) {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
       if (!user.isActive) {
-        emit(AuthenticationState.authenticated(user: user));
+        emit(Authenticated(user: user));
         return;
       }
     }
 
     if (!Storage.has("token") || !Storage.has("user")) {
-      emit(const AuthenticationState.unauthenticated());
+      emit(UnAuthenticated());
     } else {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
 
@@ -57,7 +67,7 @@ class AuthenticationBloc
 
       var rules = await AuthenticationRepository().getRules(user.ba);
       if (rules == null) {
-        emit(const AuthenticationState.expired());
+        emit(Expired());
         return;
       }
 
@@ -77,17 +87,17 @@ class AuthenticationBloc
 
       if (event.check) await Storage.activate();
       if (!Storage.status()) {
-        emit(const AuthenticationState.expired());
+        emit(Expired());
         return;
       }
-      emit(AuthenticationState.authenticated(user: user));
+      emit(Authenticated(user: user));
     }
   }
 
   FutureOr<void> onLoginRequested(
       AuthenticationLoginRequested event, Emitter emit) async {
     Storage.activate();
-    emit(AuthenticationState.authenticated(user: event.user));
+    emit(Authenticated(user: event.user));
   }
 
   FutureOr<void> onLogoutRequested(
@@ -96,12 +106,12 @@ class AuthenticationBloc
     Storage.remove("user");
     Storage.deactivate();
     LocationService.reset();
-    emit(const AuthenticationState.unauthenticated());
+    emit(UnAuthenticated());
   }
 
   FutureOr<void> onExpiredRequested(
       AuthenticationExpiredRequested event, Emitter emit) async {
     Storage.deactivate();
-    emit(const AuthenticationState.expired());
+    emit(Expired());
   }
 }
