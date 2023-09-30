@@ -26,11 +26,11 @@ class AuthenticationBloc
   FutureOr<void> onCheckRequested(
       AuthenticationCheckRequested event, Emitter emit) async {
     // Check permissions
-    var hasAllowAllPermission = await PermissionService.requestPermission();
-    if (!hasAllowAllPermission) {
-      emit(NeedPermissions());
-      return;
-    }
+    // var hasAllowAllPermission = await PermissionService.requestPermission();
+    // if (!hasAllowAllPermission) {
+    //   emit(NeedPermissions());
+    //   return;
+    // }
 
     // Check versions
     var version = await VersionService().checkUpdate();

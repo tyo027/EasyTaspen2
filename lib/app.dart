@@ -92,32 +92,33 @@ class _AppState extends State<AppView> with WidgetsBindingObserver {
               return;
             }
 
-            if (state is NeedPermissions) {
-              navigator.pushAndRemoveUntil(
-                  FlashScreen.route(), (route) => false);
-              showDialog(
-                context: navigator.context,
-                useRootNavigator: false,
-                barrierDismissible: false,
-                builder: (context) {
-                  return CupertinoAlertDialog(
-                    title: const Text("Izin Aplikasi Diperlukan"),
-                    content:
-                        const Text("Notifikasi, Kamera, Microphone, Lokasi"),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: const Text("Izinkan Sekarang"),
-                        onPressed: () {
-                          openAppSettings();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
+            // if (state is NeedPermissions) {
+            //   navigator.pushAndRemoveUntil(
+            //       FlashScreen.route(), (route) => false);
+            //   showDialog(
+            //     context: navigator.context,
+            //     useRootNavigator: false,
+            //     barrierDismissible: false,
+            //     builder: (context) {
+            //       return CupertinoAlertDialog(
+            //         title: const Text("Saran"),
+            //         content: const Text(
+            //             "Aktifkan izin aplikasi untuk penggunaan aplikasi secara optimal"),
+            //         actions: [
+            //           CupertinoDialogAction(
+            //             child: const Text("Terimakasih"),
+            //             onPressed: () {
+            //               // openAppSettings();
+            //               navigator.pop();
+            //             },
+            //           ),
+            //         ],
+            //       );
+            //     },
+            //   );
 
-              return;
-            }
+            //   return;
+            // }
 
             if (state is NeedUpdate) {
               navigator.pushAndRemoveUntil(

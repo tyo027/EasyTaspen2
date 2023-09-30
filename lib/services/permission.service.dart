@@ -5,7 +5,7 @@ class PermissionService {
     var permissions = [
       Permission.camera,
       Permission.location,
-      Permission.microphone,
+      // Permission.microphone,
       Permission.notification,
     ];
     var hasDeniedPermission = false;

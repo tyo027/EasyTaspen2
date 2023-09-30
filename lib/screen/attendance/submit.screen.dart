@@ -202,7 +202,7 @@ class SubmitAttendance extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(20)),
                                           child: const Center(
-                                              child: Text("Attendance/Absen")),
+                                              child: Text("Absen")),
                                         ),
                                       );
                                     }

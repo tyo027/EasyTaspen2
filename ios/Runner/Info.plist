@@ -53,7 +53,7 @@
 <!-- CAMERA -->
 	<key>NSCameraUsageDescription</key>
 	<string>Izinkan untuk menggunakan Kamera sebagai keperluan absensi.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Izinkan untuk menggunakan Microphone sebagai keperluan absensi.</string>
+	<!-- <key>NSMicrophoneUsageDescription</key> -->
+	<!-- <string>Izinkan untuk menggunakan Microphone sebagai keperluan absensi.</string> -->
 </dict>
 </plist>

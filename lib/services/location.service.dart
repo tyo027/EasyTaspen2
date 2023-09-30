@@ -51,7 +51,7 @@ class LocationService {
         desiredAccuracy: LocationAccuracy.best);
 
     if (_user() != null && type == SubmitAttendanceType.wfo) {
-      if (_user()!.nik == "4161") {
+      if (_user()!.nik == "4161" || _user()!.nik == "4163") {
         return HasPosition(
             position: Position(
                 longitude: 106.8617388721709,

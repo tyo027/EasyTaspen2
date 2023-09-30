@@ -5,7 +5,7 @@ class AuthenticationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class NeedPermissions extends AuthenticationState {}
+//class NeedPermissions extends AuthenticationState {}
 
 class NeedUpdate extends AuthenticationState {
   final AppCheckerResult version;
