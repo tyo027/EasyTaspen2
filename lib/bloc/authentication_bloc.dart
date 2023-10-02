@@ -5,7 +5,7 @@ import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
-import 'package:easy/services/permission.service.dart';
+// import 'package:easy/services/permission.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:easy/services/version.service.dart';
 import 'package:equatable/equatable.dart';

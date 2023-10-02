@@ -231,7 +231,7 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
                             ? Colors.grey
                             : Colors.amberAccent,
                         borderRadius: BorderRadius.circular(20)),
-                    child: const Center(child: Text("Attendance")),
+                    child: const Center(child: Text("Absen")),
                   ),
                 );
               },

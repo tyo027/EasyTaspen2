@@ -180,7 +180,7 @@ class SubmitAttendance extends StatelessWidget {
                                 BlocBuilder<AuthenticationBloc,
                                     AuthenticationState>(
                                   builder: (context, state) {
-                                    if (state is Authenticated) {
+                                    if (state is Authenticated && enable) {
                                       return GestureDetector(
                                         onTap: () {
                                           submit(
