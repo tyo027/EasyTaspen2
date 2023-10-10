@@ -59,7 +59,9 @@ class LaporansScreen extends StatelessWidget {
 
     monthPicker(context: context, initialDate: selected).then((selectedDate) {
       if (selectedDate == null) return;
-      context.read<KehadiranBloc>().add(ThnBlnChanged(thnBln: selectedDate));
+      context
+          .read<KehadiranBloc>()
+          .add(RekapKehadiranEvent(thnBln: selectedDate));
     });
   }
 
@@ -102,12 +104,10 @@ class LaporansScreen extends StatelessWidget {
         ).then((selectedDate) {
           if (selectedDate == null) return;
 
-          context
-              .read<KehadiranBloc>()
-              .add(TglMulaiChanged(tglMulai: selectedDate.start));
-          context
-              .read<KehadiranBloc>()
-              .add(TglAkhirChanged(tglAkhir: selectedDate.end));
+          context.read<KehadiranBloc>().add(KehadiranHarianVerifiedEvent(
+              tglMulai: selectedDate.start,
+              tglAkhir: selectedDate.end,
+              isLoading: false));
         });
       }
 
@@ -119,10 +119,8 @@ class LaporansScreen extends StatelessWidget {
           var startTime = selectedDate.copyWith(day: 1);
           var endTime = startTime.copyWith(month: startTime.month + 1, day: 0);
 
-          context
-              .read<KehadiranBloc>()
-              .add(TglMulaiChanged(tglMulai: startTime));
-          context.read<KehadiranBloc>().add(TglAkhirChanged(
+          context.read<KehadiranBloc>().add(KehadiranHarianVerifiedEvent(
+              tglMulai: startTime,
               tglAkhir:
                   DateTime.now().isBefore(endTime) ? DateTime.now() : endTime));
         });
@@ -130,17 +128,13 @@ class LaporansScreen extends StatelessWidget {
     });
   }
 
-  void findMonthly(BuildContext context, String? nik, DateTime dateTime) {
-    // TODO: LOGIC MONTHLY AMBIL API
-
+  void findMonthly(BuildContext context, String? nik, DateTime thnBln) {
     if (nik == null) return;
 
-    context.read<KehadiranBloc>().add(Loading());
-    context
-        .read<KehadiranBloc>()
-        .add(RekapKehadiranChanged(rekapKehadiran: const []));
+    context.read<KehadiranBloc>().add(RekapKehadiranEvent(
+        isLoading: true, rekapKehadiran: const [], thnBln: thnBln));
 
-    var startTime = dateTime.copyWith(day: 1);
+    var startTime = thnBln.copyWith(day: 1);
     var endTime = startTime.copyWith(month: startTime.month + 1, day: 0);
 
     AttendanceRepository()
@@ -150,42 +144,60 @@ class LaporansScreen extends StatelessWidget {
             tglAkhir: endTime.toString().substring(0, 10))
         .then((value) {
       if (value != null) {
-        context
-            .read<KehadiranBloc>()
-            .add(RekapKehadiranChanged(rekapKehadiran: value));
+        context.read<KehadiranBloc>().add(RekapKehadiranEvent(
+            rekapKehadiran: value, isLoading: false, thnBln: thnBln));
+        return;
       }
-
-      context.read<KehadiranBloc>().add(Iddle());
+      context.read<KehadiranBloc>().add(RekapKehadiranEvent(
+          isLoading: false, rekapKehadiran: const [], thnBln: thnBln));
     });
   }
 
   void findDaily(
-      BuildContext context, String? nik, DateTime start, DateTime end) {
-    // TODO: LOGIC DAILY AMBIL API
+      BuildContext context, String? nik, DateTime tglMulai, DateTime tglAkhir) {
     if (nik == null) return;
-    context.read<KehadiranBloc>().add(Loading());
-    context
-        .read<KehadiranBloc>()
-        .add(KehadiranHarianChanged(kehadiranHarian: const []));
+    context.read<KehadiranBloc>().add(KehadiranHarianVerifiedEvent(
+        tglMulai: tglMulai,
+        tglAkhir: tglAkhir,
+        kehadiranHarian: const [],
+        isLoading: true));
 
     AttendanceRepository()
         .getRekapKehadiranHarian(
             nik: nik,
-            tglMulai: start.toString().substring(0, 10),
-            tglAkhir: end.toString().substring(0, 10))
+            tglMulai: tglMulai.toString().substring(0, 10),
+            tglAkhir: tglAkhir.toString().substring(0, 10))
         .then((value) {
       if (value != null) {
-        context
-            .read<KehadiranBloc>()
-            .add(KehadiranHarianChanged(kehadiranHarian: value));
+        context.read<KehadiranBloc>().add(KehadiranHarianVerifiedEvent(
+            tglMulai: tglMulai,
+            tglAkhir: tglAkhir,
+            kehadiranHarian: value,
+            isLoading: false));
+        return;
       }
 
-      context.read<KehadiranBloc>().add(Iddle());
+      context.read<KehadiranBloc>().add(KehadiranHarianVerifiedEvent(
+          tglMulai: tglMulai,
+          tglAkhir: tglAkhir,
+          kehadiranHarian: const [],
+          isLoading: false));
     });
   }
 
-  void getAttendances({required String nik}) async {
-    var attendences = AttendanceRepository().getAttendances(nik: nik);
+  void getAttendances({required BuildContext context, required String? nik}) {
+    if (nik == null) return;
+
+    context
+        .read<KehadiranBloc>()
+        .add(CekAbsenHarianEvent(isLoading: true, attandances: const []));
+
+    AttendanceRepository().getAttendances(nik: nik).then((attandences) {
+      context
+          .read<KehadiranBloc>()
+          .add(CekAbsenHarianEvent(isLoading: false, attandances: attandences));
+      return;
+    });
   }
 
   @override
@@ -195,7 +207,7 @@ class LaporansScreen extends StatelessWidget {
 
   Widget laporansMenu(BuildContext context) {
     return BlocProvider(
-      create: (context) => KehadiranBloc(),
+      create: (context) => KehadiranBloc(const RekapKehadiran()),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         child: BlocBuilder<KehadiranBloc, KehadiranState>(
@@ -207,8 +219,9 @@ class LaporansScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                if (state.type != LaporanType.CEK_ABSEN_HARIAN) cariTgl(),
-                if (state.type != LaporanType.CEK_ABSEN_HARIAN)
+                if (state is RekapKehadiran || state is KehadiranHarianVerified)
+                  cariTgl(),
+                if (state is RekapKehadiran || state is KehadiranHarianVerified)
                   const SizedBox(
                     height: 10,
                   ),
@@ -230,9 +243,11 @@ class LaporansScreen extends StatelessWidget {
       builder: (context, state) {
         return GestureDetector(
           onTap: () async {
-            if (state.type == LaporanType.REKAP_KEHADIRAN) {
+            if (state is RekapKehadiran) {
               findMounthDialog(context, state.thnBln);
-            } else {
+              return;
+            }
+            if (state is KehadiranHarianVerified) {
               findDateRangeDialog(context, state.tglMulai, state.tglAkhir);
             }
           },
@@ -248,13 +263,15 @@ class LaporansScreen extends StatelessWidget {
               children: [
                 BlocBuilder<KehadiranBloc, KehadiranState>(
                   builder: (context, state) {
-                    return Text(state.type == LaporanType.REKAP_KEHADIRAN
+                    return Text(state is RekapKehadiran
                         ? state.thnBln == null
                             ? "Bulan / Tahun "
                             : DateFormat("MMMM yyyy").format(state.thnBln!)
-                        : state.tglMulai == null
-                            ? 'Dari s/d Sampai'
-                            : '${DateFormat("dd MMM yyyy").format(state.tglMulai!)} s/d ${DateFormat("dd MMM yyyy").format(state.tglAkhir!)}');
+                        : state is KehadiranHarianVerified
+                            ? state.tglMulai == null
+                                ? 'Dari s/d Sampai'
+                                : '${DateFormat("dd MMM yyyy").format(state.tglMulai!)} s/d ${DateFormat("dd MMM yyyy").format(state.tglAkhir!)}'
+                            : "");
                   },
                 ),
                 Icon(
@@ -280,7 +297,11 @@ class LaporansScreen extends StatelessWidget {
           builder: (context, state) {
             return DropdownButton<LaporanType>(
                 isExpanded: true,
-                value: state.type,
+                value: state is RekapKehadiran
+                    ? LaporanType.REKAP_KEHADIRAN
+                    : state is KehadiranHarianVerified
+                        ? LaporanType.KEHADIRAN_HARIAN_VERIFIED
+                        : LaporanType.CEK_ABSEN_HARIAN,
                 elevation: 16,
                 style: const TextStyle(color: Colors.black),
                 underline: Container(
@@ -288,8 +309,19 @@ class LaporansScreen extends StatelessWidget {
                 ),
                 onChanged: (LaporanType? type) {
                   if (type != null) {
-                    context.read<KehadiranBloc>().add(JenisChanged(type: type));
-                    context.read<KehadiranBloc>().add(Iddle());
+                    if (type == LaporanType.REKAP_KEHADIRAN) {
+                      context.read<KehadiranBloc>().add(RekapKehadiranEvent());
+                    }
+
+                    if (type == LaporanType.KEHADIRAN_HARIAN_VERIFIED) {
+                      context
+                          .read<KehadiranBloc>()
+                          .add(KehadiranHarianVerifiedEvent());
+                    }
+
+                    if (type == LaporanType.CEK_ABSEN_HARIAN) {
+                      context.read<KehadiranBloc>().add(CekAbsenHarianEvent());
+                    }
                   }
                 },
                 items: LaporanType.values
@@ -313,39 +345,30 @@ class LaporansScreen extends StatelessWidget {
             if (auth is Authenticated) {
               return GestureDetector(
                 onTap: () {
-                  if (state.isProcessing) return;
+                  if (state.isLoading) return;
 
-                  if (state.type == LaporanType.REKAP_KEHADIRAN &&
-                      state.thnBln != null) {
+                  if (state is RekapKehadiran && state.thnBln != null) {
                     findMonthly(context, auth.user.nik, state.thnBln!);
-                    context.read<KehadiranBloc>().add(Loading());
                   }
-                  if (state.type == LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
+
+                  if (state is KehadiranHarianVerified &&
                       state.tglMulai != null &&
                       state.tglAkhir != null) {
                     findDaily(context, auth.user.nik, state.tglMulai!,
                         state.tglAkhir!);
-                    context.read<KehadiranBloc>().add(Loading());
                   }
-                  if (state.type == LaporanType.CEK_ABSEN_HARIAN) {
-                    context.read<KehadiranBloc>().add(Loading());
+
+                  if (state is CekAbsenHarian) {
+                    getAttendances(context: context, nik: auth.user.nik);
                   }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                      color: (state.type == LaporanType.CEK_ABSEN_HARIAN) ||
-                              (state.type == LaporanType.REKAP_KEHADIRAN &&
-                                  state.thnBln != null) ||
-                              (state.type ==
-                                      LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
-                                  state.tglMulai != null &&
-                                  state.tglAkhir != null)
-                          ? Colors.blue[300]
-                          : Colors.grey,
+                      color: state.isEnabled ? Colors.blue[300] : Colors.grey,
                       borderRadius: BorderRadius.circular(10)),
                   child: Center(
-                    child: state.isProcessing
+                    child: state.isLoading
                         ? const SizedBox(
                             height: 17,
                             width: 17,
@@ -373,18 +396,24 @@ class LaporansScreen extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           child: BlocBuilder<KehadiranBloc, KehadiranState>(
             builder: (context, state) {
-              if (state.isProcessing) return Container();
+              if (state.isLoading) return Container();
 
-              if (state.type == LaporanType.REKAP_KEHADIRAN &&
+              if (state is RekapKehadiran &&
                   state.rekapKehadiran != null &&
                   state.rekapKehadiran!.isNotEmpty) {
                 return viewRekapKehadiran(state.rekapKehadiran!);
               }
 
-              if (state.type == LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
+              if (state is KehadiranHarianVerified &&
                   state.kehadiranHarian != null &&
                   state.kehadiranHarian!.isNotEmpty) {
                 return viewKehadiranHarian(state.kehadiranHarian!);
+              }
+
+              if (state is CekAbsenHarian &&
+                  state.attandances != null &&
+                  state.attandances!.isNotEmpty) {
+                return viewCekAbsensiHarian(state.attandances!);
               }
 
               return Container();
@@ -498,5 +527,41 @@ class LaporansScreen extends StatelessWidget {
         }).toList())
       ],
     );
+  }
+
+  Widget viewCekAbsensiHarian(List<AttendanceModel> list) {
+    return Expanded(
+      // height: 1000,
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 12),
+        itemCount: list.length,
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(
+            height: 20,
+          );
+        },
+        itemBuilder: (BuildContext context, int index) {
+          return laporanItem(attendanceModel: list[index]);
+        },
+      ),
+    );
+  }
+
+  Widget laporanItem({required AttendanceModel attendanceModel}) {
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        width: double.infinity,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black45),
+            borderRadius: BorderRadius.circular(20)),
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Waktu Absen: ${attendanceModel.attendanceTime}"),
+            Text("Status SAP: ${attendanceModel.statusSap}"),
+            Text("Absensi: ${attendanceModel.type.name.toUpperCase()}")
+          ],
+        ));
   }
 }

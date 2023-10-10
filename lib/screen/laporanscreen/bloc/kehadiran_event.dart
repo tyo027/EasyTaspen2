@@ -5,73 +5,112 @@ abstract class KehadiranEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class NikChanged extends KehadiranEvent {
-  final String nik;
+class RekapKehadiranEvent extends KehadiranEvent {
+  final DateTime? thnBln;
+  final List<RekapKehadiranModel>? rekapKehadiran;
+  final bool isLoading;
 
-  NikChanged({required this.nik});
-
-  @override
-  List<Object?> get props => [nik];
-}
-
-class TglMulaiChanged extends KehadiranEvent {
-  final DateTime tglMulai;
-
-  TglMulaiChanged({required this.tglMulai});
+  RekapKehadiranEvent(
+      {this.thnBln, this.rekapKehadiran, this.isLoading = false});
 
   @override
-  List<Object?> get props => [tglMulai];
+  List<Object?> get props => [thnBln, rekapKehadiran, isLoading];
 }
 
-class TglAkhirChanged extends KehadiranEvent {
-  final DateTime tglAkhir;
+class KehadiranHarianVerifiedEvent extends KehadiranEvent {
+  final DateTime? tglMulai;
+  final DateTime? tglAkhir;
+  final List<RekapKehadiranHarianModel>? kehadiranHarian;
+  final bool isLoading;
 
-  TglAkhirChanged({required this.tglAkhir});
+  KehadiranHarianVerifiedEvent(
+      {this.tglMulai,
+      this.tglAkhir,
+      this.kehadiranHarian,
+      this.isLoading = false});
 
   @override
-  List<Object?> get props => [tglAkhir];
+  List<Object?> get props => [tglMulai, tglAkhir, kehadiranHarian, isLoading];
 }
 
-class JenisChanged extends KehadiranEvent {
-  final LaporanType type;
+class CekAbsenHarianEvent extends KehadiranEvent {
+  final List<AttendanceModel>? attandances;
+  final bool isLoading;
 
-  JenisChanged({required this.type});
+  CekAbsenHarianEvent({this.isLoading = false, this.attandances});
 
   @override
-  List<Object?> get props => [type];
+  List<Object?> get props => [isLoading, attandances];
 }
 
-class ThnBlnChanged extends KehadiranEvent {
-  final DateTime thnBln;
 
-  ThnBlnChanged({required this.thnBln});
+// class NikChanged extends KehadiranEvent {
+//   final String nik;
 
-  @override
-  List<Object?> get props => [thnBln];
-}
+//   NikChanged({required this.nik});
 
-class RekapKehadiranChanged extends KehadiranEvent {
-  final List<RekapKehadiranModel> rekapKehadiran;
+//   @override
+//   List<Object?> get props => [nik];
+// }
 
-  RekapKehadiranChanged({required this.rekapKehadiran});
+// class TglMulaiChanged extends KehadiranEvent {
+//   final DateTime tglMulai;
 
-  @override
-  List<Object?> get props => [rekapKehadiran];
-}
+//   TglMulaiChanged({required this.tglMulai});
 
-class KehadiranHarianChanged extends KehadiranEvent {
-  final List<RekapKehadiranHarianModel> kehadiranHarian;
+//   @override
+//   List<Object?> get props => [tglMulai];
+// }
 
-  KehadiranHarianChanged({required this.kehadiranHarian});
+// class TglAkhirChanged extends KehadiranEvent {
+//   final DateTime tglAkhir;
 
-  @override
-  List<Object?> get props => [kehadiranHarian];
-}
+//   TglAkhirChanged({required this.tglAkhir});
 
-class Loading extends KehadiranEvent {
-  Loading();
-}
+//   @override
+//   List<Object?> get props => [tglAkhir];
+// }
 
-class Iddle extends KehadiranEvent {
-  Iddle();
-}
+// class JenisChanged extends KehadiranEvent {
+//   final LaporanType type;
+
+//   JenisChanged({required this.type});
+
+//   @override
+//   List<Object?> get props => [type];
+// }
+
+// class ThnBlnChanged extends KehadiranEvent {
+//   final DateTime thnBln;
+
+//   ThnBlnChanged({required this.thnBln});
+
+//   @override
+//   List<Object?> get props => [thnBln];
+// }
+
+// class RekapKehadiranChanged extends KehadiranEvent {
+//   final List<RekapKehadiranModel> rekapKehadiran;
+
+//   RekapKehadiranChanged({required this.rekapKehadiran});
+
+//   @override
+//   List<Object?> get props => [rekapKehadiran];
+// }
+
+// class KehadiranHarianChanged extends KehadiranEvent {
+//   final List<RekapKehadiranHarianModel> kehadiranHarian;
+
+//   KehadiranHarianChanged({required this.kehadiranHarian});
+
+//   @override
+//   List<Object?> get props => [kehadiranHarian];
+// }
+
+// class Loading extends KehadiranEvent {
+//   Loading();
+// }
+
+// class Iddle extends KehadiranEvent {
+//   Iddle();
+// }
