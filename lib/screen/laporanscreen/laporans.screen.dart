@@ -3,6 +3,7 @@
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
+import 'package:easy/models/attendance.model.dart';
 import 'package:easy/models/rekapkehadiran.model.dart';
 import 'package:easy/models/rekapkehadiranharian.model.dart';
 import 'package:easy/repositories/attendance.repository.dart';
@@ -16,8 +17,8 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 enum LaporanType {
   REKAP_KEHADIRAN,
-  KEHADIRAN_HARIAN,
-  KEHADIRAN_MOBILE,
+  KEHADIRAN_HARIAN_VERIFIED,
+  CEK_ABSEN_HARIAN,
 }
 
 class LaporansScreen extends StatelessWidget {
@@ -183,6 +184,10 @@ class LaporansScreen extends StatelessWidget {
     });
   }
 
+  void getAttendances({required String nik}) async {
+    var attendences = AttendanceRepository().getAttendances(nik: nik);
+  }
+
   @override
   Widget build(BuildContext context) {
     return UserInfoTemplate(child: laporansMenu(context));
@@ -193,23 +198,28 @@ class LaporansScreen extends StatelessWidget {
       create: (context) => KehadiranBloc(),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            jenisRekap(),
-            const SizedBox(
-              height: 10,
-            ),
-            cariTgl(),
-            const SizedBox(
-              height: 10,
-            ),
-            cariBtn(),
-            const SizedBox(
-              height: 20,
-            ),
-            result()
-          ],
+        child: BlocBuilder<KehadiranBloc, KehadiranState>(
+          builder: (context, state) {
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                jenisRekap(),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (state.type != LaporanType.CEK_ABSEN_HARIAN) cariTgl(),
+                if (state.type != LaporanType.CEK_ABSEN_HARIAN)
+                  const SizedBox(
+                    height: 10,
+                  ),
+                cariBtn(),
+                const SizedBox(
+                  height: 20,
+                ),
+                result()
+              ],
+            );
+          },
         ),
       ),
     );
@@ -279,6 +289,7 @@ class LaporansScreen extends StatelessWidget {
                 onChanged: (LaporanType? type) {
                   if (type != null) {
                     context.read<KehadiranBloc>().add(JenisChanged(type: type));
+                    context.read<KehadiranBloc>().add(Iddle());
                   }
                 },
                 items: LaporanType.values
@@ -309,20 +320,25 @@ class LaporansScreen extends StatelessWidget {
                     findMonthly(context, auth.user.nik, state.thnBln!);
                     context.read<KehadiranBloc>().add(Loading());
                   }
-                  if (state.type == LaporanType.KEHADIRAN_HARIAN &&
+                  if (state.type == LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
                       state.tglMulai != null &&
                       state.tglAkhir != null) {
                     findDaily(context, auth.user.nik, state.tglMulai!,
                         state.tglAkhir!);
                     context.read<KehadiranBloc>().add(Loading());
                   }
+                  if (state.type == LaporanType.CEK_ABSEN_HARIAN) {
+                    context.read<KehadiranBloc>().add(Loading());
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                      color: (state.type == LaporanType.REKAP_KEHADIRAN &&
+                      color: (state.type == LaporanType.CEK_ABSEN_HARIAN) ||
+                              (state.type == LaporanType.REKAP_KEHADIRAN &&
                                   state.thnBln != null) ||
-                              (state.type == LaporanType.KEHADIRAN_HARIAN &&
+                              (state.type ==
+                                      LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
                                   state.tglMulai != null &&
                                   state.tglAkhir != null)
                           ? Colors.blue[300]
@@ -365,7 +381,7 @@ class LaporansScreen extends StatelessWidget {
                 return viewRekapKehadiran(state.rekapKehadiran!);
               }
 
-              if (state.type == LaporanType.KEHADIRAN_HARIAN &&
+              if (state.type == LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
                   state.kehadiranHarian != null &&
                   state.kehadiranHarian!.isNotEmpty) {
                 return viewKehadiranHarian(state.kehadiranHarian!);
