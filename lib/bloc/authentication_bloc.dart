@@ -5,7 +5,7 @@ import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
-// import 'package:easy/services/permission.service.dart';
+import 'package:easy/services/permission.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:easy/services/version.service.dart';
 import 'package:equatable/equatable.dart';
@@ -27,6 +27,7 @@ class AuthenticationBloc
       AuthenticationCheckRequested event, Emitter emit) async {
     // Check permissions
     // var hasAllowAllPermission = await PermissionService.requestPermission();
+    await PermissionService.requestPermission();
     // if (!hasAllowAllPermission) {
     //   emit(NeedPermissions());
     //   return;

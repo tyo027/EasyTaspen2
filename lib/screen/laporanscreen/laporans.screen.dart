@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
@@ -12,7 +14,11 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 // import 'package:intl/intl.dart';
 // import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 
-enum LaporanType { REKAP_KEHADIRAN, KEHADIRAN_HARIAN }
+enum LaporanType {
+  REKAP_KEHADIRAN,
+  KEHADIRAN_HARIAN,
+  KEHADIRAN_MOBILE,
+}
 
 class LaporansScreen extends StatelessWidget {
   const LaporansScreen({super.key});
