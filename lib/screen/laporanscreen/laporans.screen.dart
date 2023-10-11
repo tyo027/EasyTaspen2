@@ -530,21 +530,19 @@ class LaporansScreen extends StatelessWidget {
   }
 
   Widget viewCekAbsensiHarian(List<AttendanceModel> list) {
-    return Expanded(
-      // height: 1000,
-      child: ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 12),
-        itemCount: list.length,
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(
-            height: 20,
-          );
-        },
-        itemBuilder: (BuildContext context, int index) {
-          return laporanItem(attendanceModel: list[index]);
-        },
-      ),
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      // padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 12),
+      itemCount: list.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(
+          height: 20,
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        return laporanItem(attendanceModel: list[index]);
+      },
     );
   }
 
