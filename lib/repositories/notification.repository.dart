@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:easy/models/notification.model.dart';
 import 'package:easy/repositories/repository.dart';
 

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
@@ -203,7 +202,7 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
                       .executeThread();
                   setState(() {});
                 } on CameraException catch (e) {
-                  print("Error: camera");
+                  // print("Error: camera");
                   return null;
                 }
               },
