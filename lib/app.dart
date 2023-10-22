@@ -2,13 +2,10 @@ import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/flash.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/screen/authentication/login.screen.dart';
-import 'package:easy/services/fcm.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:permission_handler/permission_handler.dart';
-// import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -39,7 +36,7 @@ class _AppState extends State<AppView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    FcmService.getToken();
+
     WidgetsBinding.instance.addObserver(this);
     context.read<AuthenticationBloc>().add(AuthenticationCheckRequested());
   }
