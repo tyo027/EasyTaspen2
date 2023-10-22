@@ -12,6 +12,7 @@ import 'package:easy/repositories/device.repository.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
 import 'package:easy/services/biometric.service.dart';
+import 'package:easy/services/fcm.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,6 +60,8 @@ class LoginScreen extends StatelessWidget {
         if (mpp != null && mpp.custom == 1) {
           location = location.copyWith(lat: mpp.lat, long: mpp.long);
         }
+
+        FcmService.whenTokenUpdated(username, uuid, auth.nik);
 
         var rules = await AuthenticationRepository().getRules(auth.ba);
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/repository.dart';
+import 'package:easy/services/fcm.service.dart';
 
 class AuthResponse {
   final bool status;
@@ -32,6 +33,25 @@ class AuthResponse {
 }
 
 class DeviceRepository extends Repository {
+  Future<bool> setToken(
+      {required String username,
+      required String uuid,
+      required String fcmToken,
+      required String nik}) async {
+    var response = await dio.post("v2/DeviceId", data: {
+      "username": username,
+      "uuid": uuid,
+      "fcm_token": fcmToken,
+      "nik": nik
+    });
+
+    if (response.statusCode != 200) {
+      return false;
+    }
+
+    return true;
+  }
+
   Future<AuthResponse> login(
       {required String username,
       required String uuid,
@@ -44,9 +64,15 @@ class DeviceRepository extends Repository {
       }
       dio.options.headers["Authorization"] = "Bearer ${userData.token}";
 
+      var fcmToken = await FcmService.getToken();
+
+      print(userData.user.nik);
+
       var response = await dio.post("v2/DeviceId", data: {
         "username": username,
         "uuid": uuid,
+        "fcm_token": fcmToken ?? "",
+        "nik": userData.user.nik
       });
 
       if (response.statusCode != 200) {
