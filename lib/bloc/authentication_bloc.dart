@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:easy/models/location.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
@@ -27,11 +28,16 @@ class AuthenticationBloc
       AuthenticationCheckRequested event, Emitter emit) async {
     // Check permissions
     // var hasAllowAllPermission = await PermissionService.requestPermission();
-    await PermissionService.requestPermission();
     // if (!hasAllowAllPermission) {
     //   emit(NeedPermissions());
     //   return;
     // }
+
+    //cek permission
+
+    if (Platform.isAndroid) {
+      await PermissionService.requestPermission();
+    }
 
     // Check versions
     var version = await VersionService().checkUpdate();

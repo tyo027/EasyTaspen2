@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDtlWl8fTZ8nw01N6PUfMy1Sj0ZZ4jLr28',
-    appId: '1:305440063960:web:89313851ac256e9aebf2ad',
-    messagingSenderId: '305440063960',
-    projectId: 'taspen-easy',
-    authDomain: 'taspen-easy.firebaseapp.com',
-    storageBucket: 'taspen-easy.appspot.com',
-    measurementId: 'G-G5NNB3YP7N',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAJ_gKje8yeXk2WDrjXErVL5yQkgFeYmdQ',
-    appId: '1:305440063960:android:e128ab849695082cebf2ad',
+    appId: '1:305440063960:android:b35fd612b5442bb4ebf2ad',
     messagingSenderId: '305440063960',
     projectId: 'taspen-easy',
     storageBucket: 'taspen-easy.appspot.com',
@@ -68,14 +64,5 @@ class DefaultFirebaseOptions {
     projectId: 'taspen-easy',
     storageBucket: 'taspen-easy.appspot.com',
     iosBundleId: 'com.taspen.easy2',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDLSLYrjyNuLZrKSIPk-HtZBDW7-4WDuOs',
-    appId: '1:305440063960:ios:c66a14456c78e17cebf2ad',
-    messagingSenderId: '305440063960',
-    projectId: 'taspen-easy',
-    storageBucket: 'taspen-easy.appspot.com',
-    iosBundleId: 'com.example.easy',
   );
 }

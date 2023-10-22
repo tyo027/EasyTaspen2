@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "305440063960",
+    "project_id": "taspen-easy",
+    "storage_bucket": "taspen-easy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305440063960:android:e128ab849695082cebf2ad",
+        "android_client_info": {
+          "package_name": "com.example.easy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305440063960-d87tst0q41jn4c4qmrbj54nc632u1spu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ_gKje8yeXk2WDrjXErVL5yQkgFeYmdQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305440063960-d87tst0q41jn4c4qmrbj54nc632u1spu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305440063960:android:b35fd612b5442bb4ebf2ad",
+        "android_client_info": {
+          "package_name": "com.taspen.easy2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305440063960-d87tst0q41jn4c4qmrbj54nc632u1spu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ_gKje8yeXk2WDrjXErVL5yQkgFeYmdQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305440063960-d87tst0q41jn4c4qmrbj54nc632u1spu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
