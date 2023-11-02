@@ -60,7 +60,7 @@ class Storage {
     var lastActive = _storage!.read<int>(_lastActive);
     return lastActive != null
         ? DateTime.fromMicrosecondsSinceEpoch(lastActive)
-            .isAfter(DateTime.now().add(const Duration(minutes: -10)))
+            .isAfter(DateTime.now().add(const Duration(minutes: -1)))
         : false;
   }
 }

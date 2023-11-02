@@ -58,7 +58,10 @@ class AuthenticationBloc
       }
     }
 
-    if (!Storage.has("token") || !Storage.has("user")) {
+    if (!Storage.has("token") ||
+        !Storage.has("user") ||
+        !Storage.has("username") ||
+        !Storage.has("uuid")) {
       emit(UnAuthenticated());
     } else {
       var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
@@ -92,7 +95,9 @@ class AuthenticationBloc
 
       await Storage.write("user", json.encode(user.toJson()));
 
-      if (event.check) await Storage.activate();
+      if (event.check) {
+        await Storage.activate();
+      }
       if (!Storage.status()) {
         emit(Expired());
         return;
@@ -111,6 +116,8 @@ class AuthenticationBloc
       AuthenticationLogoutRequested event, Emitter emit) async {
     Storage.remove("token");
     Storage.remove("user");
+    Storage.remove("username");
+    Storage.remove("uuid");
     Storage.deactivate();
     LocationService.reset();
     emit(UnAuthenticated());

@@ -61,6 +61,9 @@ class LoginScreen extends StatelessWidget {
           location = location.copyWith(lat: mpp.lat, long: mpp.long);
         }
 
+        await Storage.write("username", username);
+        await Storage.write("uuid", uuid);
+
         FcmService.whenTokenUpdated(username, uuid, auth.nik);
 
         var rules = await AuthenticationRepository().getRules(auth.ba);

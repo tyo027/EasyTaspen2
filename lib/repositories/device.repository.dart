@@ -66,8 +66,6 @@ class DeviceRepository extends Repository {
 
       var fcmToken = await FcmService.getToken();
 
-      print(userData.user.nik);
-
       var response = await dio.post("v2/DeviceId", data: {
         "username": username,
         "uuid": uuid,
