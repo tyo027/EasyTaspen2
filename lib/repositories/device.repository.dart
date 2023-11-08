@@ -48,7 +48,7 @@ class DeviceRepository extends Repository {
       String? token = null}) async {
     if (token != null) dio.options.headers["Authorization"] = "Bearer ${token}";
 
-    var device = await this.getDevice();
+    var device = await getDevice();
 
     var response = await dio.post("v2/DeviceId", data: {
       "username": username,
@@ -79,7 +79,7 @@ class DeviceRepository extends Repository {
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
-    String code = packageInfo.buildNumber;
+
     return DeviceIdModel(
         device_name: deviceModel,
         app_version: version,
@@ -100,7 +100,7 @@ class DeviceRepository extends Repository {
 
       var fcmToken = await FcmService.getToken();
 
-      var response = await this.setToken(
+      var response = await setToken(
           username: username,
           uuid: uuid,
           fcmToken: fcmToken ?? "",

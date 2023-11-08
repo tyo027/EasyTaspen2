@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:easy/models/location.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
+import 'package:easy/repositories/device.repository.dart';
+import 'package:easy/services/fcm.service.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
 import 'package:easy/services/permission.service.dart';
@@ -96,6 +98,16 @@ class AuthenticationBloc
       await Storage.write("user", json.encode(user.toJson()));
 
       if (event.check) {
+        var fcmToken = await FcmService.getToken();
+        if (fcmToken == null) {
+          emit(Expired());
+          return;
+        }
+        await DeviceRepository().setToken(
+            username: Storage.read('username'),
+            uuid: Storage.read('uuid'),
+            fcmToken: fcmToken,
+            nik: user.nik);
         await Storage.activate();
       }
       if (!Storage.status()) {
