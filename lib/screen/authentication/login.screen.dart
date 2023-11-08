@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:device_uuid/device_uuid.dart';
 import 'package:easy/Widget/templatelogo.dart';

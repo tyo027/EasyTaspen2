@@ -41,8 +41,15 @@ class FcmService {
   static Future<void> whenTokenUpdated(
       String username, String uuid, String nik) async {
     FirebaseMessaging.instance.onTokenRefresh.listen((event) async {
-      await DeviceRepository()
-          .setToken(username: username, uuid: uuid, fcmToken: event, nik: nik);
+      await DeviceRepository().setToken(
+        username: username,
+        uuid: uuid,
+        fcmToken: event,
+        nik: nik,
+        deviceModel: event,
+        version: event,
+        deviceRelease: event,
+      );
     });
   }
 }

@@ -1,6 +1,8 @@
 PODS:
   - camera_avfoundation (0.0.1):
     - Flutter
+  - device_info_plus (0.0.1):
+    - Flutter
   - device_uuid (0.0.1):
     - Flutter
     - XYUUID
@@ -87,6 +89,7 @@ PODS:
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - device_uuid (from `.symlinks/plugins/device_uuid/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -117,6 +120,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   device_uuid:
     :path: ".symlinks/plugins/device_uuid/ios"
   firebase_core:
@@ -146,6 +151,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
+  device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   device_uuid: 1673ecd99e9ae7a1508120f378158c85ecd708a6
   Firebase: 66043bd4579e5b73811f96829c694c7af8d67435
   firebase_core: fd674fcc642742ef7289acea60bd21a1a021bd98
