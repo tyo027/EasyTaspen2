@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps, avoid_init_to_null
+
 import 'dart:async';
 import 'dart:io';
 
@@ -43,23 +45,22 @@ class DeviceRepository extends Repository {
       required String uuid,
       required String fcmToken,
       required String nik,
-       String token = null}) async {
+      String? token = null}) async {
+    if (token != null) dio.options.headers["Authorization"] = "Bearer ${token}";
 
-      if(token) dio.options.headers["Authorization"] = "Bearer ${token}";
-    
-      var device = await this.getDevice();
-    
-      var response = await dio.post("v2/DeviceId", data: {
-        "username": username,
-        "uuid": uuid,
-        "fcm_token": fcmToken,
-        "nik": nik,
-        "device_name": device.device_name,
-        "app_version": device.app_version,
-        "os_version": device.os_version,
-      });
-  
-      return response;
+    var device = await this.getDevice();
+
+    var response = await dio.post("v2/DeviceId", data: {
+      "username": username,
+      "uuid": uuid,
+      "fcm_token": fcmToken,
+      "nik": nik,
+      "device_name": device.device_name,
+      "app_version": device.app_version,
+      "os_version": device.os_version,
+    });
+
+    return response;
   }
 
   Future<DeviceIdModel> getDevice() async {
@@ -80,9 +81,9 @@ class DeviceRepository extends Repository {
     String version = packageInfo.version;
     String code = packageInfo.buildNumber;
     return DeviceIdModel(
-      device_name: deviceModel,
-      app_version: version,
-      os_version: deviceRelease);
+        device_name: deviceModel,
+        app_version: version,
+        os_version: deviceRelease);
   }
 
   Future<AuthResponse> login(
@@ -102,10 +103,9 @@ class DeviceRepository extends Repository {
       var response = await this.setToken(
           username: username,
           uuid: uuid,
-          fcm_token: fcmToken ?? "",
+          fcmToken: fcmToken ?? "",
           nik: userData.user.nik,
-          token: userData.token
-      );
+          token: userData.token);
 
       if (response.statusCode != 200) {
         return AuthResponse(
