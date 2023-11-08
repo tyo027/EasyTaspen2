@@ -38,31 +38,31 @@ class AuthResponse {
 }
 
 class DeviceRepository extends Repository {
-  Future<bool> setToken(
+  setToken(
       {required String username,
       required String uuid,
       required String fcmToken,
       required String nik,
-      required String deviceModel,
-      required String version,
-      required String deviceRelease}) async {
-    var response = await dio.post("v2/DeviceId", data: {
-      "username": username,
-      "uuid": uuid,
-      "fcm_token": fcmToken,
-      "nik": nik,
-      "device_name": deviceModel,
-      "app_version": version,
-      "os_version": deviceRelease,
-    });
+       String token = null}) async {
 
-    if (response.statusCode != 200) {
-      return false;
-    }
-    return true;
+      if(token) dio.options.headers["Authorization"] = "Bearer ${token}";
+    
+      var device = await this.getDevice();
+    
+      var response = await dio.post("v2/DeviceId", data: {
+        "username": username,
+        "uuid": uuid,
+        "fcm_token": fcmToken,
+        "nik": nik,
+        "device_name": device.device_name,
+        "app_version": device.app_version,
+        "os_version": device.os_version,
+      });
+  
+      return response;
   }
 
-  Future<DeviceIdModel?> getDevice() async {
+  Future<DeviceIdModel> getDevice() async {
     String deviceModel = "";
     String deviceRelease = "";
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -79,6 +79,10 @@ class DeviceRepository extends Repository {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
     String code = packageInfo.buildNumber;
+    return DeviceIdModel(
+      device_name: deviceModel,
+      app_version: version,
+      os_version: deviceRelease);
   }
 
   Future<AuthResponse> login(
@@ -92,18 +96,16 @@ class DeviceRepository extends Repository {
         return AuthResponse(
             status: false, message: 'Username Atau Password Salah');
       }
-      dio.options.headers["Authorization"] = "Bearer ${userData.token}";
+
       var fcmToken = await FcmService.getToken();
 
-      var response = await dio.post("v2/DeviceId", data: {
-        "username": username,
-        "uuid": uuid,
-        "fcm_token": fcmToken ?? "",
-        "nik": userData.user.nik,
-        "device_name": deviceModel ?? "",
-        "app_version": version ?? "",
-        "os_version": deviceRelease ?? "",
-      });
+      var response = await this.setToken(
+          username: username,
+          uuid: uuid,
+          fcm_token: fcmToken ?? "",
+          nik: userData.user.nik,
+          token: userData.token
+      );
 
       if (response.statusCode != 200) {
         return AuthResponse(
