@@ -45,10 +45,7 @@ class FcmService {
         username: username,
         uuid: uuid,
         fcmToken: event,
-        nik: nik,
-        deviceModel: event,
-        version: event,
-        deviceRelease: event,
+        nik: nik
       );
     });
   }
