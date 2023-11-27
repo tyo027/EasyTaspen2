@@ -10,6 +10,7 @@ import 'package:easy/screen/home.screen.dart';
 import 'package:easy/services/biometric.service.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
+import 'package:easy/services/storage.service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,7 @@ class SubmitAttendance extends StatelessWidget {
 
   Future cancelNotification() async {
     var now = DateTime.now();
-    if (now.hour <= 8) {
+    if (now.hour < 12) {
       await NotificationService.cancelNotifications("NOTIF_MASUK_KERJA");
     } else if (now.hour >= 12) {
       await NotificationService.cancelNotifications("NOTIF_PULANG_KERJA");
@@ -99,6 +100,8 @@ class SubmitAttendance extends StatelessWidget {
     } else {
       await Future.delayed(const Duration(seconds: 2));
     }
+
+    Storage.write("last-absen", DateTime.now().millisecondsSinceEpoch);
 
     NotificationService.showNotification(
         title: "Absen Berhasil Direkam",

@@ -1,120 +1,17 @@
 // ignore_for_file: use_build_context_synchronously
-import 'dart:convert';
-import 'package:device_uuid/device_uuid.dart';
 import 'package:easy/Widget/templatelogo.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
-import 'package:easy/models/location.model.dart';
-import 'package:easy/models/user.model.dart';
-import 'package:easy/repositories/authentication.repository.dart';
-import 'package:easy/repositories/device.repository.dart';
-import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
-import 'package:easy/services/biometric.service.dart';
-import 'package:easy/services/fcm.service.dart';
-import 'package:easy/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget implements LoginView {
   const LoginScreen({super.key});
 
   static Route<void> route() =>
       MaterialPageRoute(builder: (_) => const LoginScreen());
-
-  void login(
-    bool isFilled,
-    BuildContext context,
-    String username,
-    String password,
-  ) async {
-    if (isFilled) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: SizedBox(
-                height: 50, width: 50, child: CircularProgressIndicator()),
-          );
-        },
-      );
-      var uuid = await DeviceUuid().getUUID();
-      if (uuid == null) {
-        navigator.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Gagal Mendapatkan DeviceID")));
-        return;
-      }
-
-      var auth = await DeviceRepository().login(
-          password: password, username: username.toLowerCase(), uuid: uuid);
-
-      if (auth.status) {
-        await Storage.write("token", auth.token);
-        var location = const LocationModel(long: 0, lat: 0);
-
-        var mpp = await AuthenticationRepository().getMpp(auth.nik);
-        if (mpp != null && mpp.custom == 1) {
-          location = location.copyWith(lat: mpp.lat, long: mpp.long);
-        }
-
-        await Storage.write("username", username);
-        await Storage.write("uuid", uuid);
-
-        FcmService.whenTokenUpdated(username, uuid, auth.nik);
-
-        var rules = await AuthenticationRepository().getRules(auth.ba);
-
-        if (rules == null) {
-          navigator.pop();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Tidak Dapat Menemukan Data Kantor")));
-          return;
-        }
-
-        if (location.lat == 0) {
-          location = location.copyWith(lat: rules.lat, long: rules.long);
-        }
-
-        var userProfile = await ProfileRepository().getProfile(nik: auth.nik);
-        if (userProfile == null) {
-          navigator.pop();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Data Tidak Ditemukan, Coba beberapa saat lagi")));
-          await Storage.remove("token");
-          return;
-        }
-
-        var user = UserModel(
-            nik: auth.nik,
-            nama: auth.fullname,
-            jabatan: auth.jabatan,
-            ba: auth.ba,
-            unitkerja: auth.unitKerja,
-            isActive: true,
-            gender: userProfile.gender,
-            latitude: location.lat,
-            longitude: location.long,
-            allowWFA: rules.allowWFA,
-            allowWFO: rules.allowWFO,
-            allowMock: rules.allowMock,
-            radius: rules.radius);
-
-        await Storage.write("user", json.encode(user.toJson()));
-        context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
-              user: user,
-            ));
-        return;
-      }
-
-      navigator.pop();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(auth.message)));
-      return;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,139 +21,156 @@ class LoginScreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: BlocProvider(
-          create: (context) => LoginBloc(),
+          create: (context) => LoginBloc(this, context),
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                    color: Colors.blueGrey[50],
-                    // border: Border.all(color: Colors.black45),
-                    borderRadius: BorderRadius.circular(10)),
-                child: BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, state) {
-                    return TextFormField(
-                      onChanged: (value) => context
-                          .read<LoginBloc>()
-                          .add(LoginUserNameChanged(userName: value)),
-                      decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: 'Username'),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                    color: Colors.blueGrey[50],
-                    // border: Border.all(color: Colors.black45),
-                    borderRadius: BorderRadius.circular(10)),
-                child: BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, state) {
-                    return TextFormField(
-                        onChanged: (value) => context
-                            .read<LoginBloc>()
-                            .add(LoginPasswordChanged(password: value)),
-                        obscureText: !state.isPasswordShow,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Password',
-                          suffixIcon: IconButton(
-                              icon: Icon(state.isPasswordShow
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                              onPressed: () {
-                                context.read<LoginBloc>().add(
-                                    LoginPasswordShowChanged(
-                                        isPasswordShow: !state.isPasswordShow));
-                              }),
-                        ));
-                  },
-                ),
-              ),
+              _username(),
+              _password(),
               const SizedBox(
                 height: 20,
               ),
-              BlocBuilder<LoginBloc, LoginState>(
-                builder: (context, state) {
-                  var isFilled = (state.userName != "" && state.password != "");
-
-                  return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                    builder: (context, authState) {
-                      return Row(
-                        children: [
-                          Flexible(
-                            child: GestureDetector(
-                              onTap: () async {
-                                login(isFilled, context, state.userName,
-                                    state.password);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                    color: isFilled
-                                        ? Colors.amber[300]
-                                        : Colors.blueGrey[200],
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Center(
-                                  child: Text(
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                      'Login'),
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (authState is Expired)
-                            const SizedBox(
-                              width: 16,
-                            ),
-                          if (authState is Expired)
-                            GestureDetector(
-                              onTap: () async {
-                                var isAuthenticate =
-                                    await BiometricService.authenticate();
-                                if (!isAuthenticate) {
-                                  return;
-                                }
-
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return const Center(
-                                      child: SizedBox(
-                                          height: 50,
-                                          width: 50,
-                                          child: CircularProgressIndicator()),
-                                    );
-                                  },
-                                );
-                                context.read<AuthenticationBloc>().add(
-                                    AuthenticationCheckRequested(check: true));
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Colors.amber[300],
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Center(
-                                    child: SvgPicture.asset(
-                                        'assets/svgs/face-id.svg')),
-                              ),
-                            )
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
+              _button(),
             ],
           ),
         ),
       ),
     )));
+  }
+
+  Widget _username() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+          color: Colors.blueGrey[50], borderRadius: BorderRadius.circular(10)),
+      child: BlocBuilder<LoginBloc, LoginState>(
+        builder: (context, state) {
+          return TextFormField(
+            onChanged: (value) => context
+                .read<LoginBloc>()
+                .add(LoginUsernameChanged(username: value)),
+            decoration: const InputDecoration(
+                border: InputBorder.none, hintText: 'Username'),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _password() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+          color: Colors.blueGrey[50],
+          // border: Border.all(color: Colors.black45),
+          borderRadius: BorderRadius.circular(10)),
+      child: BlocBuilder<LoginBloc, LoginState>(
+        builder: (context, state) {
+          return TextFormField(
+              onChanged: (value) => context
+                  .read<LoginBloc>()
+                  .add(LoginPasswordChanged(password: value)),
+              obscureText: !state.isPasswordShow,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Password',
+                suffixIcon: IconButton(
+                    icon: Icon(state.isPasswordShow
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () {
+                      context.read<LoginBloc>().add(LoginPasswordShowChanged(
+                          isPasswordShow: !state.isPasswordShow));
+                    }),
+              ));
+        },
+      ),
+    );
+  }
+
+  Widget _button() {
+    return Row(
+      children: [
+        Flexible(
+          child: BlocBuilder<LoginBloc, LoginState>(
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () async {
+                  context.read<LoginBloc>().add(LoginRequestedEvent());
+                  // login(isFilled, context, state.userName,
+                  //     state.password);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                      color: state.isFilled
+                          ? Colors.amber[300]
+                          : Colors.blueGrey[200],
+                      borderRadius: BorderRadius.circular(10)),
+                  child: const Center(
+                    child: Text(
+                        style: TextStyle(fontWeight: FontWeight.bold), 'Login'),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            return SizedBox(
+              width: (state is Expired) ? 16 : 0,
+            );
+          },
+        ),
+        BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state is Expired) {
+              return GestureDetector(
+                onTap: () async {
+                  context.read<LoginBloc>().add(LoginRequestedBiometricEvent());
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      color: Colors.amber[300],
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                      child: SvgPicture.asset('assets/svgs/face-id.svg')),
+                ),
+              );
+            }
+            return const SizedBox();
+          },
+        )
+      ],
+    );
+  }
+
+  @override
+  void showLoading(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: SizedBox(
+              height: 50, width: 50, child: CircularProgressIndicator()),
+        );
+      },
+    );
+  }
+
+  @override
+  void hideLoading() {
+    navigator.pop();
+  }
+
+  @override
+  void showToast(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }

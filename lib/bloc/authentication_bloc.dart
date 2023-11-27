@@ -37,85 +37,90 @@ class AuthenticationBloc
 
     //cek permission
 
-    if (Platform.isAndroid) {
-      await PermissionService.requestPermission();
-    }
+    if (!event.isBiometric) {
+      if (Platform.isAndroid) {
+        await PermissionService.requestPermission();
+      }
 
-    // Check versions
-    var version = await VersionService().checkUpdate();
-    if (version.canUpdate) {
-      emit(NeedUpdate(version: version));
-      return;
-    }
-
-    await Future.delayed(const Duration(seconds: 1));
-    await NotificationService.init();
-    await NotificationService.loadAllNotification();
-
-    if (Storage.has("user")) {
-      var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
-      if (!user.isActive) {
-        emit(Authenticated(user: user));
+      // Check versions
+      var version = await VersionService().checkUpdate();
+      if (version.canUpdate) {
+        emit(NeedUpdate(version: version));
         return;
       }
+
+      await Future.delayed(const Duration(seconds: 1));
+      await NotificationService.init();
+      await NotificationService.loadAllNotification();
     }
+
+    // if (Storage.has("user")) {
+    //   var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+    //   if (!user.isActive) {
+    //     emit(Authenticated(user: user));
+    //     return;
+    //   }
+    // }
 
     if (!Storage.has("token") ||
         !Storage.has("user") ||
         !Storage.has("username") ||
         !Storage.has("uuid")) {
-      emit(UnAuthenticated());
-    } else {
-      var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
-
-      // Check for v1.1
-
-      var location = const LocationModel(long: 0, lat: 0);
-
-      var mpp = await AuthenticationRepository().getMpp(user.nik);
-      if (mpp != null && mpp.custom == 1) {
-        location = location.copyWith(lat: mpp.lat, long: mpp.long);
-      }
-
-      var rules = await AuthenticationRepository().getRules(user.ba);
-      if (rules == null) {
-        emit(Expired());
-        return;
-      }
-
-      if (location.lat == 0) {
-        location = location.copyWith(lat: rules.lat, long: rules.long);
-      }
-
-      user = user.copyWith(
-          latitude: location.lat,
-          longitude: location.long,
-          allowWFA: rules.allowWFA,
-          allowWFO: rules.allowWFO,
-          allowMock: rules.allowMock,
-          radius: rules.radius);
-
-      await Storage.write("user", json.encode(user.toJson()));
-
-      if (event.check) {
-        var fcmToken = await FcmService.getToken();
-        if (fcmToken == null) {
-          emit(Expired());
-          return;
-        }
-        await DeviceRepository().setToken(
-            username: Storage.read('username'),
-            uuid: Storage.read('uuid'),
-            fcmToken: fcmToken,
-            nik: user.nik);
-        await Storage.activate();
-      }
-      if (!Storage.status()) {
-        emit(Expired());
-        return;
-      }
-      emit(Authenticated(user: user));
+      return emit(UnAuthenticated());
     }
+
+    var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+
+    if (!user.isActive) return emit(Authenticated(user: user));
+
+    // Check for v1.1
+
+    var location = const LocationModel(long: 0, lat: 0);
+
+    var mpp = await AuthenticationRepository().getMpp(user.nik);
+    if (mpp != null && mpp.custom == 1) {
+      location = location.copyWith(lat: mpp.lat, long: mpp.long);
+    }
+
+    var rules = await AuthenticationRepository().getRules(user.ba);
+    if (rules == null) {
+      emit(Expired());
+      return;
+    }
+
+    if (location.lat == 0) {
+      location = location.copyWith(lat: rules.lat, long: rules.long);
+    }
+
+    user = user.copyWith(
+        latitude: location.lat,
+        longitude: location.long,
+        allowWFA: rules.allowWFA,
+        allowWFO: rules.allowWFO,
+        allowMock: rules.allowMock,
+        radius: rules.radius);
+
+    await Storage.write("user", json.encode(user.toJson()));
+
+    if (event.isBiometric) {
+      var fcmToken = await FcmService.getToken();
+      if (fcmToken == null) {
+        emit(Expired());
+        return;
+      }
+      await DeviceRepository().setToken(
+          username: Storage.read('username'),
+          uuid: Storage.read('uuid'),
+          fcmToken: fcmToken,
+          nik: user.nik);
+      await Storage.activate();
+      return emit(Authenticated(user: user));
+    }
+    if (!Storage.status()) {
+      emit(Expired());
+      return;
+    }
+    emit(Authenticated(user: user));
   }
 
   FutureOr<void> onLoginRequested(

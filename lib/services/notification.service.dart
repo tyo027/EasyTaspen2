@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy/services/storage.service.dart';
 import 'package:easy/utils/notification.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -90,6 +91,8 @@ class NotificationService {
       int? weekday}) async {
     var workingDays = weekday ?? 5;
 
+    var lastAbsen = Storage.read('last-absen');
+
     for (var weekdays = weekday ?? 1; weekdays <= workingDays; weekdays++) {
       int id0 = id * 100 + weekdays;
 
@@ -103,7 +106,24 @@ class NotificationService {
           forceNextDay: forceNextDay,
           weekday: weekdays);
 
-      print('Load notif $id0 $datetime $weekday $forceNextDay');
+      if (lastAbsen != null) {
+        var lastWorkingDay = DateTime.fromMillisecondsSinceEpoch(lastAbsen);
+
+        if (lastWorkingDay.day == datetime.day &&
+            lastWorkingDay.month == datetime.month &&
+            lastWorkingDay.year == datetime.year) {
+          if (lastWorkingDay.hour < 12 &&
+              androidChannelName == "NOTIF_MASUK_KERJA") {
+            continue;
+          }
+          if (lastWorkingDay.hour >= 12 &&
+              androidChannelName == "NOTIF_PULANG_KERJA") {
+            continue;
+          }
+        }
+      }
+
+      print('Load notif $id0 $datetime ');
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
         id0,
@@ -149,10 +169,10 @@ class NotificationService {
       return scheduledDate;
     }
 
-    // while (scheduledDate.weekday == DateTime.sunday ||
-    //     scheduledDate.weekday == DateTime.saturday) {
-    //   scheduledDate = scheduledDate.add(const Duration(days: 1));
-    // }
+    while (scheduledDate.weekday == DateTime.sunday ||
+        scheduledDate.weekday == DateTime.saturday) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
     return scheduledDate;
   }
 
@@ -186,21 +206,20 @@ class NotificationService {
 
   static cancelNotifications(String channelName) async {
     final now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day);
+
+    // tz.TZDateTime scheduledDate =
+    //     tz.TZDateTime(tz.local, now.year, now.month, now.day);
 
     scheduledNotifications
         .where((element) => element.androidChannelName == channelName)
         .forEach((element) async {
-      int id0 = element.id * 100 + scheduledDate.weekday;
+      int id0 = element.id * 100 + now.weekday;
       print('cancel notification $id0');
       await flutterLocalNotificationsPlugin.cancel(id0);
     });
 
     await loadAllNotification(
-        channelName: channelName,
-        weekday: scheduledDate.weekday,
-        forceNextDay: true);
+        channelName: channelName, weekday: now.weekday, forceNextDay: true);
   }
 }
 

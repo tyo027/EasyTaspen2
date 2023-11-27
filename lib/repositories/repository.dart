@@ -13,4 +13,13 @@ class Repository {
           hasToken ? "Bearer ${Storage.read<String>('token')}" : null
     }));
   }
+
+  setJWTToken(String token) {
+    Storage.write("token", token);
+    dio.options.headers['Authorization'] = "Bearer $token";
+  }
+
+  resetJWTToken() {
+    dio.options.headers['Authorization'] = null;
+  }
 }

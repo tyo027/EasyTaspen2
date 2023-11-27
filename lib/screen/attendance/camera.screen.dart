@@ -189,7 +189,7 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
 
                 if (cameraController.value.isTakingPicture) {
                   // A capture is already pending, do nothing.
-                  return null;
+                  return;
                 }
 
                 try {
@@ -201,9 +201,9 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
                         ..writeToFile(_filePath!))
                       .executeThread();
                   setState(() {});
-                } on CameraException catch (e) {
+                } on CameraException catch (_) {
                   // print("Error: camera");
-                  return null;
+                  return;
                 }
               },
               child: Container(

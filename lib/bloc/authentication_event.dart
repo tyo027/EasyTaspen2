@@ -6,12 +6,12 @@ abstract class AuthenticationEvent extends Equatable {
 }
 
 class AuthenticationCheckRequested extends AuthenticationEvent {
-  final bool check;
+  final bool isBiometric;
 
-  AuthenticationCheckRequested({this.check = false});
+  AuthenticationCheckRequested({this.isBiometric = false});
 
   @override
-  List<Object?> get props => [check];
+  List<Object?> get props => [isBiometric];
 }
 
 class AuthenticationLoginRequested extends AuthenticationEvent {
