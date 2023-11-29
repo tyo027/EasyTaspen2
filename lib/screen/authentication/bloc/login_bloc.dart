@@ -117,6 +117,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         jabatan: auth.jabatan,
         ba: auth.ba,
         unitkerja: auth.unitKerja,
+        perty: auth.perty,
         isActive: true,
         gender: userProfile.gender,
         latitude: location.lat,
@@ -127,6 +128,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         radius: rules.radius);
 
     view.hideLoading();
+
+    print(user);
 
     await Storage.write("user", json.encode(user.toJson()));
     context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(

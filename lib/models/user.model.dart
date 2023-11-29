@@ -6,6 +6,7 @@ class UserModel extends Equatable {
   final String jabatan;
   final String ba;
   final String unitkerja;
+  final String? perty;
   final String gender;
   final bool isActive;
   final double latitude;
@@ -21,6 +22,7 @@ class UserModel extends Equatable {
       required this.jabatan,
       required this.ba,
       required this.unitkerja,
+      required this.perty,
       this.gender = "",
       required this.isActive,
       this.latitude = 0,
@@ -36,6 +38,7 @@ class UserModel extends Equatable {
           String? jabatan,
           String? ba,
           String? unitkerja,
+          String? perty,
           String? gender,
           bool? isActive,
           double? latitude,
@@ -50,6 +53,7 @@ class UserModel extends Equatable {
           jabatan: jabatan ?? this.jabatan,
           ba: ba ?? this.ba,
           unitkerja: unitkerja ?? this.unitkerja,
+          perty: perty ?? this.perty,
           gender: gender ?? this.gender,
           isActive: isActive ?? this.isActive,
           latitude: latitude ?? this.latitude,
@@ -65,6 +69,7 @@ class UserModel extends Equatable {
         jabatan: json['JABATAN'],
         ba: json['BA'],
         unitkerja: json['UNITKERJA'],
+        perty: json['PERTY'],
         gender: json.containsKey("Gender") ? json['Gender'] : "",
         isActive: json.containsKey("IS_ACTIVE") ? json["IS_ACTIVE"] : true,
         latitude: json.containsKey("latitude") ? json["latitude"] : 0,
@@ -81,6 +86,7 @@ class UserModel extends Equatable {
         'JABATAN': jabatan,
         'BA': ba,
         'UNITKERJA': unitkerja,
+        'PERTY': perty,
         'Gender': gender,
         "IS_ACTIVE": isActive,
         "latitude": latitude,
@@ -98,6 +104,7 @@ class UserModel extends Equatable {
         jabatan,
         ba,
         unitkerja,
+        perty,
         gender,
         isActive,
         latitude,

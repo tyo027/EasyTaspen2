@@ -64,7 +64,7 @@ var scheduledNotifications = [
     title: "Sudah saatnya pulang kerja",
     body: "Jangan lupa absen pulang ya",
     hour: 17,
-    minute: 30,
+    minute: 15,
   ),
   Notification(
     id: 6,

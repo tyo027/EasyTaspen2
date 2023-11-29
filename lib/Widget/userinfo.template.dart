@@ -158,11 +158,16 @@ class UserInfoTemplate extends StatelessWidget {
                       BlocBuilder<AuthenticationBloc, AuthenticationState>(
                         builder: (context, state) {
                           if (state is Authenticated) {
-                            return SizedBox(
-                              child: Text(
-                                state.user.jabatan.capitalize(),
-                              ),
-                            );
+                            if (state.user.jabatan == "" ||
+                                state.user.jabatan == null) {
+                              return SizedBox.shrink();
+                            } else {
+                              return SizedBox(
+                                child: Text(
+                                  state.user.jabatan.capitalize(),
+                                ),
+                              );
+                            }
                           }
                           return Container();
                         },
@@ -170,11 +175,16 @@ class UserInfoTemplate extends StatelessWidget {
                       BlocBuilder<AuthenticationBloc, AuthenticationState>(
                         builder: (context, state) {
                           if (state is Authenticated) {
-                            return SizedBox(
-                              child: Text(
-                                state.user.unitkerja.capitalize(),
-                              ),
-                            );
+                            if (state.user.unitkerja == "" ||
+                                state.user.unitkerja == null) {
+                              return SizedBox.shrink();
+                            } else {
+                              return SizedBox(
+                                child: Text(
+                                  state.user.unitkerja.capitalize(),
+                                ),
+                              );
+                            }
                           }
                           return Container();
                         },

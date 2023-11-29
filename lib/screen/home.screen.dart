@@ -1,6 +1,7 @@
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
+import 'package:easy/screen/admin.screen.dart';
 import 'package:easy/screen/attendance/attendance.screen.dart';
 import 'package:easy/screen/payslip/pay_slip.screen.dart';
 import 'package:easy/screen/profile.screen.dart';
@@ -28,7 +29,29 @@ class HomeScreen extends StatelessWidget {
       children: [
         BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            if (state is Authenticated) {
+            if (state is Authenticated &&
+                (state.user.perty == "BOD" ||
+                    state.user.perty == "BOC" ||
+                    state.user.perty == "SBOC")) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (state.user.isActive)
+                    GestureDetector(
+                      onTap: () => navigator.push(PasySlipScreen.route()),
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        child: SvgPicture.asset("assets/svgs/payslip.svg"),
+                      ),
+                    ),
+                ],
+              );
+            }
+            if (state is Authenticated &&
+                (state.user.perty != "BOD" ||
+                    state.user.perty != "BOC" ||
+                    state.user.perty != "SBOC")) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -62,6 +85,32 @@ class HomeScreen extends StatelessWidget {
             return Container();
           },
         ),
+
+        // Admin
+        // BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        //   builder: (context, state) {
+        //     if (state is Authenticated && (state.user.nik == "4161")) {
+        //       return Row(
+        //         // crossAxisAlignment: CrossAxisAlignment.start,
+        //         // mainAxisAlignment: MainAxisAlignment.start,
+        //         children: [
+        //           GestureDetector(
+        //             onTap: () => navigator.push(AdminScreen.route()),
+        //             child: Container(
+        //               padding: const EdgeInsets.symmetric(horizontal: 20),
+        //               margin: const EdgeInsets.symmetric(
+        //                   horizontal: 20, vertical: 10),
+        //               // margin: const EdgeInsets.all(5),
+        //               child: SvgPicture.asset("assets/svgs/admin.svg"),
+        //             ),
+        //           ),
+        //         ],
+        //       );
+        //     }
+        //     return Container();
+        //   },
+        // ),
+
         // BlocBuilder<AuthenticationBloc, AuthenticationState>(
         //   builder: (context, state) {
         //     if (state.user != null) {

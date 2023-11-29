@@ -23,6 +23,7 @@ class AuthResponse {
   final String nik;
   final String jabatan;
   final String unitKerja;
+  final String? perty;
   final String gender;
 
   AuthResponse(
@@ -36,6 +37,7 @@ class AuthResponse {
       this.nik = "-",
       this.jabatan = "-",
       this.unitKerja = "",
+      this.perty = "",
       this.gender = ""});
 }
 
@@ -128,6 +130,7 @@ class DeviceRepository extends Repository {
         nik: userData.user.nik,
         jabatan: userData.user.jabatan,
         unitKerja: userData.user.unitkerja,
+        perty: userData.user.perty,
         gender: userData.user.gender,
       );
     } on DioException catch (e) {
