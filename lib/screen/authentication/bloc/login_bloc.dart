@@ -139,9 +139,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   onLoginRequestedBiometric(event, emit) async {
     if (!state.isFilled && !context.mounted) return;
+    view.showLoading(context);
 
     var isAuthenticate = await BiometricService.authenticate();
     if (!isAuthenticate) {
+      view.hideLoading();
       view.showToast(context, "Failed to authenticate using biometric");
       return;
     }

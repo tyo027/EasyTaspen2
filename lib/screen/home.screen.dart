@@ -87,29 +87,29 @@ class HomeScreen extends StatelessWidget {
         ),
 
         // Admin
-        // BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        //   builder: (context, state) {
-        //     if (state is Authenticated && (state.user.nik == "4161")) {
-        //       return Row(
-        //         // crossAxisAlignment: CrossAxisAlignment.start,
-        //         // mainAxisAlignment: MainAxisAlignment.start,
-        //         children: [
-        //           GestureDetector(
-        //             onTap: () => navigator.push(AdminScreen.route()),
-        //             child: Container(
-        //               padding: const EdgeInsets.symmetric(horizontal: 20),
-        //               margin: const EdgeInsets.symmetric(
-        //                   horizontal: 20, vertical: 10),
-        //               // margin: const EdgeInsets.all(5),
-        //               child: SvgPicture.asset("assets/svgs/admin.svg"),
-        //             ),
-        //           ),
-        //         ],
-        //       );
-        //     }
-        //     return Container();
-        //   },
-        // ),
+        BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state is Authenticated && (state.user.nik == "4161")) {
+              return Row(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => navigator.push(AdminScreen.route()),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      // margin: const EdgeInsets.all(5),
+                      child: SvgPicture.asset("assets/svgs/admin.svg"),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return Container();
+          },
+        ),
 
         // BlocBuilder<AuthenticationBloc, AuthenticationState>(
         //   builder: (context, state) {
