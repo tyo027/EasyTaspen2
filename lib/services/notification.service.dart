@@ -196,11 +196,9 @@ class NotificationService {
       String channelName = "",
       int? weekday}) async {
     var notificationIds = [];
-    scheduledNotifications
-        .where((element) => channelName == ""
-            ? true
-            : element.androidChannelName == channelName)
-        .forEach((notification) async {
+
+    for (var notification in scheduledNotifications.where((element) =>
+        channelName == "" ? true : element.androidChannelName == channelName)) {
       var lastId = await showRepeatEveryWorkingDays(
           id: notification.id,
           androidChannelId: notification.androidChannelId,
@@ -212,7 +210,8 @@ class NotificationService {
           forceNextDay: forceNextDay,
           weekday: weekday);
       notificationIds.add(lastId);
-    });
+    }
+
     notificationIds.sort((a, b) => a < b ? 0 : 1);
     Storage.write("lastNotificationId", notificationIds.last);
   }
@@ -230,8 +229,7 @@ class NotificationService {
       var id0 = tz.TZDateTime(tz.local, now.year, now.month, now.day,
           element.hour, element.minute - increment);
       int id = id0.millisecondsSinceEpoch ~/ 100000;
-      print(tz.TZDateTime(tz.local, now.year, now.month, now.day, element.hour,
-          element.minute - increment));
+
       print('cancel notification $id');
       await flutterLocalNotificationsPlugin.cancel(id);
     });
