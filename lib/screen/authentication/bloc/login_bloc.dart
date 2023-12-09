@@ -150,7 +150,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     context
         .read<AuthenticationBloc>()
-        .add(AuthenticationCheckRequested(isBiometric: true));
+        .add(AuthenticationBiometricGcRequested());
   }
 }
 

@@ -1,7 +1,7 @@
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
-import 'package:easy/screen/admin.screen.dart';
+import 'package:easy/screen/admin/admin.screen.dart';
 import 'package:easy/screen/attendance/attendance.screen.dart';
 import 'package:easy/screen/payslip/pay_slip.screen.dart';
 import 'package:easy/screen/profile.screen.dart';

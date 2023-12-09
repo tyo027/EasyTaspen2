@@ -28,3 +28,5 @@ class AuthenticationLoginRequested extends AuthenticationEvent {
 class AuthenticationLogoutRequested extends AuthenticationEvent {}
 
 class AuthenticationExpiredRequested extends AuthenticationEvent {}
+
+class AuthenticationBiometricGcRequested extends AuthenticationEvent {}

@@ -24,6 +24,7 @@ class AuthenticationBloc
     on<AuthenticationLoginRequested>(onLoginRequested);
     on<AuthenticationLogoutRequested>(onLogoutRequested);
     on<AuthenticationExpiredRequested>(onExpiredRequested);
+    on<AuthenticationBiometricGcRequested>(onBiometricGcRequested);
   }
 
   FutureOr<void> onCheckRequested(
@@ -144,5 +145,33 @@ class AuthenticationBloc
       AuthenticationExpiredRequested event, Emitter emit) async {
     Storage.deactivate();
     emit(Expired());
+  }
+
+  FutureOr<void> onBiometricGcRequested(
+      AuthenticationBiometricGcRequested event,
+      Emitter<AuthenticationState> emit) async {
+    if (!Storage.has("token") ||
+        !Storage.has("user") ||
+        !Storage.has("username") ||
+        !Storage.has("uuid")) {
+      return emit(UnAuthenticated());
+    }
+
+    var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+
+    if (!user.isActive) return emit(Authenticated(user: user));
+
+    var fcmToken = await FcmService.getToken();
+    if (fcmToken == null) {
+      emit(Expired());
+      return;
+    }
+    await DeviceRepository().setToken(
+        username: Storage.read('username'),
+        uuid: Storage.read('uuid'),
+        fcmToken: fcmToken,
+        nik: user.nik);
+    await Storage.activate();
+    return emit(Authenticated(user: user));
   }
 }

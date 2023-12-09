@@ -16,9 +16,9 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 // import 'package:month_picker_dialog_2/month_picker_dialog_2.dart';
 
 enum LaporanType {
+  CEK_ABSEN_HARIAN,
   REKAP_KEHADIRAN,
   KEHADIRAN_HARIAN_VERIFIED,
-  CEK_ABSEN_HARIAN,
 }
 
 class LaporansScreen extends StatelessWidget {
@@ -207,7 +207,7 @@ class LaporansScreen extends StatelessWidget {
 
   Widget laporansMenu(BuildContext context) {
     return BlocProvider(
-      create: (context) => KehadiranBloc(const RekapKehadiran()),
+      create: (context) => KehadiranBloc(const CekAbsenHarian()),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         child: BlocBuilder<KehadiranBloc, KehadiranState>(

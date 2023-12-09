@@ -7,8 +7,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 
-var id = 0;
-
 class NotificationService {
   static late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   static late InitializationSettings initializationSettings;
@@ -56,7 +54,11 @@ class NotificationService {
     var scheduledDate =
         tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10));
 
+    var id0 = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month,
+        scheduledDate.day, scheduledDate.hour, scheduledDate.minute);
+    int id = id0.millisecondsSinceEpoch ~/ 100000;
     var notificationDetails = const NotificationDetails();
+
     await flutterLocalNotificationsPlugin.zonedSchedule(id, 'scheduled title',
         'scheduled body', scheduledDate, notificationDetails,
         uiLocalNotificationDateInterpretation:
@@ -64,6 +66,11 @@ class NotificationService {
   }
 
   static showNotification({required String title, required String body}) async {
+    var scheduledDate =
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10));
+    var id0 = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month,
+        scheduledDate.day, scheduledDate.hour, scheduledDate.minute);
+    int id = id0.millisecondsSinceEpoch ~/ 100000;
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'easy.notification.id', 'easy.notification.channel',
@@ -73,8 +80,7 @@ class NotificationService {
             ticker: 'ticker');
     var notificationDetails =
         const NotificationDetails(android: androidNotificationDetails);
-    flutterLocalNotificationsPlugin.show(
-        id++, title, body, notificationDetails);
+    flutterLocalNotificationsPlugin.show(id, title, body, notificationDetails);
   }
 
   static showRepeatEveryWorkingDays(
@@ -89,22 +95,19 @@ class NotificationService {
       int second = 0,
       bool forceNextDay = false,
       int? weekday}) async {
-    var workingDays = weekday ?? 5;
+    var workingDays = weekday ?? 7;
 
     var lastAbsen = Storage.read('last-absen');
 
     for (var weekdays = weekday ?? 1; weekdays <= workingDays; weekdays++) {
-      int id0 = id * 100 + weekdays;
-
-      if (weekdays.toString() == "5") {
-        minute = minute - 30;
-      }
       var datetime = _zonedDay(
           hour: hour,
-          minute: minute,
+          minute: weekdays == 5 ? minute - 30 : 0,
           second: second,
           forceNextDay: forceNextDay,
           weekday: weekdays);
+
+      int id0 = datetime.millisecondsSinceEpoch ~/ 100000;
 
       if (lastAbsen != null) {
         var lastWorkingDay = DateTime.fromMillisecondsSinceEpoch(lastAbsen);
@@ -143,7 +146,7 @@ class NotificationService {
     }
   }
 
-  static _zonedDay(
+  static tz.TZDateTime _zonedDay(
       {int hour = 0,
       int minute = 0,
       int second = 0,
@@ -209,13 +212,18 @@ class NotificationService {
 
     // tz.TZDateTime scheduledDate =
     //     tz.TZDateTime(tz.local, now.year, now.month, now.day);
+    var increment = (now.weekday == 5) ? 30 : 0;
 
     scheduledNotifications
         .where((element) => element.androidChannelName == channelName)
         .forEach((element) async {
-      int id0 = element.id * 100 + now.weekday;
+      var id0 = tz.TZDateTime(tz.local, now.year, now.month, now.day,
+          element.hour, element.minute - increment);
+      int id = id0.millisecondsSinceEpoch ~/ 100000;
+      print(tz.TZDateTime(tz.local, now.year, now.month, now.day, element.hour,
+          element.minute - increment));
       print('cancel notification $id0');
-      await flutterLocalNotificationsPlugin.cancel(id0);
+      await flutterLocalNotificationsPlugin.cancel(id);
     });
 
     await loadAllNotification(

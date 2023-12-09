@@ -1,12 +1,13 @@
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
+import 'package:easy/repositories/admin.repository.dart';
+import 'package:easy/screen/admin/bloc/bloc/admin_bloc.dart';
 import 'package:easy/screen/authentication/bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
-class AdminScreen extends StatelessWidget implements LoginView {
+class AdminScreen extends StatelessWidget implements AdminView {
   const AdminScreen({super.key});
 
   static Route<void> route() =>
@@ -20,7 +21,7 @@ class AdminScreen extends StatelessWidget implements LoginView {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: BlocProvider(
-          create: (context) => LoginBloc(this, context),
+          create: (context) => AdminBloc(this, context),
           child: Column(
             children: [
               _username(),
@@ -41,12 +42,11 @@ class AdminScreen extends StatelessWidget implements LoginView {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
           color: Colors.blueGrey[50], borderRadius: BorderRadius.circular(10)),
-      child: BlocBuilder<LoginBloc, LoginState>(
+      child: BlocBuilder<AdminBloc, AdminState>(
         builder: (context, state) {
           return TextFormField(
-            onChanged: (value) => context
-                .read<LoginBloc>()
-                .add(LoginUsernameChanged(username: value)),
+            onChanged: (value) =>
+                context.read<AdminBloc>().add(AdminChanged(username: value)),
             decoration: const InputDecoration(
                 border: InputBorder.none, hintText: 'Username'),
           );
@@ -59,13 +59,11 @@ class AdminScreen extends StatelessWidget implements LoginView {
     return Row(
       children: [
         Flexible(
-          child: BlocBuilder<LoginBloc, LoginState>(
+          child: BlocBuilder<AdminBloc, AdminState>(
             builder: (context, state) {
               return GestureDetector(
                 onTap: () async {
-                  context.read<LoginBloc>().add(LoginRequestedEvent());
-                  // login(isFilled, context, state.userName,
-                  //     state.password);
+                  context.read<AdminBloc>().add(DeleteUnChanged());
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
