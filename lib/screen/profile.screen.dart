@@ -1,3 +1,4 @@
+import 'package:easy/Widget/menu.template.dart';
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
@@ -25,9 +26,7 @@ class ProfileScreen extends StatelessWidget {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is Authenticated) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+          return MenuTemplate(
             children: [
               GestureDetector(
                 onTap: () => navigator.push(IndividuScreen.route()),

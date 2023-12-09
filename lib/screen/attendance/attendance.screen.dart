@@ -1,3 +1,4 @@
+import 'package:easy/Widget/menu.template.dart';
 import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
@@ -20,65 +21,60 @@ class AttendanceScreen extends StatelessWidget {
     );
   }
 
-  Row attendanceMenu(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
-            if (state is Authenticated) {
-              return GestureDetector(
-                onTap: () {
-                  if (state.user.allowWFA) {
-                    navigator
-                        .push(SubmitAttendance.route(SubmitAttendanceType.wfa));
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(5),
-                  clipBehavior: Clip.hardEdge,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                  child:
-                      filterSvg((state.user.allowWFA), "assets/svgs/wfa.svg"),
-                ),
-              );
-            }
-            return Container();
-          },
+  Widget attendanceMenu(BuildContext context) {
+    return MenuTemplate(children: [
+      BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is Authenticated) {
+            return GestureDetector(
+              onTap: () {
+                if (state.user.allowWFA) {
+                  navigator
+                      .push(SubmitAttendance.route(SubmitAttendanceType.wfa));
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.all(5),
+                clipBehavior: Clip.hardEdge,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                child: filterSvg((state.user.allowWFA), "assets/svgs/wfa.svg"),
+              ),
+            );
+          }
+          return Container();
+        },
+      ),
+      BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is Authenticated) {
+            return GestureDetector(
+              onTap: () {
+                if (state.user.allowWFO) {
+                  navigator
+                      .push(SubmitAttendance.route(SubmitAttendanceType.wfo));
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.all(5),
+                clipBehavior: Clip.hardEdge,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                child: filterSvg(state.user.allowWFO, "assets/svgs/wfo.svg"),
+              ),
+            );
+          }
+          return Container();
+        },
+      ),
+      GestureDetector(
+        onTap: () => navigator.push(LaporansScreen.route()),
+        child: Container(
+          margin: const EdgeInsets.all(5),
+          child: SvgPicture.asset("assets/svgs/laporan.svg"),
         ),
-        BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
-            if (state is Authenticated) {
-              return GestureDetector(
-                onTap: () {
-                  if (state.user.allowWFO) {
-                    navigator
-                        .push(SubmitAttendance.route(SubmitAttendanceType.wfo));
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(5),
-                  clipBehavior: Clip.hardEdge,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                  child: filterSvg(state.user.allowWFO, "assets/svgs/wfo.svg"),
-                ),
-              );
-            }
-            return Container();
-          },
-        ),
-        GestureDetector(
-          onTap: () => navigator.push(LaporansScreen.route()),
-          child: Container(
-            margin: const EdgeInsets.all(5),
-            child: SvgPicture.asset("assets/svgs/laporan.svg"),
-          ),
-        ),
-      ],
-    );
+      ),
+    ]);
   }
 
   Widget filterSvg(bool isActive, String asset) {
