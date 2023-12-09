@@ -54,8 +54,8 @@ var scheduledNotifications = [
     androidChannelName: "NOTIF_PULANG_KERJA",
     title: "Sudah saatnya pulang kerja",
     body: "Jangan lupa absen pulang ya",
-    hour: now.hour,
-    minute: now.minute + 2,
+    hour: 17,
+    minute: 00,
   ),
   Notification(
     id: 5,
@@ -63,10 +63,10 @@ var scheduledNotifications = [
     androidChannelName: "NOTIF_PULANG_KERJA",
     title: "Sudah saatnya pulang kerja",
     body: "Jangan lupa absen pulang ya",
-    hour: now.hour,
-    minute: now.minute + 3,
-    // hour: 12,
-    // minute: 41,
+    // hour: now.hour,
+    // minute: now.minute + 3,
+    hour: 17,
+    minute: 15,
   ),
   Notification(
     id: 6,
@@ -74,9 +74,7 @@ var scheduledNotifications = [
     androidChannelName: "NOTIF_PULANG_KERJA",
     title: "Sudah saatnya pulang kerja",
     body: "Jangan lupa absen pulang ya",
-    hour: now.hour,
-    minute: now.minute + 4,
-    // hour: 12,
-    // minute: 42,
+    hour: 18,
+    minute: 00,
   )
 ];

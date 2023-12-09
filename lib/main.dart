@@ -11,6 +11,8 @@ late List<CameraDescription> cameraDescriptions;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Storage.initialize();
+  // await Storage.remove("lastNotificationId");
+  // await Storage.remove("last-absen");
 
   cameraDescriptions = await availableCameras();
   await Firebase.initializeApp(

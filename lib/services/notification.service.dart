@@ -56,7 +56,7 @@ class NotificationService {
 
     var id0 = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month,
         scheduledDate.day, scheduledDate.hour, scheduledDate.minute);
-    int id = id0.millisecondsSinceEpoch ~/ 100000;
+    int id = id0.millisecondsSinceEpoch ~/ 10000;
     var notificationDetails = const NotificationDetails();
 
     await flutterLocalNotificationsPlugin.zonedSchedule(id, 'scheduled title',
@@ -70,7 +70,7 @@ class NotificationService {
         tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10));
     var id0 = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month,
         scheduledDate.day, scheduledDate.hour, scheduledDate.minute);
-    int id = id0.millisecondsSinceEpoch ~/ 100000;
+    int id = id0.millisecondsSinceEpoch ~/ 10000;
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'easy.notification.id', 'easy.notification.channel',
@@ -109,7 +109,7 @@ class NotificationService {
           forceNextDay: forceNextDay,
           weekday: weekdays);
 
-      int id0 = datetime.millisecondsSinceEpoch ~/ 100000;
+      int id0 = datetime.millisecondsSinceEpoch ~/ 10000;
 
       if (lastAbsen != null) {
         var lastWorkingDay = DateTime.fromMillisecondsSinceEpoch(lastAbsen);
@@ -127,8 +127,9 @@ class NotificationService {
           }
         }
       }
+      print("$lastLoadedNotification \t $id0");
       if (lastLoadedNotification == null ||
-          (lastLoadedNotification != null && id > lastLoadedNotification)) {
+          (lastLoadedNotification != null && id0 > lastLoadedNotification)) {
         print('Load notif $id0 $datetime ');
         await flutterLocalNotificationsPlugin.zonedSchedule(
           id0,
@@ -146,8 +147,9 @@ class NotificationService {
           // matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime
         );
       }
-
-      lastId = id0;
+      if (lastId == null || (lastId != null && id0 > lastId)) {
+        lastId = id0;
+      }
     }
     return lastId!;
   }
@@ -196,7 +198,7 @@ class NotificationService {
       String channelName = "",
       int? weekday}) async {
     var notificationIds = [];
-
+    print(tz.local);
     for (var notification in scheduledNotifications.where((element) =>
         channelName == "" ? true : element.androidChannelName == channelName)) {
       var lastId = await showRepeatEveryWorkingDays(
@@ -213,6 +215,7 @@ class NotificationService {
     }
 
     notificationIds.sort((a, b) => a < b ? 0 : 1);
+    print(notificationIds);
     Storage.write("lastNotificationId", notificationIds.last);
   }
 
@@ -228,14 +231,14 @@ class NotificationService {
         .forEach((element) async {
       var id0 = tz.TZDateTime(tz.local, now.year, now.month, now.day,
           element.hour, element.minute - increment);
-      int id = id0.millisecondsSinceEpoch ~/ 100000;
+      int id = id0.millisecondsSinceEpoch ~/ 10000;
 
       print('cancel notification $id');
       await flutterLocalNotificationsPlugin.cancel(id);
     });
 
-    // await loadAllNotification(
-    //     channelName: channelName, weekday: now.weekday, forceNextDay: true);
+    await loadAllNotification(
+        channelName: channelName, weekday: now.weekday, forceNextDay: true);
   }
 }
 
