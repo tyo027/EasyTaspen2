@@ -23,11 +23,11 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
           username: state.username,
         );
         view.hideLoading();
-        view.showToast(context, "wkwkwk berhasil");
+        view.showToast(context, "Akun Berhasil Di-reset");
       } catch (e) {
         print(e);
         view.hideLoading();
-        view.showToast(context, "wkwkwk gagal");
+        view.showToast(context, "Periksa Kembali Username Yang Dimaksud");
       }
     });
   }

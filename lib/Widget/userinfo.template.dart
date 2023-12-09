@@ -3,6 +3,8 @@ import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
 import 'package:easy/repositories/notification.repository.dart';
+import 'package:easy/screen/authentication/bloc/login_bloc.dart';
+import 'package:easy/screen/notifscreen/notif.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -46,24 +48,35 @@ class UserInfoTemplate extends StatelessWidget {
               const Spacer(),
               // if (!canBack)
               //   GestureDetector(
-              //     onTap: () => navigator.push(NotifScreen.route()),
-              //     child: Stack(
-              //       children: [
-              //         Container(
-              //           padding: const EdgeInsets.all(6),
-              //           margin: const EdgeInsets.symmetric(horizontal: 25),
-              //           child: const Icon(Icons.notifications_none_rounded),
-              //         ),
-              //         BlocBuilder<AuthenticationBloc, AuthenticationState>(
-              //           builder: (context, state) {
-              //             if (state.user == null) {
-              //               return Container();
-              //             }
+              //     onTap: () {
+              //       context.read<AuthenticationBloc>().add(event);
+              //     },
+              //     child: Container(
+              //       padding: const EdgeInsets.all(6),
+              //       margin: const EdgeInsets.symmetric(horizontal: 25),
+              //       child: const Icon(Icons.refresh),
+              //     ),
+              //   )
+
+              //notification contoh
+              // if (!canBack)
+              // GestureDetector(
+              //   onTap: () => navigator.push(NotifScreen.route()),
+              //   child: Stack(
+              //     children: [
+              //       Container(
+              //         padding: const EdgeInsets.all(6),
+              //         margin: const EdgeInsets.symmetric(horizontal: 25),
+              //         child: const Icon(Icons.notifications_none_rounded),
+              //       ),
+              //       BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              //         builder: (context, state) {
+              //           if (state is Authenticated) {
               //             return FutureBuilder(
               //               future: getCountNotification(state.user!.nik),
               //               initialData: 0,
-              //               builder:
-              //                   (BuildContext context, AsyncSnapshot snapshot) {
+              //               builder: (BuildContext context,
+              //                   AsyncSnapshot snapshot) {
               //                 return Positioned(
               //                   left: 42,
               //                   child: Container(
@@ -84,11 +97,13 @@ class UserInfoTemplate extends StatelessWidget {
               //                 );
               //               },
               //             );
-              //           },
-              //         ),
-              //       ],
-              //     ),
-              //   )
+              //           }
+              //           return Container();
+              //         },
+              //       ),
+              //     ],
+              //   ),
+              // )
             ]),
           ),
           if (showUserInfo) userInfo(),

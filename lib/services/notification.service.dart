@@ -95,7 +95,7 @@ class NotificationService {
       int second = 0,
       bool forceNextDay = false,
       int? weekday}) async {
-    var workingDays = weekday ?? 7;
+    var workingDays = weekday ?? 5;
 
     var lastId = null;
     var lastLoadedNotification = Storage.read("lastNotificationId");
