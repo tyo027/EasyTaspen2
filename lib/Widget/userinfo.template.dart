@@ -3,8 +3,8 @@ import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
 import 'package:easy/repositories/notification.repository.dart';
-import 'package:easy/screen/authentication/bloc/login_bloc.dart';
-import 'package:easy/screen/notifscreen/notif.screen.dart';
+// import 'package:easy/screen/authentication/bloc/login_bloc.dart';
+// import 'package:easy/screen/notifscreen/notif.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -175,7 +175,7 @@ class UserInfoTemplate extends StatelessWidget {
                           if (state is Authenticated) {
                             if (state.user.jabatan == "" ||
                                 state.user.jabatan == null) {
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             } else {
                               return SizedBox(
                                 child: Text(
@@ -192,7 +192,7 @@ class UserInfoTemplate extends StatelessWidget {
                           if (state is Authenticated) {
                             if (state.user.unitkerja == "" ||
                                 state.user.unitkerja == null) {
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             } else {
                               return SizedBox(
                                 child: Text(

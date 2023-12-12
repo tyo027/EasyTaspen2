@@ -6,10 +6,10 @@ class NotificationRepository extends Repository {
       {required String nik}) async {
     try {
       var response = await dio.get("v2/NotificationEasyMobile/$nik");
-      print(response.data);
+      //print(response.data);
       return notificationModelFromJson(response.data);
     } catch (e) {
-      print(e);
+      //print(e);
       return [];
     }
   }
