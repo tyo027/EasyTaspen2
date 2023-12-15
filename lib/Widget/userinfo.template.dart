@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:easy/Widget/templatecopyright.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';

@@ -54,6 +54,7 @@ class VersionService {
     String? url;
     var uri = Uri.https("itunes.apple.com", "/lookup",
         {"bundleId": packageName, 'country': 'id'});
+    print(uri);
     try {
       final response = await http.get(uri);
       if (response.statusCode != 200) {
