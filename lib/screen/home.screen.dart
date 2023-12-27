@@ -30,7 +30,12 @@ class HomeScreen extends StatelessWidget {
       builder: (context, state) {
         if (state is Authenticated) {
           var canAccess = !["BOD", "BOC", "SBOC"].contains(state.user.perty);
-          var isAdmin = state.user.nik == "4161" || state.user.nik == "4199";
+          var isAdmin = [
+            "4161",
+            "4199",
+            "3746",
+            "4200",
+          ].contains(state.user.nik);
           return Column(
             children: [
               MenuTemplate(children: [
