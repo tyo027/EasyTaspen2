@@ -5,7 +5,7 @@ class NotificationRepository extends Repository {
   Future<List<NotificationModel>?> getNotification(
       {required String nik}) async {
     try {
-      var response = await dio.get("v2/NotificationEasyMobile/$nik");
+      var response = await dio.post("absensi/1.0/NotificationEasyMobile/$nik");
       //print(response.data);
       return notificationModelFromJson(response.data);
     } catch (e) {
@@ -16,7 +16,8 @@ class NotificationRepository extends Repository {
 
   Future<int> getCountNotification({required String nik}) async {
     try {
-      var response = await dio.get("v2/CountNotificationEasyMobile/$nik");
+      var response =
+          await dio.post("absensi/1.0/CountNotificationEasyMobile/$nik");
       return response.data['count'];
     } catch (e) {
       return 0;

@@ -52,7 +52,7 @@ class DeviceRepository extends Repository {
 
     var device = await getDevice();
 
-    var response = await dio.post("v2/DeviceId", data: {
+    var response = await dio.post("absensi/1.0/DeviceId", data: {
       "username": username,
       "uuid": uuid,
       "fcm_token": fcmToken,

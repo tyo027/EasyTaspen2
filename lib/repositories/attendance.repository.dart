@@ -28,7 +28,7 @@ class AttendanceRepository extends Repository {
             filename: imagePath != null ? null : "approve-2.png"),
       });
 
-      await dio.post("v2/SubmitAbsen", data: data);
+      await dio.post("absensi/1.0/SubmitAbsen", data: data);
       return true;
       // print(response);
       // return AuthenticationModel.fromJson(response.data);
@@ -52,7 +52,7 @@ class AttendanceRepository extends Repository {
 
   Future<List<AttendanceModel>> getAttendances({required String nik}) async {
     try {
-      var response = await dio.get("v2/GetAbsen/$nik");
+      var response = await dio.post("absensi/1.0/cekAbsenHarian/$nik");
       return attendanceModelFromJson(response.data);
     } catch (e) {
       return [];
@@ -64,7 +64,7 @@ class AttendanceRepository extends Repository {
       required String tglMulai,
       required String tglAkhir}) async {
     try {
-      var response = await dio.post("v2/getRekapKehadiran", data: {
+      var response = await dio.post("absensi/1.0/rekapKehadiran", data: {
         "nik": nik,
         "tgl_mulai": tglMulai,
         "tgl_akhir": tglAkhir,
@@ -80,7 +80,7 @@ class AttendanceRepository extends Repository {
       required String tglMulai,
       required String tglAkhir}) async {
     try {
-      var response = await dio.post("v2/getRekapKehadiranHarian", data: {
+      var response = await dio.post("absensi/1.0/rekapKehadiranHarian", data: {
         "nik": nik,
         "tgl_mulai": tglMulai,
         "tgl_akhir": tglAkhir,

@@ -3,7 +3,7 @@ import 'package:easy/services/storage.service.dart';
 
 class Repository {
   late Dio dio;
-  String baseUrl = "https://api.taspen.co.id/ApiWebTaspen/public/api/";
+  String baseUrl = "https://apigw.taspen.co.id/gateway/";
 
   Repository() {
     var hasToken = Storage.has("token");

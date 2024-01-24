@@ -7,7 +7,7 @@ import 'package:easy/repositories/repository.dart';
 class AuthenticationRepository extends Repository {
   Future<AuthenticationModel?> login(String username, String password) async {
     try {
-      var response = await dio.post("loginADNoToken",
+      var response = await dio.post("loginAD/1.0/ApiLoginADPublic",
           data: {"username": username, "password": password});
       // print(response.data);
 
@@ -20,7 +20,7 @@ class AuthenticationRepository extends Repository {
   Future<LocationModel?> getCabangLocation(String kdCabang) async {
     try {
       var response = await dio.post(
-        "GetDataCabangByKdcab?kdcab=$kdCabang",
+        "absensi/1.0/DataCabangByKdCab/$kdCabang",
       );
       // print(response.data["result"][0]);
       return LocationModel.fromJson(response.data["result"][0]);
@@ -31,7 +31,8 @@ class AuthenticationRepository extends Repository {
 
   Future<MppModel?> getMpp(String nik) async {
     try {
-      var response = await dio.post("v2/CustomAbsen", data: {"nik": nik});
+      var response =
+          await dio.post("absensi/1.0/CekAbsenCustom", data: {"nik": nik});
       return MppModel.fromJson(response.data["data"]);
     } catch (e) {
       return null;
@@ -40,7 +41,7 @@ class AuthenticationRepository extends Repository {
 
   Future<RuleModel?> getRules(String codeCabang) async {
     try {
-      var response = await dio.get('v2/rules/$codeCabang');
+      var response = await dio.post('absensi/1.0/rules/$codeCabang');
 
       return RuleModel.fromJson(response.data["data"]);
     } catch (e) {
