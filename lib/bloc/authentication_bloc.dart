@@ -126,7 +126,9 @@ class AuthenticationBloc
 
   FutureOr<void> onLoginRequested(
       AuthenticationLoginRequested event, Emitter emit) async {
-    Storage.activate();
+
+    // Storage.activate();
+    
     emit(Authenticated(user: event.user));
   }
 
