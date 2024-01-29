@@ -29,7 +29,7 @@ class ProfileRepository extends Repository {
   Future<List<JabatanModel>?> getJabatan({required String nik}) async {
     try {
       var response =
-          await dio.get("InternalSDM/1.0/ApiJabatan", data: {"nik": nik});
+          await dio.post("InternalSDM/1.0/ApiJabatan", data: {"nik": nik});
       return jabatanModelFromJson(response.data);
     } catch (e) {
       print(e);
