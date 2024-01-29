@@ -69,7 +69,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return;
     }
 
+
+    
     await Storage.write("token", auth.token);
+    
+    // Adding password to storage
+    await Storage.write("password", state.password);
 
     authenticationRepository.setJWTToken(auth.token);
     profileRepository.setJWTToken(auth.token);
@@ -91,6 +96,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (rules == null) {
       view.hideLoading();
       view.showToast(context, "Tidak Dapat Menemukan Data Kantor");
+
+      // reset token
+      await Storage.remove("token");
+      await Storage.remove("password");
+      await Storage.remove("username");
+      await Storage.remove("uuid");
+
       return;
     }
 
@@ -105,6 +117,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       // reset token
       await Storage.remove("token");
+      await Storage.remove("password");
+      await Storage.remove("username");
+      await Storage.remove("uuid");
+
       authenticationRepository.resetJWTToken();
       profileRepository.resetJWTToken();
 
@@ -132,6 +148,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     print(user);
 
     await Storage.write("user", json.encode(user.toJson()));
+    
     context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
           user: user,
         ));
