@@ -47,7 +47,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(state.copyWith(isPasswordShow: event.isPasswordShow));
   }
 
-  onLoginRequested(event, emit) async {
+  onLoginRequested(LoginRequestedEvent event, emit) async {
     if (!state.isFilled && !context.mounted) return;
     view.showLoading(context);
 
@@ -58,10 +58,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return;
     }
 
+    var username = !event.onBiometric
+        ? state.username.toLowerCase()
+        : Storage.read('username');
+    var password =
+        !event.onBiometric ? state.password : Storage.read('password');
+
     var auth = await deviceRepository.login(
-        password: state.password,
-        username: state.username.toLowerCase(),
-        uuid: uuid);
+        password: password, username: username, uuid: uuid);
 
     if (!auth.status) {
       view.hideLoading();
@@ -69,12 +73,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return;
     }
 
-
-    
     await Storage.write("token", auth.token);
-    
+
     // Adding password to storage
-    await Storage.write("password", state.password);
+    await Storage.write("password", password);
 
     authenticationRepository.setJWTToken(auth.token);
     profileRepository.setJWTToken(auth.token);
@@ -86,10 +88,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       location = location.copyWith(lat: mpp.lat, long: mpp.long);
     }
 
-    await Storage.write("username", state.username);
+    await Storage.write("username", username);
     await Storage.write("uuid", uuid);
 
-    FcmService.whenTokenUpdated(state.username, uuid, auth.nik);
+    FcmService.whenTokenUpdated(username, uuid, auth.nik);
 
     var rules = await authenticationRepository.getRules(auth.ba);
 
@@ -145,29 +147,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     view.hideLoading();
 
-    print(user);
-
     await Storage.write("user", json.encode(user.toJson()));
-    
+
     context.read<AuthenticationBloc>().add(AuthenticationLoginRequested(
           user: user,
         ));
   }
 
-  onLoginRequestedBiometric(event, emit) async {
-    if (!state.isFilled && !context.mounted) return;
-    view.showLoading(context);
-
+  onLoginRequestedBiometric(LoginRequestedBiometricEvent event, emit) async {
     var isAuthenticate = await BiometricService.authenticate();
     if (!isAuthenticate) {
-      view.hideLoading();
       view.showToast(context, "Failed to authenticate using biometric");
       return;
     }
 
-    context
-        .read<AuthenticationBloc>()
-        .add(AuthenticationBiometricGcRequested());
+    onLoginRequested(LoginRequestedEvent(onBiometric: true), emit);
   }
 }
 

@@ -66,8 +66,14 @@ class AuthenticationBloc
     if (!Storage.has("token") ||
         !Storage.has("user") ||
         !Storage.has("username") ||
-        !Storage.has("uuid")) {
+        !Storage.has("uuid") ||
+        !Storage.has("password")) {
       return emit(UnAuthenticated());
+    }
+
+    if (!Storage.status()) {
+      emit(Expired());
+      return;
     }
 
     var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
@@ -117,18 +123,14 @@ class AuthenticationBloc
       await Storage.activate();
       return emit(Authenticated(user: user));
     }
-    if (!Storage.status()) {
-      emit(Expired());
-      return;
-    }
+
     emit(Authenticated(user: user));
   }
 
   FutureOr<void> onLoginRequested(
       AuthenticationLoginRequested event, Emitter emit) async {
+    Storage.activate();
 
-    // Storage.activate();
-    
     emit(Authenticated(user: event.user));
   }
 
@@ -138,6 +140,7 @@ class AuthenticationBloc
     Storage.remove("user");
     Storage.remove("username");
     Storage.remove("uuid");
+    Storage.remove("password");
     Storage.deactivate();
     LocationService.reset();
     emit(UnAuthenticated());
@@ -155,7 +158,8 @@ class AuthenticationBloc
     if (!Storage.has("token") ||
         !Storage.has("user") ||
         !Storage.has("username") ||
-        !Storage.has("uuid")) {
+        !Storage.has("uuid") ||
+        !Storage.has("password")) {
       return emit(UnAuthenticated());
     }
 
@@ -168,12 +172,17 @@ class AuthenticationBloc
       emit(Expired());
       return;
     }
-    await DeviceRepository().setToken(
+    var status = await DeviceRepository().setToken(
         username: Storage.read('username'),
         uuid: Storage.read('uuid'),
         fcmToken: fcmToken,
         nik: user.nik);
-    await Storage.activate();
-    return emit(Authenticated(user: user));
+
+    if (status != null) {
+      await Storage.activate();
+      return emit(Authenticated(user: user));
+    }
+
+    onLogoutRequested(AuthenticationLogoutRequested(), emit);
   }
 }

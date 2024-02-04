@@ -32,6 +32,10 @@ class LoginPasswordShowChanged extends LoginEvent {
   List<Object?> get props => [isPasswordShow];
 }
 
-class LoginRequestedEvent extends LoginEvent {}
+class LoginRequestedEvent extends LoginEvent {
+  final bool onBiometric;
+
+  LoginRequestedEvent({this.onBiometric = false});
+}
 
 class LoginRequestedBiometricEvent extends LoginEvent {}

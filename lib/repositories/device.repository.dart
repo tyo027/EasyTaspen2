@@ -48,21 +48,27 @@ class DeviceRepository extends Repository {
       required String fcmToken,
       required String nik,
       String? token = null}) async {
-    if (token != null) dio.options.headers["Authorization"] = "Bearer ${token}";
+    try {
+      if (token != null) {
+        dio.options.headers["Authorization"] = "Bearer ${token}";
+      }
 
-    var device = await getDevice();
+      var device = await getDevice();
 
-    var response = await dio.post("absensi/1.0/DeviceId", data: {
-      "username": username,
-      "uuid": uuid,
-      "fcm_token": fcmToken,
-      "nik": nik,
-      "device_name": device.device_name,
-      "app_version": device.app_version,
-      "os_version": device.os_version,
-    });
+      var response = await dio.post("absensi/1.0/DeviceId", data: {
+        "username": username,
+        "uuid": uuid,
+        "fcm_token": fcmToken,
+        "nik": nik,
+        "device_name": device.device_name,
+        "app_version": device.app_version,
+        "os_version": device.os_version,
+      });
 
-    return response;
+      return response;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<DeviceIdModel> getDevice() async {
