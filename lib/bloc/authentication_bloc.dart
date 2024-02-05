@@ -51,8 +51,6 @@ class AuthenticationBloc
       }
 
       await Future.delayed(const Duration(seconds: 1));
-      await NotificationService.init();
-      await NotificationService.loadAllNotification();
     }
 
     // if (Storage.has("user")) {
@@ -121,7 +119,18 @@ class AuthenticationBloc
           fcmToken: fcmToken,
           nik: user.nik);
       await Storage.activate();
+
+      if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
+        await NotificationService.init();
+        await NotificationService.loadAllNotification();
+      }
+
       return emit(Authenticated(user: user));
+    }
+
+    if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
+      await NotificationService.init();
+      await NotificationService.loadAllNotification();
     }
 
     emit(Authenticated(user: user));
@@ -131,6 +140,10 @@ class AuthenticationBloc
       AuthenticationLoginRequested event, Emitter emit) async {
     Storage.activate();
 
+    if (!["BOD", "BOC", "SBOC"].contains(event.user.perty ?? '')) {
+      await NotificationService.init();
+      await NotificationService.loadAllNotification();
+    }
     emit(Authenticated(user: event.user));
   }
 
@@ -143,6 +156,7 @@ class AuthenticationBloc
     Storage.remove("password");
     Storage.deactivate();
     LocationService.reset();
+
     emit(UnAuthenticated());
   }
 
@@ -180,6 +194,12 @@ class AuthenticationBloc
 
     if (status != null) {
       await Storage.activate();
+
+      if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
+        await NotificationService.init();
+        await NotificationService.loadAllNotification();
+      }
+
       return emit(Authenticated(user: user));
     }
 
