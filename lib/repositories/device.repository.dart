@@ -48,27 +48,27 @@ class DeviceRepository extends Repository {
       required String fcmToken,
       required String nik,
       String? token = null}) async {
-    try {
-      if (token != null) {
-        dio.options.headers["Authorization"] = "Bearer ${token}";
-      }
-
-      var device = await getDevice();
-
-      var response = await dio.post("absensi/1.0/DeviceId", data: {
-        "username": username,
-        "uuid": uuid,
-        "fcm_token": fcmToken,
-        "nik": nik,
-        "device_name": device.device_name,
-        "app_version": device.app_version,
-        "os_version": device.os_version,
-      });
-
-      return response;
-    } catch (e) {
-      return null;
+    // try {
+    if (token != null) {
+      dio.options.headers["Authorization"] = "Bearer ${token}";
     }
+
+    var device = await getDevice();
+
+    var response = await dio.post("absensi/1.0/DeviceId", data: {
+      "username": username,
+      "uuid": uuid,
+      "fcm_token": fcmToken,
+      "nik": nik,
+      "device_name": device.device_name,
+      "app_version": device.app_version,
+      "os_version": device.os_version,
+    });
+
+    return response;
+    // } catch (e) {
+    //   return null;
+    // }
   }
 
   Future<DeviceIdModel> getDevice() async {
@@ -117,9 +117,9 @@ class DeviceRepository extends Repository {
 
       if (response.statusCode != 200) {
         return AuthResponse(
-            status: false, message: response.statusMessage ?? '');
+            status: false,
+            message: response.statusMessage ?? "Up's something went wrong!");
       }
-      // print(response.data);
       // return AuthResponse(status: false);
 
       if (response.data['status'] == false) {

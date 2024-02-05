@@ -186,13 +186,14 @@ class AuthenticationBloc
       emit(Expired());
       return;
     }
-    var status = await DeviceRepository().setToken(
-        username: Storage.read('username'),
-        uuid: Storage.read('uuid'),
-        fcmToken: fcmToken,
-        nik: user.nik);
 
-    if (status != null) {
+    try {
+      await DeviceRepository().setToken(
+          username: Storage.read('username'),
+          uuid: Storage.read('uuid'),
+          fcmToken: fcmToken,
+          nik: user.nik);
+
       await Storage.activate();
 
       if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
@@ -201,7 +202,7 @@ class AuthenticationBloc
       }
 
       return emit(Authenticated(user: user));
-    }
+    } catch (e) {}
 
     onLogoutRequested(AuthenticationLogoutRequested(), emit);
   }
