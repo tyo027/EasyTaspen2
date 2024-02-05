@@ -8,7 +8,7 @@ class ProfileRepository extends Repository {
     try {
       var response =
           await dio.post("InternalSDM/1.0/ApiIdentitas", data: {"nik": nik});
-      return ProfileModel.fromJson(response.data);
+      return ProfileModel.fromJson(response.data['identity']);
     } catch (e) {
       print(e);
       return null;
