@@ -5,7 +5,7 @@ class PaySlipRepository extends Repository {
       {required String nik, required String thnbln}) async {
     try {
       var response = await dio.post("InternalSDM/1.0/ApiGaji",
-          data: {"nik": nik, "thnbln": thnbln});
+          data: {"nik": nik, "blnthn": thnbln});
 
       return response.data;
     } catch (e) {

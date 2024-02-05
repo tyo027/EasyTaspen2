@@ -62,6 +62,39 @@ class HomeScreen extends StatelessWidget {
                     child: SvgPicture.asset("assets/svgs/payslip.svg"),
                   ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CupertinoAlertDialog(
+                          title: const Text("Log Out Sekarang"),
+                          content: const Text("Log Out Sekarang"),
+                          actions: [
+                            CupertinoDialogAction(
+                              child: const Text("YA"),
+                              onPressed: () {
+                                context
+                                    .read<AuthenticationBloc>()
+                                    .add(AuthenticationLogoutRequested());
+                              },
+                            ),
+                            CupertinoDialogAction(
+                              child: const Text("TIDAK"),
+                              onPressed: () {
+                                navigator.pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    child: SvgPicture.asset("assets/svgs/logout.svg"),
+                  ),
+                ),
                 if (isAdmin)
                   GestureDetector(
                     onTap: () => navigator.push(AdminScreen.route()),
@@ -72,50 +105,50 @@ class HomeScreen extends StatelessWidget {
                   ),
               ]),
               const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return CupertinoAlertDialog(
-                        title: const Text("Log Out Sekarang"),
-                        content: const Text("Log Out Sekarang"),
-                        actions: [
-                          CupertinoDialogAction(
-                            child: const Text("YA"),
-                            onPressed: () {
-                              context
-                                  .read<AuthenticationBloc>()
-                                  .add(AuthenticationLogoutRequested());
-                            },
-                          ),
-                          CupertinoDialogAction(
-                            child: const Text("TIDAK"),
-                            onPressed: () {
-                              navigator.pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 35, vertical: 30),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.red.shade800,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: const Center(
-                      child: Text(
-                    "Log Out",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     showDialog(
+              //       context: context,
+              //       builder: (context) {
+              //         return CupertinoAlertDialog(
+              //           title: const Text("Log Out Sekarang"),
+              //           content: const Text("Log Out Sekarang"),
+              //           actions: [
+              //             CupertinoDialogAction(
+              //               child: const Text("YA"),
+              //               onPressed: () {
+              //                 context
+              //                     .read<AuthenticationBloc>()
+              //                     .add(AuthenticationLogoutRequested());
+              //               },
+              //             ),
+              //             CupertinoDialogAction(
+              //               child: const Text("TIDAK"),
+              //               onPressed: () {
+              //                 navigator.pop();
+              //               },
+              //             ),
+              //           ],
+              //         );
+              //       },
+              //     );
+              //   },
+              //   child: Container(
+              //     padding: const EdgeInsets.all(20),
+              //     margin:
+              //         const EdgeInsets.symmetric(horizontal: 35, vertical: 30),
+              //     width: double.infinity,
+              //     decoration: BoxDecoration(
+              //         color: Colors.red.shade800,
+              //         borderRadius: BorderRadius.circular(20)),
+              //     child: const Center(
+              //         child: Text(
+              //       "Log Out",
+              //       style: TextStyle(
+              //           color: Colors.white, fontWeight: FontWeight.bold),
+              //     )),
+              //   ),
+              // ),
             ],
           );
         }
