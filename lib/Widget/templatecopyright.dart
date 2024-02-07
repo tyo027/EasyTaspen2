@@ -16,7 +16,7 @@ class Templatecopyright extends StatelessWidget {
             children: [
               if (child != null)
                 Flexible(fit: FlexFit.tight, child: Container(child: child!)),
-              const Text('Powered by: PT TASPEN (Persero)')
+              const Text('Powered by:PT TASPEN(Persero) - V.3.0.0')
             ]));
   }
 }
