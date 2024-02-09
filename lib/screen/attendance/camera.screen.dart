@@ -262,9 +262,12 @@ class _CameraState extends State<Camera> with WidgetsBindingObserver {
       return;
     }
 
-    NotificationService.showNotification(
-        title: "Absen Berhasil Direkam",
-        body: "Data Absen Anda Berhasil Direkam");
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Absen Berhasil Direkam"),
+    ));
+    // NotificationService.showNotification(
+    //     title: "Absen Berhasil Direkam",
+    //     body: "Data Absen Anda Berhasil Direkam");
     navigator.pushAndRemoveUntil(HomeScreen.route(), (route) => false);
   }
 }

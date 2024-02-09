@@ -5,8 +5,8 @@ class PermissionService {
     var permissions = [
       Permission.camera,
       Permission.location,
-      // Permission.microphone,
       Permission.notification,
+      Permission.scheduleExactAlarm,
     ];
     var hasDeniedPermission = false;
     await permissions.request();
