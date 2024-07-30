@@ -5,6 +5,7 @@ import 'package:easy/models/location.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
+import 'package:easy/repositories/isadmin.repository.dart';
 import 'package:easy/services/fcm.service.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
@@ -105,6 +106,10 @@ class AuthenticationBloc
         allowMock: rules.allowMock,
         radius: rules.radius);
 
+    if (await IsAdminRepository().getIsAdmin(nik: user.nik)) {
+      user = user.copyWith(isAdmin: true);
+    }
+
     await Storage.write("user", json.encode(user.toJson()));
 
     if (event.isBiometric) {
@@ -144,6 +149,7 @@ class AuthenticationBloc
       await NotificationService.init();
       await NotificationService.loadAllNotification();
     }
+
     emit(Authenticated(user: event.user));
   }
 
@@ -178,6 +184,10 @@ class AuthenticationBloc
     }
 
     var user = UserModel.fromJson(jsonDecode(Storage.read<String>("user")!));
+
+    if (await IsAdminRepository().getIsAdmin(nik: user.nik)) {
+      user = user.copyWith(isAdmin: true);
+    }
 
     if (!user.isActive) return emit(Authenticated(user: user));
 

@@ -49,7 +49,8 @@ class LocationService {
 
     var position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
-
+    // ignore: avoid_print
+    print(_user());
     if (_user() != null && type == SubmitAttendanceType.wfo) {
       if (_user()!.nik == "4161") {
         return HasPosition(

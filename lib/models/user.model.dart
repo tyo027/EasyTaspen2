@@ -15,6 +15,7 @@ class UserModel extends Equatable {
   final bool allowWFO;
   final bool allowMock;
   final int radius;
+  final bool isAdmin;
 
   const UserModel(
       {required this.nik,
@@ -30,7 +31,8 @@ class UserModel extends Equatable {
       this.allowWFA = false,
       this.allowWFO = false,
       this.allowMock = false,
-      this.radius = 0});
+      this.radius = 0,
+      this.isAdmin = false});
 
   UserModel copyWith(
           {String? nik,
@@ -46,7 +48,8 @@ class UserModel extends Equatable {
           bool? allowWFA,
           bool? allowWFO,
           bool? allowMock,
-          int? radius}) =>
+          int? radius,
+          bool? isAdmin}) =>
       UserModel(
           nik: nik ?? this.nik,
           nama: nama ?? this.nama,
@@ -57,11 +60,12 @@ class UserModel extends Equatable {
           gender: gender ?? this.gender,
           isActive: isActive ?? this.isActive,
           latitude: latitude ?? this.latitude,
-          longitude: longitude ?? this.latitude,
+          longitude: longitude ?? this.longitude,
           allowWFA: allowWFA ?? this.allowWFA,
           allowWFO: allowWFO ?? this.allowWFO,
           allowMock: allowMock ?? this.allowMock,
-          radius: radius ?? this.radius);
+          radius: radius ?? this.radius,
+          isAdmin: isAdmin ?? this.isAdmin);
 
   static UserModel fromJson(Map<String, dynamic> json) => UserModel(
         nik: json['NIK'],
@@ -78,6 +82,7 @@ class UserModel extends Equatable {
         allowWFO: json.containsKey("allowWFO") ? json["allowWFO"] : false,
         allowMock: json.containsKey("allowMock") ? json["allowMock"] : false,
         radius: json.containsKey("radius") ? json["radius"] : 0,
+        isAdmin: json.containsKey("isAdmin") ? json["isAdmin"] : false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -94,7 +99,8 @@ class UserModel extends Equatable {
         "allowWFA": allowWFA,
         "allowWFO": allowWFO,
         "allowMock": allowMock,
-        "radius": radius
+        "radius": radius,
+        "isAdmin": isAdmin,
       };
 
   @override
@@ -112,6 +118,7 @@ class UserModel extends Equatable {
         allowWFA,
         allowWFO,
         allowMock,
-        radius
+        radius,
+        isAdmin
       ];
 }

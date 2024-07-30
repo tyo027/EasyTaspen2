@@ -4,6 +4,7 @@ import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/admin/admin.screen.dart';
 import 'package:easy/screen/attendance/attendance.screen.dart';
+import 'package:easy/screen/manajemenscreen/manajemen.screen.dart';
 import 'package:easy/screen/payslip/pay_slip.screen.dart';
 import 'package:easy/screen/profile.screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,12 +31,7 @@ class HomeScreen extends StatelessWidget {
       builder: (context, state) {
         if (state is Authenticated) {
           var canAccess = !["BOD", "BOC", "SBOC"].contains(state.user.perty);
-          var isAdmin = [
-            "4161",
-            "4199",
-            "3746",
-            "4200",
-          ].contains(state.user.nik);
+          print(state.user.toJson());
           return Column(
             children: [
               MenuTemplate(children: [
@@ -55,6 +51,14 @@ class HomeScreen extends StatelessWidget {
                       child: SvgPicture.asset("assets/svgs/absensi.svg"),
                     ),
                   ),
+                if (canAccess)
+                  GestureDetector(
+                    onTap: () => navigator.push(ManajemenScreen.route()),
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      child: SvgPicture.asset("assets/svgs/manajemen.svg"),
+                    ),
+                  ),
                 GestureDetector(
                   onTap: () => navigator.push(PasySlipScreen.route()),
                   child: Container(
@@ -62,6 +66,14 @@ class HomeScreen extends StatelessWidget {
                     child: SvgPicture.asset("assets/svgs/payslip.svg"),
                   ),
                 ),
+                if (state.user.isAdmin)
+                  GestureDetector(
+                    onTap: () => navigator.push(AdminScreen.route()),
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      child: SvgPicture.asset("assets/svgs/admin.svg"),
+                    ),
+                  ),
                 GestureDetector(
                   onTap: () {
                     showDialog(
@@ -95,14 +107,6 @@ class HomeScreen extends StatelessWidget {
                     child: SvgPicture.asset("assets/svgs/logout.svg"),
                   ),
                 ),
-                if (isAdmin)
-                  GestureDetector(
-                    onTap: () => navigator.push(AdminScreen.route()),
-                    child: Container(
-                      margin: const EdgeInsets.all(5),
-                      child: SvgPicture.asset("assets/svgs/admin.svg"),
-                    ),
-                  ),
               ]),
               const Spacer(),
               // GestureDetector(

@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:easy/app.dart';
 import 'package:easy/services/fcm.service.dart';
+import 'package:easy/services/notification.service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,6 +20,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FcmService.initialize();
+//  await NotificationService.cancelNotifications();
 
   runApp(const App());
 }

@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:easy/repositories/libur.repository.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:easy/utils/notification.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -127,7 +129,7 @@ class NotificationService {
           }
         }
       }
-      print("$lastLoadedNotification \t $id0");
+      //print("$lastLoadedNotification \t $id0");
       if (lastLoadedNotification == null ||
           (lastLoadedNotification != null && id0 > lastLoadedNotification)) {
         print('Load notif $id0 $datetime ');
@@ -236,6 +238,12 @@ class NotificationService {
       print('cancel notification $id');
       await flutterLocalNotificationsPlugin.cancel(id);
     });
+
+    // if (await LiburRepository().getIsLibur(
+    //     tgl_merah: DateFormat("yyyy-MM-dd").format(
+    //         tz.TZDateTime(tz.local, now.year, now.month, now.day + 7)))) {
+    //   return;
+    // }
 
     await loadAllNotification(
         channelName: channelName, weekday: now.weekday, forceNextDay: true);

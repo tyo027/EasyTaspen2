@@ -8,6 +8,7 @@ import 'package:easy/models/location.model.dart';
 import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
+import 'package:easy/repositories/isadmin.repository.dart';
 import 'package:easy/repositories/profile.repository.dart';
 import 'package:easy/services/biometric.service.dart';
 import 'package:easy/services/fcm.service.dart';
@@ -144,6 +145,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         allowWFO: rules.allowWFO,
         allowMock: rules.allowMock,
         radius: rules.radius);
+
+    if (await IsAdminRepository().getIsAdmin(nik: user.nik)) {
+      user = user.copyWith(isAdmin: true);
+    }
 
     view.hideLoading();
 
