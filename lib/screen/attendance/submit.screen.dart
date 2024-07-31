@@ -170,56 +170,53 @@ class SubmitAttendance extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      FutureBuilder(
-                          future: LocationService.getDistanceTo(type: type),
-                          builder: (context, snapshot) {
-                            var outOfRange = snapshot.hasData
-                                ? (snapshot.data! > 100)
-                                : true;
-                            var enable = (!outOfRange &&
-                                    type == SubmitAttendanceType.wfo) ||
-                                type == SubmitAttendanceType.wfa;
-                            return Column(
-                              children: [
-                                if (outOfRange && !enable)
-                                  const Text(
-                                      "Anda Tidak Berada Di Area Kantor"),
-                                BlocBuilder<AuthenticationBloc,
-                                    AuthenticationState>(
-                                  builder: (context, state) {
-                                    if (state is Authenticated && enable) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          submit(
-                                            enable,
-                                            context,
-                                            state.user,
-                                            location.position,
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(20),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 35, vertical: 30),
-                                          width: 400,
-                                          decoration: BoxDecoration(
-                                              color: enable
-                                                  ? Colors.amberAccent
-                                                  : Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                          child: const Center(
-                                              child: Text("Absen")),
-                                        ),
-                                      );
-                                    }
+                      BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                          builder: (context, state) {
+                        if (state is! Authenticated) return const SizedBox();
 
-                                    return Container();
-                                  },
-                                ),
-                              ],
-                            );
-                          }),
+                        return FutureBuilder(
+                            future: LocationService.getDistanceTo(type: type),
+                            builder: (context, snapshot) {
+                              var outOfRange = snapshot.hasData
+                                  ? (snapshot.data! > state.user.radius)
+                                  : true;
+                              var enable = (!outOfRange &&
+                                      type == SubmitAttendanceType.wfo) ||
+                                  type == SubmitAttendanceType.wfa;
+                              return Column(
+                                children: [
+                                  if (outOfRange && !enable)
+                                    const Text(
+                                        "Anda Tidak Berada Di Area Kantor"),
+                                  if (state is Authenticated && enable)
+                                    GestureDetector(
+                                      onTap: () {
+                                        submit(
+                                          enable,
+                                          context,
+                                          state.user,
+                                          location.position,
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(20),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 35, vertical: 30),
+                                        width: 400,
+                                        decoration: BoxDecoration(
+                                            color: enable
+                                                ? Colors.amberAccent
+                                                : Colors.grey,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        child:
+                                            const Center(child: Text("Absen")),
+                                      ),
+                                    )
+                                ],
+                              );
+                            });
+                      }),
                     ],
                   );
                 }
