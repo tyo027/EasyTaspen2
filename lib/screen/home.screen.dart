@@ -51,14 +51,14 @@ class HomeScreen extends StatelessWidget {
                       child: SvgPicture.asset("assets/svgs/absensi.svg"),
                     ),
                   ),
-                if (canAccess)
-                  GestureDetector(
-                    onTap: () => navigator.push(ManajemenScreen.route()),
-                    child: Container(
-                      margin: const EdgeInsets.all(5),
-                      child: SvgPicture.asset("assets/svgs/manajemen.svg"),
-                    ),
-                  ),
+                // if (canAccess)
+                //   GestureDetector(
+                //     onTap: () => navigator.push(ManajemenScreen.route()),
+                //     child: Container(
+                //       margin: const EdgeInsets.all(5),
+                //       child: SvgPicture.asset("assets/svgs/manajemen.svg"),
+                //     ),
+                //   ),
                 GestureDetector(
                   onTap: () => navigator.push(PasySlipScreen.route()),
                   child: Container(

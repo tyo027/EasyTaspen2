@@ -144,7 +144,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         allowWFA: rules.allowWFA,
         allowWFO: rules.allowWFO,
         allowMock: rules.allowMock,
-        radius: rules.radius);
+        radius:
+            mpp != null && mpp.custom == 1 ? mpp.radius.toInt() : rules.radius);
 
     if (await IsAdminRepository().getIsAdmin(nik: user.nik)) {
       user = user.copyWith(isAdmin: true);

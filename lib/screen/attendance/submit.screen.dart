@@ -188,7 +188,7 @@ class SubmitAttendance extends StatelessWidget {
                                   if (outOfRange && !enable)
                                     const Text(
                                         "Anda Tidak Berada Di Area Kantor"),
-                                  if (state is Authenticated && enable)
+                                  if (enable)
                                     GestureDetector(
                                       onTap: () {
                                         submit(
