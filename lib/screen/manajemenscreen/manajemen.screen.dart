@@ -4,9 +4,11 @@ import 'package:easy/Widget/userinfo.template.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
 import 'package:easy/models/attendance.model.dart';
+import 'package:easy/models/cekstaff.model.dart';
 import 'package:easy/models/rekapkehadiran.model.dart';
 import 'package:easy/models/rekapkehadiranharian.model.dart';
 import 'package:easy/repositories/attendance.repository.dart';
+import 'package:easy/repositories/cekstaff.repository.dart';
 import 'package:easy/screen/laporanscreen/bloc/kehadiran_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -348,46 +350,44 @@ class ManajemenScreen extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.blueGrey[50],
             borderRadius: BorderRadius.circular(10)),
-        child: BlocBuilder<KehadiranBloc, KehadiranState>(
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            return DropdownButton<LaporanType>(
-                isExpanded: true,
-                value: state is RekapKehadiran
-                    ? LaporanType.REKAP_KEHADIRAN
-                    : state is KehadiranHarianVerified
-                        ? LaporanType.KEHADIRAN_HARIAN_VERIFIED
-                        : LaporanType.CEK_ABSEN_HARIAN,
-                elevation: 16,
-                style: const TextStyle(color: Colors.black),
-                underline: Container(
-                  height: 0,
-                ),
-                onChanged: (LaporanType? type) {
-                  if (type != null) {
-                    if (type == LaporanType.REKAP_KEHADIRAN) {
-                      context.read<KehadiranBloc>().add(RekapKehadiranEvent());
-                    }
-
-                    if (type == LaporanType.KEHADIRAN_HARIAN_VERIFIED) {
-                      context
-                          .read<KehadiranBloc>()
-                          .add(KehadiranHarianVerifiedEvent());
-                    }
-
-                    if (type == LaporanType.CEK_ABSEN_HARIAN) {
-                      context.read<KehadiranBloc>().add(CekAbsenHarianEvent());
-                    }
-                  }
-                },
-                items: LaporanType.values
-                    .map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type.name
-                              .split('_')
-                              .map((e) => e.capitalize())
-                              .join(" ")),
-                        ))
-                    .toList());
+            return FutureBuilder<List<CekStaffModel>>(
+              future: CekStaff().getStaff(nik: "3130"),
+              initialData: null,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return DropdownButton<CekStaffModel>(
+                    isExpanded: true,
+                    value: snapshot.hasData
+                        ? null
+                        : const CekStaffModel(
+                            nik: "nik",
+                            nama: "Sedang Memuat Data",
+                            positionname: "positionname"),
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.black),
+                    underline: Container(
+                      height: 0,
+                    ),
+                    onChanged: (value) {},
+                    items: snapshot.hasData
+                        ? (snapshot.data as List<CekStaffModel>)
+                            .map((type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type.nama),
+                                ))
+                            .toList()
+                        : [
+                            const DropdownMenuItem(
+                              value: CekStaffModel(
+                                  nik: "nik",
+                                  nama: "Sedang Memuat Data",
+                                  positionname: "positionname"),
+                              child: Text("SEDANG MEMUAT DATA"),
+                            )
+                          ]);
+              },
+            );
           },
         ));
   }
@@ -401,7 +401,7 @@ class ManajemenScreen extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   if (state.isLoading) return;
-
+                  print(CekStaff().getStaff(nik: auth.user.nik));
                   if (state is RekapKehadiran && state.thnBln != null) {
                     findMonthly(context, auth.user.nik, state.thnBln!);
                   }
