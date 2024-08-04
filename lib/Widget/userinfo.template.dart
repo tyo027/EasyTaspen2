@@ -4,6 +4,7 @@ import 'package:easy/Widget/templatecopyright.dart';
 import 'package:easy/app.dart';
 import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/extension.dart';
+import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/notification.repository.dart';
 // import 'package:easy/screen/authentication/bloc/login_bloc.dart';
 // import 'package:easy/screen/notifscreen/notif.screen.dart';
@@ -17,11 +18,14 @@ class UserInfoTemplate extends StatelessWidget {
     this.child,
     this.canBack = true,
     this.showUserInfo = true,
+    this.builder,
   });
 
   final Widget? child;
   final bool canBack;
   final bool showUserInfo;
+
+  final Widget Function(BuildContext context, UserModel user)? builder;
 
   Future<int> getCountNotification(String nik) {
     return NotificationRepository().getCountNotification(nik: nik);
@@ -111,6 +115,17 @@ class UserInfoTemplate extends StatelessWidget {
           if (showUserInfo) userInfo(),
           if (child != null)
             Flexible(fit: FlexFit.tight, child: Container(child: child!)),
+          if (builder != null)
+            Flexible(
+                fit: FlexFit.tight,
+                child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                  builder: (context, state) {
+                    if (state is Authenticated) {
+                      return Container(child: builder!(context, state.user));
+                    }
+                    return const SizedBox();
+                  },
+                )),
         ],
       )),
     ));
