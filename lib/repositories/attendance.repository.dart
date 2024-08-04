@@ -28,7 +28,7 @@ class AttendanceRepository extends Repository {
             filename: imagePath != null ? null : "approve-2.png"),
       });
 
-      await dio.post("absensi/1.0/SubmitAbsen", data: data);
+      await dio.post("absensi/1.0/SbmtAbsnNw", data: data);
       return true;
       // print(response);
       // return AuthenticationModel.fromJson(response.data);

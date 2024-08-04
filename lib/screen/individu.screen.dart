@@ -36,6 +36,7 @@ class IndividuScreen extends StatelessWidget {
           tmt: '-',
           unit: '-'));
     }
+
     return ProfileRepository().getProfile(nik: nik);
   }
 

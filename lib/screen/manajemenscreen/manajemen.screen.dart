@@ -24,7 +24,7 @@ class ManajemenScreen extends StatelessWidget {
       child: UserInfoTemplate(
         builder: (context, user) {
           context.read<ManajemenBloc>().add(
-                LoadManajemenUserData(nik: '3130'),
+                LoadManajemenUserData(nik: user.nik),
               );
           return BlocConsumer<ManajemenBloc, ManajemenState>(
             builder: (context, manajemenState) {
@@ -154,7 +154,7 @@ class ManajemenScreen extends StatelessWidget {
                   ? manajemenState.staff!
                       .map((type) => DropdownMenuItem(
                             value: type,
-                            child: Text(type.nama),
+                            child: Text("${type.nama} (${type.positionname})"),
                           ))
                       .toList()
                   : [])
@@ -304,7 +304,18 @@ class ManajemenScreen extends StatelessWidget {
   Widget cariBtn(BuildContext context, ManajemenState manajemenState) {
     return GestureDetector(
       onTap: () {
-        context.read<ManajemenBloc>().add(Search());
+        if (manajemenState is SuccessState &&
+            manajemenState.selectedStaff != null &&
+            manajemenState.selectedType != null &&
+            (manajemenState.selectedType == LaporanType.REKAP_KEHADIRAN &&
+                    manajemenState.thnBln != null ||
+                manajemenState.selectedType ==
+                        LaporanType.KEHADIRAN_HARIAN_VERIFIED &&
+                    manajemenState.tglAkhir != null &&
+                    manajemenState.tglMulai != null ||
+                manajemenState.selectedType == LaporanType.CEK_ABSEN_HARIAN)) {
+          context.read<ManajemenBloc>().add(Search());
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(14),

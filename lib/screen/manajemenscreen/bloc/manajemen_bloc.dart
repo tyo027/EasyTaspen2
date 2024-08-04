@@ -52,6 +52,9 @@ class ManajemenBloc extends Bloc<ManajemenEvent, ManajemenState> {
       final currentState = state;
 
       if (currentState is SuccessState) {
+        if (currentState.selectedStaff == null) {
+          return;
+        }
         emit(currentState.copyWith(
           isLoading: true,
           thnBln: currentState.thnBln,
