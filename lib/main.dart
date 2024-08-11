@@ -20,7 +20,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FcmService.initialize();
-//  await NotificationService.cancelNotifications();
+  await NotificationService.init();
+  // NotificationService.showNotification(body: "oke", title: "sda");
 
   runApp(const App());
 }
