@@ -20,6 +20,11 @@ class NotificationService {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     if (Platform.isIOS) {
       await _requireIOSPermission();
+    } else {
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestFullScreenIntentPermission();
     }
 
     await _initializedPlatform();
