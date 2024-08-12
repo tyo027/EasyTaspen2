@@ -2,6 +2,7 @@ import 'package:easy/bloc/authentication_bloc.dart';
 import 'package:easy/screen/flash.screen.dart';
 import 'package:easy/screen/home.screen.dart';
 import 'package:easy/screen/authentication/login.screen.dart';
+import 'package:easy/services/alarm_service.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

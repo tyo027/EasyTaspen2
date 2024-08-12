@@ -7,6 +7,7 @@ import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/attendance.repository.dart';
 import 'package:easy/screen/attendance/camera.screen.dart';
 import 'package:easy/screen/home.screen.dart';
+import 'package:easy/services/alarm_service.dart';
 import 'package:easy/services/biometric.service.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
@@ -30,9 +31,9 @@ class SubmitAttendance extends StatelessWidget {
   Future cancelNotification() async {
     var now = DateTime.now();
     if (now.hour < 12) {
-      await NotificationService.cancelNotifications("NOTIF_MASUK_KERJA");
+      await AlarmService.cancelNotifications("NOTIF_MASUK_KERJA");
     } else if (now.hour >= 12) {
-      await NotificationService.cancelNotifications("NOTIF_PULANG_KERJA");
+      await AlarmService.cancelNotifications("NOTIF_PULANG_KERJA");
     }
   }
 

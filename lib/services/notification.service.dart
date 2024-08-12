@@ -21,10 +21,12 @@ class NotificationService {
     if (Platform.isIOS) {
       await _requireIOSPermission();
     } else {
-      await flutterLocalNotificationsPlugin
+      var result = await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .requestFullScreenIntentPermission();
+
+      print("Result $result");
     }
 
     await _initializedPlatform();
@@ -83,7 +85,7 @@ class NotificationService {
             'easy.notification.id', 'easy.notification.channel',
             channelDescription: 'Easy notification',
             importance: Importance.max,
-            priority: Priority.high,
+            priority: Priority.max,
             ticker: 'ticker');
     var notificationDetails =
         const NotificationDetails(android: androidNotificationDetails);
@@ -104,7 +106,7 @@ class NotificationService {
       int? weekday}) async {
     var workingDays = weekday ?? 5;
 
-    var lastId = null;
+    int? lastId;
     var lastLoadedNotification = Storage.read("lastNotificationId");
     var lastAbsen = Storage.read('last-absen');
 
@@ -154,7 +156,7 @@ class NotificationService {
           // matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime
         );
       }
-      if (lastId == null || (lastId != null && id0 > lastId)) {
+      if (lastId == null || (id0 > lastId)) {
         lastId = id0;
       }
     }

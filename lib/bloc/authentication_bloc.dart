@@ -6,6 +6,7 @@ import 'package:easy/models/user.model.dart';
 import 'package:easy/repositories/authentication.repository.dart';
 import 'package:easy/repositories/device.repository.dart';
 import 'package:easy/repositories/isadmin.repository.dart';
+import 'package:easy/services/alarm_service.dart';
 import 'package:easy/services/fcm.service.dart';
 import 'package:easy/services/location.service.dart';
 import 'package:easy/services/notification.service.dart';
@@ -126,16 +127,16 @@ class AuthenticationBloc
       await Storage.activate();
 
       if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
-        await NotificationService.init();
-        await NotificationService.loadAllNotification();
+        await AlarmService.init();
+        await AlarmService.loadAllNotification();
       }
 
       return emit(Authenticated(user: user));
     }
 
     if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
-      await NotificationService.init();
-      await NotificationService.loadAllNotification();
+      await AlarmService.init();
+      await AlarmService.loadAllNotification();
     }
 
     emit(Authenticated(user: user));
@@ -146,8 +147,8 @@ class AuthenticationBloc
     Storage.activate();
 
     if (!["BOD", "BOC", "SBOC"].contains(event.user.perty ?? '')) {
-      await NotificationService.init();
-      await NotificationService.loadAllNotification();
+      await AlarmService.init();
+      await AlarmService.loadAllNotification();
     }
 
     emit(Authenticated(user: event.user));
@@ -207,8 +208,8 @@ class AuthenticationBloc
       await Storage.activate();
 
       if (!["BOD", "BOC", "SBOC"].contains(user.perty ?? '')) {
-        await NotificationService.init();
-        await NotificationService.loadAllNotification();
+        await AlarmService.init();
+        await AlarmService.loadAllNotification();
       }
 
       return emit(Authenticated(user: user));
