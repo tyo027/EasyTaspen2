@@ -82,8 +82,8 @@ class NotificationService {
         AndroidNotificationDetails(
             'easy.notification.id', 'easy.notification.channel',
             channelDescription: 'Easy notification',
-            importance: Importance.max,
-            priority: Priority.high,
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
             ticker: 'ticker');
     var notificationDetails =
         const NotificationDetails(android: androidNotificationDetails);
