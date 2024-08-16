@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alarm/alarm.dart';
+import 'package:auto_start_flutter/auto_start_flutter.dart';
 import 'package:easy/services/storage.service.dart';
 import 'package:easy/utils/notification.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -35,6 +36,7 @@ class AlarmService {
           'Notification permission ${res.isGranted ? '' : 'not '}granted',
         );
       }
+      // getAutoStartPermission();
     }
   }
 
@@ -140,8 +142,9 @@ class AlarmService {
         final alarmSettings = AlarmSettings(
           id: id0,
           dateTime: datetime,
-          assetAudioPath: 'assets/audio/alarm.mp3',
-          vibrate: false,
+          assetAudioPath: 'assets/audio/taspen2.mp3',
+          vibrate: true,
+          // volume: 0.8,
           loopAudio: false,
           notificationTitle: title ?? '',
           notificationBody: body ?? '',
