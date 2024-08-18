@@ -25,7 +25,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void initState() {
     super.initState();
-    _onUserActivity(context);
+    context.read<IdleBloc>().add(CheckIdle());
   }
 
   void _onUserActivity(BuildContext context) {
