@@ -1,6 +1,7 @@
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
 import 'package:easy/core/themes/app_theme.dart';
 import 'package:easy/core/dependencies/dependencies.dart';
+import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:easy/router.dart';
@@ -31,6 +32,9 @@ void main() async {
 
       // Idle
       BlocProvider(create: (_) => Dependency.get<IdleBloc>()),
+
+      // Account
+      BlocProvider(create: (_) => Dependency.get<AccountBloc>()),
     ],
     child: const MyApp(),
   ));

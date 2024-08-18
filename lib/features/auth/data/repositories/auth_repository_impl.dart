@@ -5,7 +5,7 @@ import 'package:easy/core/common/models/user_model.dart';
 import 'package:easy/core/constants/constants.dart';
 import 'package:easy/core/utils/biometric.dart';
 import 'package:easy/core/utils/secure.dart';
-import 'package:easy/features/account/data/remote_datasource/account_remote_datasource.dart';
+import 'package:easy/features/account/data/remote_datasources/account_remote_datasource.dart';
 import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';
 import 'package:easy/features/idle/data/datasources/idle_datasource.dart';
@@ -37,6 +37,8 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
     );
 
+    final isAdmin = await accountRemoteDatasource.isAdmin(auth.nik);
+
     final user = UserModel(
       nik: auth.nik,
       nama: auth.nama,
@@ -44,6 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
       ba: auth.ba,
       unitKerja: auth.unitKerja,
       perty: auth.perty,
+      isAdmin: isAdmin,
     );
 
     await box.put('token', auth.token);

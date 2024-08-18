@@ -65,6 +65,22 @@ _initAccount() {
   Dependency.addDatasource<AccountRemoteDatasource>(
     AccountRemoteDatasourceImpl(Dependency.get()),
   );
+  Dependency.addRepository<AccountRepository>(
+    AccountRepositoryImpl(
+      Dependency.get(),
+      Dependency.get(),
+    ),
+  );
+  Dependency.addUsecase(
+    GetCurrentAccount(
+      Dependency.get(),
+    ),
+  );
+  Dependency.addBloc(
+    AccountBloc(
+      Dependency.get(),
+    ),
+  );
 }
 
 _initIdle() {

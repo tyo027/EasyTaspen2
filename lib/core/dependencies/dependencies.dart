@@ -1,6 +1,10 @@
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
 import 'package:easy/core/network/intercepted_client_impl.dart';
-import 'package:easy/features/account/data/remote_datasource/account_remote_datasource.dart';
+import 'package:easy/features/account/data/remote_datasources/account_remote_datasource.dart';
+import 'package:easy/features/account/data/repositories/account_repository_impl.dart';
+import 'package:easy/features/account/domain/repositories/account_repository.dart';
+import 'package:easy/features/account/domain/usecases/get_current_account.dart';
+import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:easy/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';

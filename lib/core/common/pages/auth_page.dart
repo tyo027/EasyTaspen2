@@ -1,5 +1,6 @@
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
 import 'package:easy/core/common/entities/user.dart';
+import 'package:easy/features/account/presentation/widget/user_info.dart';
 import 'package:easy/features/auth/presentation/page/sign_in_page.dart';
 import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,7 @@ class _AuthPageState extends State<AuthPage> {
                   backgroundColor: Colors.white,
                   bottomNavigationBar:
                       idleState is! IdleActive ? null : _bottomAppBar(),
+                  appBar: AppBar(),
                   body: idleState is! IdleActive
                       ? const SizedBox()
                       : SafeArea(
@@ -68,7 +70,12 @@ class _AuthPageState extends State<AuthPage> {
                                   const EdgeInsets.only(bottom: 100, top: 8),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: widget.builder(context, state.user),
+                                children: [
+                                  UserInfo(
+                                    user: state.user,
+                                  ),
+                                  ...widget.builder(context, state.user)
+                                ],
                               ),
                             ),
                           ),

@@ -45,15 +45,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
         _userCubit.updateUser(null);
       },
-      (auth) {
-        final user = User(
-          nik: auth.nik,
-          nama: auth.nama,
-          jabatan: auth.jabatan,
-          ba: auth.ba,
-          unitKerja: auth.unitKerja,
-          perty: auth.perty,
-        );
+      (user) {
         emit(SuccessState(user));
         _userCubit.updateUser(user);
       },
@@ -75,15 +67,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     response.fold(
       (failure) => emit(FailureState(failure.message)),
-      (auth) {
-        final user = User(
-          nik: auth.nik,
-          nama: auth.nama,
-          jabatan: auth.jabatan,
-          ba: auth.ba,
-          unitKerja: auth.unitKerja,
-          perty: auth.perty,
-        );
+      (user) {
         emit(SuccessState(user));
         _userCubit.updateUser(user);
       },
@@ -100,15 +84,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     response.fold(
       (failure) => emit(FailureState(failure.message)),
-      (auth) {
-        final user = User(
-          nik: auth.nik,
-          nama: auth.nama,
-          jabatan: auth.jabatan,
-          ba: auth.ba,
-          unitKerja: auth.unitKerja,
-          perty: auth.perty,
-        );
+      (user) {
         emit(SuccessState(user));
         _userCubit.updateUser(user);
       },
