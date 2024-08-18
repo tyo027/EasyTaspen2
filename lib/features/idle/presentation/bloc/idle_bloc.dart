@@ -20,6 +20,7 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
   ) : super(IdleInitial()) {
     on<CheckIdle>(
       (event, emit) async {
+        emit(IdleLoading());
         final result = await getIdleStatus(NoParams());
 
         result.fold((_) => emit(IdleExpired()), (idleStatus) {
@@ -34,6 +35,7 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
 
     on<UserActivityDetected>(
       (event, emit) async {
+        emit(IdleLoading());
         final result = await activateIdle(NoParams());
 
         result.fold((_) => emit(IdleExpired()), (idleStatus) {

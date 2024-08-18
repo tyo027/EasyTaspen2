@@ -2,25 +2,22 @@ import 'package:easy/core/common/entities/user.dart';
 import 'package:easy/core/common/pages/auth_page.dart';
 import 'package:easy/core/common/widgets/svg_widget.dart';
 import 'package:easy/core/themes/app_pallete.dart';
-import 'package:easy/features/account/presentation/page/profile_page.dart';
+import 'package:easy/features/account/presentation/page/golongan_page.dart';
+import 'package:easy/features/account/presentation/page/individu_page.dart';
+import 'package:easy/features/account/presentation/page/position_page.dart';
 import 'package:easy/features/home/domain/entities/menu.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
-  static String route = '/home';
+  static route() =>
+      MaterialPageRoute(builder: (context) => const ProfilePage());
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return AuthPage(
-      title: "Home",
-      canBack: false,
+      title: "Profil",
       builder: (context, user) {
         final menuList = menus(context, user);
         return [
@@ -40,10 +37,11 @@ class _HomePageState extends State<HomePage> {
               return ElevatedButton(
                 onPressed: menu.onTap,
                 style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    shadowColor: AppPallete.shadow),
+                  padding: EdgeInsets.zero,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  shadowColor: AppPallete.shadow,
+                ),
                 child: SvgWidget(
                   menu.image,
                   useDefaultColor: true,
@@ -58,22 +56,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Menu> menus(BuildContext context, User user) => [
+        Menu(
+          image: 'assets/svgs/individu.svg',
+          onTap: () {
+            Navigator.of(context).push(IndividuPage.route());
+          },
+        ),
+        Menu(
+          image: 'assets/svgs/jabatan.svg',
+          onTap: () {
+            Navigator.of(context).push(PositionPage.route());
+          },
+        ),
         if (user.canAccess)
           Menu(
-            image: 'assets/svgs/profile.svg',
+            image: 'assets/svgs/golongan.svg',
             onTap: () {
-              Navigator.of(context).push(ProfilePage.route());
+              Navigator.of(context).push(GolonganPage.route());
             },
-          ),
-        if (user.canAccess)
-          Menu(
-            image: 'assets/svgs/absensi.svg',
-            onTap: () {},
-          ),
-        if (user.canAccess)
-          Menu(
-            image: 'assets/svgs/payslip.svg',
-            onTap: () {},
           ),
       ];
 }

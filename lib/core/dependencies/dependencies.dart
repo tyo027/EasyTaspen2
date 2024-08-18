@@ -4,7 +4,11 @@ import 'package:easy/features/account/data/remote_datasources/account_remote_dat
 import 'package:easy/features/account/data/repositories/account_repository_impl.dart';
 import 'package:easy/features/account/domain/repositories/account_repository.dart';
 import 'package:easy/features/account/domain/usecases/get_current_account.dart';
+import 'package:easy/features/account/domain/usecases/get_current_golongan.dart';
+import 'package:easy/features/account/domain/usecases/get_current_position.dart';
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
+import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
+import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
 import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:easy/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';

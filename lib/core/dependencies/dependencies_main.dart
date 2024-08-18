@@ -14,10 +14,16 @@ _initCore() async {
 
   Dependency.addRepository(authenticationBox);
   Dependency.addRepository(http.Client());
+  Dependency.addDatasource<AuthRemoteDatasource>(
+    AuthRemoteDatasourceImpl(
+      Dependency.get(),
+    ),
+  );
   Dependency.addRepository<InterceptedClient>(
     InterceptedClientImpl(
       client: Dependency.get(),
       box: Dependency.get(),
+      authRemoteDatasource: Dependency.get(),
     ),
   );
   Dependency.addRepository(InternetConnection());
@@ -28,11 +34,6 @@ _initCore() async {
 }
 
 _initAuth() {
-  Dependency.addDatasource<AuthRemoteDatasource>(
-    AuthRemoteDatasourceImpl(
-      Dependency.get(),
-    ),
-  );
   Dependency.addRepository<AuthRepository>(
     AuthRepositoryImpl(
       Dependency.get(),
@@ -76,8 +77,28 @@ _initAccount() {
       Dependency.get(),
     ),
   );
+  Dependency.addUsecase(
+    GetCurrentPosition(
+      Dependency.get(),
+    ),
+  );
+  Dependency.addUsecase(
+    GetCurrentGolongan(
+      Dependency.get(),
+    ),
+  );
   Dependency.addBloc(
     AccountBloc(
+      Dependency.get(),
+    ),
+  );
+  Dependency.addBloc(
+    PositionBloc(
+      Dependency.get(),
+    ),
+  );
+  Dependency.addBloc(
+    GolonganBloc(
       Dependency.get(),
     ),
   );
