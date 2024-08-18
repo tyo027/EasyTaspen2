@@ -5,6 +5,8 @@ sealed class AuthEvent {}
 
 final class IsUserLogged extends AuthEvent {}
 
+final class UseBiometricAuth extends AuthEvent {}
+
 final class Authenticate extends AuthEvent {
   final String username;
   final String password;

@@ -13,9 +13,11 @@ import 'package:go_router/go_router.dart';
 
 class SignInPage extends StatefulWidget {
   final String? redirect;
+  final bool? canUseBiometric;
   const SignInPage({
     super.key,
     this.redirect,
+    this.canUseBiometric,
   });
 
   static String route = '/auth/sign-in';
@@ -100,11 +102,15 @@ class _SignInPageState extends State<SignInPage> {
                   },
                 ),
               ),
-              const Gap(12),
-              ButtonWidget.icon(
-                'assets/svgs/face-id.svg',
-                onPressed: () {},
-              )
+              if (widget.canUseBiometric != null && widget.canUseBiometric!)
+                const Gap(12),
+              if (widget.canUseBiometric != null && widget.canUseBiometric!)
+                ButtonWidget.icon(
+                  'assets/svgs/face-id.svg',
+                  onPressed: () {
+                    context.read<AuthBloc>().add(UseBiometricAuth());
+                  },
+                )
             ],
           )
         ],

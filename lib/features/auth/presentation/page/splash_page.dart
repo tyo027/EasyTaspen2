@@ -33,7 +33,12 @@ class _SplashPageState extends State<SplashPage> {
     return BlocListener<AppUserCubit, AppUserState>(
       listener: (context, state) {
         if (state is AppUserLoggedOut) {
-          context.go(SignInPage.route, extra: widget.redirect);
+          context.go(Uri(
+            path: SignInPage.route,
+            queryParameters: {
+              'redirect': widget.redirect,
+            },
+          ).toString());
         }
 
         if (state is AppUserLoggedIn) {

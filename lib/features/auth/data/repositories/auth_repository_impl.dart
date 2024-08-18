@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:easy/core/common/entities/user.dart';
 import 'package:easy/core/common/models/user_model.dart';
 import 'package:easy/core/constants/constants.dart';
+import 'package:easy/core/utils/biometric.dart';
+import 'package:easy/core/utils/secure.dart';
 import 'package:easy/features/account/data/remote_datasource/account_remote_datasource.dart';
 import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';
+import 'package:easy/features/idle/data/datasources/idle_datasource.dart';
 import 'package:fca/fca.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -94,7 +98,42 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return right(user);
     } on ServerException catch (e) {
-      print(e.message);
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> reAuthenticate() async {
+    try {
+      final isGranted =
+          await Biometric.authenticate(reason: "Login menggunakan biometric");
+
+      if (!isGranted) return left(Failure("Biometric not granted"));
+
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+
+      final userData = box.get('user');
+
+      if (userData == null) {
+        return left(Failure(Constants.unAuthenticated));
+      }
+
+      final secureUsername = box.get('username');
+      final securePassword = box.get('password');
+
+      if (secureUsername == null || securePassword == null) {
+        return left(Failure(Constants.unAuthenticated));
+      }
+
+      final username = Secure.unSecureText(secureUsername);
+      final password = Secure.unSecureText(securePassword);
+
+      final user = await authenticate(username: username, password: password);
+
+      return right(user);
+    } on ServerException catch (e) {
       return left(Failure(e.message));
     }
   }

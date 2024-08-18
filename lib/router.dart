@@ -28,7 +28,13 @@ var router = GoRouter(
     ),
     GoRoute(
       path: SignInPage.route,
-      builder: (context, state) => SignInPage(redirect: state.extra as String?),
+      builder: (context, state) {
+        return SignInPage(
+          redirect: state.uri.queryParameters['redirect'],
+          canUseBiometric:
+              bool.tryParse(state.uri.queryParameters['canUseBiometric'] ?? ''),
+        );
+      },
     ),
     GoRoute(
       path: HomePage.route,
