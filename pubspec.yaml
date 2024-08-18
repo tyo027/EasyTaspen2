@@ -26,6 +26,8 @@ dependencies:
     fca: ^0.0.9
     fpdart: ^1.1.0
     device_uuid: ^0.0.4
+    local_auth: ^2.3.0
+    encrypt: ^5.0.3
 
 dev_dependencies:
     flutter_test:
