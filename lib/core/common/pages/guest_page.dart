@@ -44,8 +44,11 @@ class GuestPage extends StatelessWidget {
       color: Colors.white,
       height: kBottomNavigationBarHeight,
       child: Center(
-          child: Text(
-              "Powered by PT TASPEN(Persero) - ${dotenv.env['APP_VERSION']}")),
+        child: Text(
+          "Powered by PT TASPEN(Persero) - ${dotenv.env['APP_VERSION']}",
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
     );
   }
 }

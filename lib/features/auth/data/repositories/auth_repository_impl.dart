@@ -14,13 +14,43 @@ class AuthRepositoryImpl implements AuthRepository {
   final ConnectionChecker connectionChecker;
   final AuthRemoteDatasource authRemoteDatasource;
   final AccountRemoteDatasource accountRemoteDatasource;
+  final IdleDataSource idleDataSource;
 
   AuthRepositoryImpl(
     this.box,
     this.connectionChecker,
     this.authRemoteDatasource,
     this.accountRemoteDatasource,
+    this.idleDataSource,
   );
+
+  Future<UserModel> authenticate({
+    required String username,
+    required String password,
+  }) async {
+    final auth = await authRemoteDatasource.signIn(
+      username: username,
+      password: password,
+    );
+
+    final user = UserModel(
+      nik: auth.nik,
+      nama: auth.nama,
+      jabatan: auth.jabatan,
+      ba: auth.ba,
+      unitKerja: auth.unitKerja,
+      perty: auth.perty,
+    );
+
+    await box.put('token', auth.token);
+    await box.put('username', Secure.secureText(username));
+    await box.put('password', Secure.secureText(password));
+    await box.put('user', jsonEncode(user.toJson()));
+
+    await idleDataSource.saveLastIdle(DateTime.now());
+
+    return user;
+  }
 
   @override
   Future<Either<Failure, UserModel>> signIn({
@@ -32,23 +62,8 @@ class AuthRepositoryImpl implements AuthRepository {
         return left(Failure(Constants.noConnectionErrorMessage));
       }
 
-      final auth = await authRemoteDatasource.signIn(
-        username: username,
-        password: password,
-      );
+      final user = await authenticate(username: username, password: password);
 
-      await box.put('token', auth.token);
-
-      final user = UserModel(
-        nik: auth.nik,
-        nama: auth.nama,
-        jabatan: auth.jabatan,
-        ba: auth.ba,
-        unitKerja: auth.unitKerja,
-        perty: auth.perty,
-      );
-
-      await box.put('user', jsonEncode(user.toJson()));
       return right(user);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -65,6 +80,13 @@ class AuthRepositoryImpl implements AuthRepository {
       final userData = box.get('user');
 
       if (userData == null) {
+        return left(Failure(Constants.unAuthenticated));
+      }
+
+      final secureUsername = box.get('username');
+      final securePassword = box.get('password');
+
+      if (secureUsername == null || securePassword == null) {
         return left(Failure(Constants.unAuthenticated));
       }
 

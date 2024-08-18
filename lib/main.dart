@@ -2,6 +2,7 @@ import 'package:easy/core/common/cubit/app_user_cubit.dart';
 import 'package:easy/core/themes/app_theme.dart';
 import 'package:easy/core/dependencies/dependencies.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,9 @@ void main() async {
       // Auth
       BlocProvider(create: (_) => Dependency.get<AppUserCubit>()),
       BlocProvider(create: (_) => Dependency.get<AuthBloc>()),
+
+      // Idle
+      BlocProvider(create: (_) => Dependency.get<IdleBloc>()),
     ],
     child: const MyApp(),
   ));

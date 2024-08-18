@@ -5,8 +5,15 @@ import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart'
 import 'package:easy/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';
 import 'package:easy/features/auth/domain/usecase/current_user.dart';
+import 'package:easy/features/auth/domain/usecase/re_authenticate.dart';
 import 'package:easy/features/auth/domain/usecase/sign_in.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:easy/features/idle/data/datasources/idle_datasource.dart';
+import 'package:easy/features/idle/data/repository/idle_repository_impl.dart';
+import 'package:easy/features/idle/domain/repository/idle_repository.dart';
+import 'package:easy/features/idle/domain/usecase/activate_idle.dart';
+import 'package:easy/features/idle/domain/usecase/get_idle_status.dart';
+import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:fca/fca.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;

@@ -4,6 +4,7 @@ Future<void> initDependencies() async {
   await _initCore();
 
   _initAccount();
+  _initIdle();
   _initAuth();
 }
 
@@ -38,6 +39,7 @@ _initAuth() {
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),
+      Dependency.get(),
     ),
   );
   Dependency.addUsecase(
@@ -46,8 +48,12 @@ _initAuth() {
   Dependency.addUsecase(
     CurrentUser(Dependency.get()),
   );
+  Dependency.addUsecase(
+    ReAuthenticate(Dependency.get()),
+  );
   Dependency.addBloc(
     AuthBloc(
+      Dependency.get(),
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),
@@ -59,4 +65,23 @@ _initAccount() {
   Dependency.addDatasource<AccountRemoteDatasource>(
     AccountRemoteDatasourceImpl(Dependency.get()),
   );
+}
+
+_initIdle() {
+  Dependency.addDatasource<IdleDataSource>(
+    IdleDataSourceImpl(Dependency.get()),
+  );
+  Dependency.addRepository<IdleRepository>(
+    IdleRepositoryImpl(Dependency.get()),
+  );
+  Dependency.addUsecase(
+    GetIdleStatus(Dependency.get()),
+  );
+  Dependency.addUsecase(
+    ActivateIdle(Dependency.get()),
+  );
+  Dependency.addBloc(IdleBloc(
+    Dependency.get(),
+    Dependency.get(),
+  ));
 }
