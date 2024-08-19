@@ -17,7 +17,10 @@ class GolonganPage extends StatelessWidget {
     return AuthPage(
       title: "Golongan",
       builder: (context, user) {
-        context.read<GolonganBloc>().add(GetGolongan(nik: user.nik));
+        final golonganBloc = context.read<GolonganBloc>();
+        if (golonganBloc.state is! SuccessState) {
+          golonganBloc.add(GetGolongan(nik: user.nik));
+        }
 
         return [
           BaseConsumer<GolonganBloc, List<Golongan>>(

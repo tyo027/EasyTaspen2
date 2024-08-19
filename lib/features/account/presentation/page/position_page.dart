@@ -17,7 +17,10 @@ class PositionPage extends StatelessWidget {
     return AuthPage(
       title: "Jabatan",
       builder: (context, user) {
-        context.read<PositionBloc>().add(GetPosition(nik: user.nik));
+        final positionBloc = context.read<PositionBloc>();
+        if (positionBloc.state is! SuccessState) {
+          positionBloc.add(GetPosition(nik: user.nik));
+        }
 
         return [
           BaseConsumer<PositionBloc, List<Position>>(
