@@ -8,6 +8,7 @@ import 'package:easy/core/utils/secure.dart';
 import 'package:easy/features/account/data/remote_datasources/account_remote_datasource.dart';
 import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';
+import 'package:easy/features/device/domain/repositories/device_repository.dart';
 import 'package:easy/features/idle/data/datasources/idle_datasource.dart';
 import 'package:fca/fca.dart';
 import 'package:fpdart/fpdart.dart';
@@ -19,6 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource authRemoteDatasource;
   final AccountRemoteDatasource accountRemoteDatasource;
   final IdleDataSource idleDataSource;
+  final DeviceRepository deviceRepository;
 
   AuthRepositoryImpl(
     this.box,
@@ -26,6 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
     this.authRemoteDatasource,
     this.accountRemoteDatasource,
     this.idleDataSource,
+    this.deviceRepository,
   );
 
   Future<UserModel> authenticate({
@@ -47,6 +50,20 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     await box.put('token', auth.token);
+
+    final register = await deviceRepository.registerDevice(
+      username: username,
+      nik: auth.nik,
+    );
+
+    if (register.isLeft()) {
+      box.clear();
+
+      final failure = register.getLeft().getOrElse(() => Failure());
+
+      throw ServerException(failure.message);
+    }
+
     await box.put('username', Secure.secureText(username));
     await box.put('password', Secure.secureText(password));
     await box.put('user', jsonEncode(user.toJson()));

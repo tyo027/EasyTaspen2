@@ -1,6 +1,7 @@
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
 import 'package:easy/core/themes/app_theme.dart';
 import 'package:easy/core/dependencies/dependencies.dart';
+import 'package:easy/core/utils/messanging.dart';
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
@@ -18,15 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await initDependencies();
-
-  // await Storage.initialize();
-
-  // cameraDescriptions = await availableCameras();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // await FcmService.initialize();
-  // await AlarmService.init();
+  await Messanging.initialize();
 
   runApp(MultiBlocProvider(
     providers: [

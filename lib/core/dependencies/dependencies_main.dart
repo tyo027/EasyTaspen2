@@ -5,6 +5,7 @@ Future<void> initDependencies() async {
 
   _initAccount();
   _initIdle();
+  _initDevice();
   _initAuth();
 
   _initHome();
@@ -37,9 +38,19 @@ _initCore() async {
   Dependency.addBloc(AppUserCubit());
 }
 
+_initDevice() {
+  Dependency.addDatasource<DeviceRemoteDatasource>(
+    DeviceRemoteDatasourceImpl(Dependency.get()),
+  );
+  Dependency.addRepository<DeviceRepository>(
+    DeviceRepositoryImpl(Dependency.get(), Dependency.get()),
+  );
+}
+
 _initAuth() {
   Dependency.addRepository<AuthRepository>(
     AuthRepositoryImpl(
+      Dependency.get(),
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),
