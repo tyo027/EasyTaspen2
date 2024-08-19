@@ -22,7 +22,6 @@ class PositionPage extends StatelessWidget {
         return [
           BaseConsumer<PositionBloc, List<Position>>(
             builder: (context, state) {
-              print(state);
               if (state is SuccessState<List<Position>>) {
                 if (state.data.isEmpty) {
                   return const Center(child: Text("Data Belum Tersedia"));

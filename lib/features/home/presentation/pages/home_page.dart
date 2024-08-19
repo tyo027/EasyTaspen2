@@ -1,10 +1,16 @@
-import 'package:easy/core/common/entities/user.dart';
 import 'package:easy/core/common/pages/auth_page.dart';
-import 'package:easy/core/common/widgets/svg_widget.dart';
-import 'package:easy/core/themes/app_pallete.dart';
+import 'package:easy/core/common/widgets/menu_list.dart';
 import 'package:easy/features/account/presentation/page/profile_page.dart';
-import 'package:easy/features/home/domain/entities/menu.dart';
+import 'package:easy/features/attendance/presentation/pages/attendance_page.dart';
+import 'package:easy/core/common/entities/menu.dart';
+import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:easy/features/home/domain/entities/home.dart';
+import 'package:easy/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fca/fca.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,34 +28,55 @@ class _HomePageState extends State<HomePage> {
       title: "Home",
       canBack: false,
       builder: (context, user) {
-        final menuList = menus(context, user);
+        final homeBloc = context.read<HomeBloc>();
+        if (homeBloc.state is! SuccessState) {
+          homeBloc.add(LoadHomeData(nik: user.nik));
+        }
+
         return [
-          GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: menuList.length,
-            itemBuilder: (context, index) {
-              final menu = menuList[index];
-              return ElevatedButton(
-                onPressed: menu.onTap,
-                style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    shadowColor: AppPallete.shadow),
-                child: SvgWidget(
-                  menu.image,
-                  useDefaultColor: true,
-                  size: double.infinity,
-                ),
-              );
+          BaseConsumer<HomeBloc, Home>(
+            builder: (context, state) {
+              if (state is SuccessState<Home>) {
+                return MenuList(
+                  items: [
+                    if (user.canAccess)
+                      Menu(
+                        image: 'assets/svgs/profile.svg',
+                        onTap: () {
+                          Navigator.of(context).push(ProfilePage.route());
+                        },
+                      ),
+                    if (user.canAccess)
+                      Menu(
+                        image: 'assets/svgs/absensi.svg',
+                        onTap: () {
+                          Navigator.of(context).push(AttendancePage.route());
+                        },
+                      ),
+                    if (state.data.hasEmployee)
+                      Menu(
+                        image: 'assets/svgs/manajemen.svg',
+                        onTap: () {},
+                      ),
+                    Menu(
+                      image: 'assets/svgs/payslip.svg',
+                      onTap: () {},
+                    ),
+                    if (state.data.isAdmin)
+                      Menu(
+                        image: 'assets/svgs/admin.svg',
+                        onTap: () {},
+                      ),
+                    Menu(
+                      image: 'assets/svgs/logout.svg',
+                      onTap: () {
+                        _logout(context);
+                      },
+                    ),
+                  ],
+                );
+              }
+              return const Gap(0);
             },
           )
         ];
@@ -57,23 +84,28 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<Menu> menus(BuildContext context, User user) => [
-        if (user.canAccess)
-          Menu(
-            image: 'assets/svgs/profile.svg',
-            onTap: () {
-              Navigator.of(context).push(ProfilePage.route());
-            },
-          ),
-        if (user.canAccess)
-          Menu(
-            image: 'assets/svgs/absensi.svg',
-            onTap: () {},
-          ),
-        if (user.canAccess)
-          Menu(
-            image: 'assets/svgs/payslip.svg',
-            onTap: () {},
-          ),
-      ];
+  void _logout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text("Log out sekarang?"),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text("YA"),
+              onPressed: () {
+                context.read<AuthBloc>().add(LogoutNow());
+              },
+            ),
+            CupertinoDialogAction(
+              child: const Text("TIDAK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

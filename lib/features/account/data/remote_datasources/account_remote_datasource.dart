@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy/core/common/models/employee_model.dart';
 import 'package:easy/core/constants/api.dart';
 import 'package:easy/features/account/data/models/account_model.dart';
 import 'package:easy/features/account/data/models/golongan_model.dart';
@@ -14,6 +15,8 @@ abstract interface class AccountRemoteDatasource {
   Future<List<GolonganModel>> getCurrentGolongan(String nik);
 
   Future<bool> isAdmin(String nik);
+
+  Future<List<EmployeeModel>?> getCurrentEmployee(String nik);
 }
 
 class AccountRemoteDatasourceImpl implements AccountRemoteDatasource {
@@ -59,7 +62,7 @@ class AccountRemoteDatasourceImpl implements AccountRemoteDatasource {
 
       final res = jsonDecode(response.body);
 
-      return res['data']['is_admin'] == "1";
+      return res['data']['is_admin'] == 1;
     } on ResponseException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
@@ -104,6 +107,28 @@ class AccountRemoteDatasourceImpl implements AccountRemoteDatasource {
       }
 
       return GolonganModel.fromJsonList(jsonDecode(response.body));
+    } on ResponseException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<EmployeeModel>?> getCurrentEmployee(String nik) async {
+    try {
+      final response = await client.post(
+        Uri.parse("${Api.employee}/$nik"),
+      );
+
+      if (response.statusCode != 200) {
+        throw ResponseException(response.body);
+      }
+
+      if (response.body.isEmpty) return null;
+
+      return EmployeeModel.fromJsonList(
+          jsonDecode(response.body)['ZDATA']['item']);
     } on ResponseException catch (e) {
       throw ServerException(e.message);
     } catch (e) {

@@ -4,7 +4,9 @@ import 'package:easy/core/dependencies/dependencies.dart';
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
+import 'package:easy/features/attendance/presentation/bloc/rule_bloc.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:easy/features/home/presentation/bloc/home_bloc.dart';
 import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
@@ -39,6 +41,12 @@ void main() async {
       BlocProvider(create: (_) => Dependency.get<AccountBloc>()),
       BlocProvider(create: (_) => Dependency.get<PositionBloc>()),
       BlocProvider(create: (_) => Dependency.get<GolonganBloc>()),
+
+      // Home
+      BlocProvider(create: (_) => Dependency.get<HomeBloc>()),
+
+      // Attendance
+      BlocProvider(create: (_) => Dependency.get<RuleBloc>()),
     ],
     child: const MyApp(),
   ));

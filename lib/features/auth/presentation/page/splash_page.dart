@@ -3,6 +3,7 @@ import 'package:easy/core/common/pages/guest_page.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easy/features/auth/presentation/page/sign_in_page.dart';
 import 'package:easy/features/home/presentation/pages/home_page.dart';
+import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -42,6 +43,7 @@ class _SplashPageState extends State<SplashPage> {
         }
 
         if (state is AppUserLoggedIn) {
+          context.read<IdleBloc>().add(CheckIdle());
           if (widget.redirect != null) {
             context.go(widget.redirect!);
           } else {

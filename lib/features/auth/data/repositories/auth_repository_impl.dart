@@ -37,8 +37,6 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
     );
 
-    final isAdmin = await accountRemoteDatasource.isAdmin(auth.nik);
-
     final user = UserModel(
       nik: auth.nik,
       nama: auth.nama,
@@ -46,7 +44,6 @@ class AuthRepositoryImpl implements AuthRepository {
       ba: auth.ba,
       unitKerja: auth.unitKerja,
       perty: auth.perty,
-      isAdmin: isAdmin,
     );
 
     await box.put('token', auth.token);
@@ -139,5 +136,10 @@ class AuthRepositoryImpl implements AuthRepository {
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }
+  }
+
+  @override
+  Future<void> logout() async {
+    await box.clear();
   }
 }

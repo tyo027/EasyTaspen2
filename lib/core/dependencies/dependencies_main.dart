@@ -6,6 +6,10 @@ Future<void> initDependencies() async {
   _initAccount();
   _initIdle();
   _initAuth();
+
+  _initHome();
+
+  _initAttendance();
 }
 
 _initCore() async {
@@ -52,8 +56,13 @@ _initAuth() {
   Dependency.addUsecase(
     ReAuthenticate(Dependency.get()),
   );
+  Dependency.addUsecase(
+    Logout(Dependency.get()),
+  );
   Dependency.addBloc(
     AuthBloc(
+      Dependency.get(),
+      Dependency.get(),
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),
@@ -121,4 +130,34 @@ _initIdle() {
     Dependency.get(),
     Dependency.get(),
   ));
+}
+
+_initHome() {
+  Dependency.addRepository<HomeRepository>(
+    HomeRepositoryImpl(Dependency.get(), Dependency.get()),
+  );
+  Dependency.addUsecase(GetHomeData(Dependency.get()));
+  Dependency.addBloc(HomeBloc(Dependency.get()));
+}
+
+_initAttendance() {
+  Dependency.addDatasource<AttendanceRemoteDatasource>(
+    AttendanceRemoteDatasourceImpl(Dependency.get()),
+  );
+  Dependency.addRepository<AttendanceRepository>(
+    AttendanceRepositoryImpl(
+      Dependency.get(),
+      Dependency.get(),
+    ),
+  );
+  Dependency.addUsecase(
+    GetRule(
+      Dependency.get(),
+    ),
+  );
+  Dependency.addBloc(
+    RuleBloc(
+      Dependency.get(),
+    ),
+  );
 }

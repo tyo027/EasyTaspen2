@@ -11,11 +11,15 @@ class IdleRepositoryImpl implements IdleRepository {
 
   @override
   Future<Either<Failure, IdleStatus>> getIdleStatus() async {
-    final isIdle = await idleDataSource.isIdle();
+    try {
+      final isIdle = await idleDataSource.isIdle();
 
-    final idleStatus = IdleStatus(isIdle: isIdle);
+      final idleStatus = IdleStatus(isIdle: isIdle);
 
-    return right(idleStatus);
+      return right(idleStatus);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
   }
 
   @override

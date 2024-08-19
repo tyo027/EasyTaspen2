@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
-import 'package:easy/core/common/entities/user.dart';
 import 'package:easy/features/auth/domain/usecase/current_user.dart';
+import 'package:easy/features/auth/domain/usecase/logout.dart';
 import 'package:easy/features/auth/domain/usecase/re_authenticate.dart';
 import 'package:easy/features/auth/domain/usecase/sign_in.dart';
+import 'package:easy/features/auth/presentation/page/sign_in_page.dart';
+import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
+import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,18 +20,24 @@ class AuthBloc extends BaseBloc<AuthEvent> {
   final SignIn _signIn;
   final CurrentUser _currentUser;
   final ReAuthenticate _reAuthenticate;
+  final Logout logout;
+  final IdleBloc idleBloc;
 
   AuthBloc(
     this._userCubit,
     this._signIn,
     this._currentUser,
     this._reAuthenticate,
+    this.logout,
+    this.idleBloc,
   ) : super() {
     on<IsUserLogged>(_isUserLogged);
 
     on<Authenticate>(_authenticate);
 
     on<UseBiometricAuth>(_biometicAuth);
+
+    on<LogoutNow>(_logout);
   }
 
   FutureOr<void> _isUserLogged(
@@ -89,5 +98,18 @@ class AuthBloc extends BaseBloc<AuthEvent> {
         _userCubit.updateUser(user);
       },
     );
+  }
+
+  FutureOr<void> _logout(
+    LogoutNow event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(LoadingState());
+
+    await logout();
+
+    _userCubit.updateUser(null);
+    idleBloc.cancel();
+    router.go(SignInPage.route);
   }
 }

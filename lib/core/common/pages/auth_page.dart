@@ -62,19 +62,6 @@ class _AuthPageState extends State<AuthPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlocConsumer<IdleBloc, IdleState>(
-                          listener: (context, state) {
-                            if (state is IdleExpired) {
-                              context.go(Uri(
-                                path: SignInPage.route,
-                                queryParameters: {'canUseBiometric': 'true'},
-                              ).toString());
-                            }
-                          },
-                          builder: (context, idleState) {
-                            return const Gap(0);
-                          },
-                        ),
                         UserInfo(
                           user: state.user,
                         ),

@@ -5,7 +5,6 @@ class User {
   final String ba;
   final String unitKerja;
   final String perty;
-  final bool isAdmin;
 
   User({
     required this.nik,
@@ -14,7 +13,6 @@ class User {
     required this.ba,
     required this.unitKerja,
     required this.perty,
-    required this.isAdmin,
   });
 
   bool get canAccess => !["BOD", "BOC", "SBOC"].contains(perty);

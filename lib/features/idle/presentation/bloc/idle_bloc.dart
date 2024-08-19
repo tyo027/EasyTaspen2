@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:easy/features/auth/presentation/page/sign_in_page.dart';
 import 'package:easy/features/idle/domain/usecase/activate_idle.dart';
 import 'package:easy/features/idle/domain/usecase/get_idle_status.dart';
+import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,11 +25,11 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
         emit(IdleLoading());
         final result = await getIdleStatus(NoParams());
 
-        result.fold((_) => emit(IdleExpired()), (idleStatus) {
+        result.fold((_) => _unAuthenticate(emit), (idleStatus) {
           if (idleStatus.isIdle) {
             emit(IdleActive());
           } else {
-            emit(IdleExpired());
+            _expired(emit);
           }
         });
       },
@@ -38,11 +40,11 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
         emit(IdleLoading());
         final result = await activateIdle(NoParams());
 
-        result.fold((_) => emit(IdleExpired()), (idleStatus) {
+        result.fold((_) => _unAuthenticate(emit), (idleStatus) {
           if (idleStatus.isIdle) {
             emit(IdleActive());
           } else {
-            emit(IdleExpired());
+            _expired(emit);
           }
         });
       },
@@ -51,15 +53,36 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
     _startIdleCheck();
   }
 
+  void _expired(Emitter<IdleState> emit) {
+    emit(IdleExpired());
+    _idleTimer?.cancel();
+    router.go(Uri(
+      path: SignInPage.route,
+      queryParameters: {'canUseBiometric': 'true'},
+    ).toString());
+  }
+
+  void _unAuthenticate(Emitter<IdleState> emit) {
+    emit(IdleExpired());
+    _idleTimer?.cancel();
+    router.go(Uri(
+      path: SignInPage.route,
+    ).toString());
+  }
+
   void _startIdleCheck() {
     _idleTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       add(CheckIdle());
     });
   }
 
+  cancel() {
+    _idleTimer?.cancel();
+  }
+
   @override
   Future<void> close() {
-    _idleTimer?.cancel();
+    cancel();
     return super.close();
   }
 }

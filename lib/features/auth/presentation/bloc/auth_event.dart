@@ -16,3 +16,5 @@ final class Authenticate extends AuthEvent {
     required this.password,
   });
 }
+
+final class LogoutNow extends AuthEvent {}

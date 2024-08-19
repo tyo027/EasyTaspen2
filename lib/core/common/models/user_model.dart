@@ -8,7 +8,6 @@ class UserModel extends User {
     required super.ba,
     required super.unitKerja,
     required super.perty,
-    required super.isAdmin,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -19,7 +18,6 @@ class UserModel extends User {
       ba: json['ba'],
       unitKerja: json['unitKerja'],
       perty: json['perty'],
-      isAdmin: json['isAdmin'] ?? false,
     );
   }
 
@@ -31,7 +29,6 @@ class UserModel extends User {
       "ba": ba,
       "unitKerja": unitKerja,
       "perty": perty,
-      "isAdmin": isAdmin,
     };
   }
 }
