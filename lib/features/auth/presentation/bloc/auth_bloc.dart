@@ -56,6 +56,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
       },
       (user) {
         emit(SuccessState(user));
+        idleBloc.startIdleCheck();
         _userCubit.updateUser(user);
       },
     );
@@ -78,6 +79,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
       (failure) => emit(FailureState(failure.message)),
       (user) {
         emit(SuccessState(user));
+        idleBloc.startIdleCheck();
         _userCubit.updateUser(user);
       },
     );
@@ -95,6 +97,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
       (failure) => emit(FailureState(failure.message)),
       (user) {
         emit(SuccessState(user));
+        idleBloc.startIdleCheck();
         _userCubit.updateUser(user);
       },
     );

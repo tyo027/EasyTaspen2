@@ -50,7 +50,7 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
       },
     );
 
-    _startIdleCheck();
+    startIdleCheck();
   }
 
   void _expired(Emitter<IdleState> emit) {
@@ -70,7 +70,7 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
     ).toString());
   }
 
-  void _startIdleCheck() {
+  void startIdleCheck() {
     _idleTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       add(CheckIdle());
     });
