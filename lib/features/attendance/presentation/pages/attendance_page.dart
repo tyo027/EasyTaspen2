@@ -23,10 +23,15 @@ class AttendancePage extends StatelessWidget {
     return AuthPage(
       title: "Presensi",
       builder: (context, user) {
-        context.read<RuleBloc>().add(GetRuleData(
+        final ruleBloc = context.read<RuleBloc>();
+        if (ruleBloc.state is! SuccessState) {
+          ruleBloc.add(
+            GetRuleData(
               codeCabang: user.ba,
               nik: user.nik,
-            ));
+            ),
+          );
+        }
         return [
           BaseConsumer<RuleBloc, Rule>(
             builder: (context, state) {
