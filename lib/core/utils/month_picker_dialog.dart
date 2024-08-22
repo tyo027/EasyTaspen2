@@ -5,11 +5,12 @@ monthPickerDialog(
   BuildContext context, {
   required Function(DateTime? selectedMonth) onSelected,
   DateTime? initialDate,
+  DateTime? lastDate,
 }) async {
   final selectedMonth = await showMonthPicker(
     context: context,
     initialDate: initialDate ?? DateTime.now(),
-    lastDate: DateTime.now(),
+    lastDate: lastDate ?? DateTime.now(),
     cancelWidget: const Text(
       "Batal",
       style: TextStyle(color: Colors.black38),

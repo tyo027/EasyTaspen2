@@ -80,52 +80,49 @@ class _AttendanceReportPageState extends State<AttendanceReportPage> {
     );
   }
 
-  Container filter() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          DropdownFieldWidget<AttendanceReportType>(
-            "Jenis Laporan",
-            value: type,
-            items: AttendanceReportType.values
-                .map(
-                  (item) => DropdownItem(
-                    text: item.name.camelToCapitalizedWords(),
-                    value: item,
-                  ),
-                )
-                .toList(),
-            onChange: (value) {
-              if (value != null) {
-                setState(() {
-                  type = value;
-                  timeRange = null;
+  Widget filter() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        DropdownFieldWidget<AttendanceReportType>(
+          "Jenis Laporan",
+          value: type,
+          items: AttendanceReportType.values
+              .map(
+                (item) => DropdownItem(
+                  text: item.name.camelToCapitalizedWords(),
+                  value: item,
+                ),
+              )
+              .toList(),
+          onChange: (value) {
+            if (value != null) {
+              setState(() {
+                type = value;
+                timeRange = null;
 
-                  _dateController.text = "";
-                });
-              }
-            },
+                _dateController.text = "";
+              });
+            }
+          },
+        ),
+        if ([
+          AttendanceReportType.kehadiranVerified,
+          AttendanceReportType.rekapKehadiran,
+        ].contains(type))
+          const Gap(16),
+        if ([
+          AttendanceReportType.kehadiranVerified,
+          AttendanceReportType.rekapKehadiran,
+        ].contains(type))
+          TextFieldWidget(
+            type == AttendanceReportType.rekapKehadiran
+                ? "Bulan / Tahun"
+                : 'Dari s/d Sampai',
+            controller: _dateController,
+            onTap: _selectDateDialog,
           ),
-          if ([
-            AttendanceReportType.kehadiranVerified,
-            AttendanceReportType.rekapKehadiran,
-          ].contains(type))
-            const Gap(16),
-          if ([
-            AttendanceReportType.kehadiranVerified,
-            AttendanceReportType.rekapKehadiran,
-          ].contains(type))
-            TextFieldWidget(
-              type == AttendanceReportType.rekapKehadiran
-                  ? "Bulan / Tahun"
-                  : 'Dari s/d Sampai',
-              controller: _dateController,
-              onTap: _selectDateDialog,
-            ),
-        ],
-      ),
+      ],
     );
   }
 

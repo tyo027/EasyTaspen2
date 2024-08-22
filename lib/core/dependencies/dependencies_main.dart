@@ -11,6 +11,8 @@ Future<void> initDependencies() async {
   _initHome();
 
   _initAttendance();
+
+  _initPayslip();
 }
 
 _initCore() async {
@@ -176,4 +178,17 @@ _initAttendance() {
     Dependency.get(),
     Dependency.get(),
   ));
+}
+
+_initPayslip() {
+  Dependency.addDatasource<PayslipRemoteDatasource>(
+    PayslipRemoteDatasourceImpl(Dependency.get()),
+  );
+  Dependency.addRepository<PayslipRepository>(
+    PayslipRepositoryImpl(Dependency.get(), Dependency.get()),
+  );
+  Dependency.addUsecase(
+    GetPayslip(Dependency.get()),
+  );
+  Dependency.addBloc(PayslipBloc(Dependency.get()));
 }

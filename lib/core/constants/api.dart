@@ -21,4 +21,6 @@ class Api {
   static final String dailyAttendance = "$_baseUrl/absensi/1.0/cekAbsenHarian";
   static final String attendanceRecap = "$_baseUrl/absensi/1.0/rekapKehadiran";
   static final String dailyRecap = "$_baseUrl/absensi/1.0/rekapKehadiranHarian";
+
+  static final String payslip = "$_baseUrl/InternalSDM/1.0/ApiGaji";
 }

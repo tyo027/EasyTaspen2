@@ -67,7 +67,9 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     if (widget.stackedWidget != null)
                       Container(
-                        padding: const EdgeInsets.only(top: 24, bottom: 12),
+                        padding: const EdgeInsets.only(
+                            top: 24, bottom: 12, left: 24, right: 24),
+                        width: double.infinity,
                         decoration: const BoxDecoration(
                           border: Border(
                               bottom: BorderSide(color: AppPallete.border)),
