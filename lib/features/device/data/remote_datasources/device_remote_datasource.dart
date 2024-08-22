@@ -50,7 +50,7 @@ class DeviceRemoteDatasourceImpl implements DeviceRemoteDatasource {
       );
 
       if (response.statusCode != 200) {
-        throw ResponseException(response.body);
+        throw ResponseException(jsonDecode(response.body)['message']);
       }
 
       return DeviceResponseModel.fromJson(jsonDecode(response.body));
