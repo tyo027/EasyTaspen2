@@ -22,6 +22,7 @@ class PayslipPage extends StatefulWidget {
 
 class _PayslipPageState extends State<PayslipPage> {
   DateTimeRange? _timeRange;
+  bool load = false;
   final TextEditingController _timeRangeController = TextEditingController();
 
   @override
@@ -52,8 +53,13 @@ class _PayslipPageState extends State<PayslipPage> {
       builder: (context, user) {
         return [
           BaseConsumer<PayslipBloc, String>(
+            onSuccess: (data) {
+              setState(() {
+                load = true;
+              });
+            },
             builder: (context, state) {
-              if (state is SuccessState<String> && _timeRange != null) {
+              if (state is SuccessState<String> && load) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Html(
@@ -98,6 +104,7 @@ class _PayslipPageState extends State<PayslipPage> {
                   .copyWith(day: 1)
                   .copyWith(month: selectedMonth.month + 1, day: 0),
             );
+            load = false;
           });
         }
       },
