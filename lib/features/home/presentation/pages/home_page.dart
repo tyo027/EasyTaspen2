@@ -1,11 +1,14 @@
 import 'package:easy/core/common/pages/auth_page.dart';
 import 'package:easy/core/common/widgets/menu_list.dart';
 import 'package:easy/features/account/presentation/page/profile_page.dart';
+import 'package:easy/features/admin/presentation/pages/admin_page.dart';
 import 'package:easy/features/attendance/presentation/pages/attendance_page.dart';
 import 'package:easy/core/common/entities/menu.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easy/features/home/domain/entities/home.dart';
 import 'package:easy/features/home/presentation/bloc/home_bloc.dart';
+import 'package:easy/features/management/presentation/pages/management_page.dart';
+import 'package:easy/features/payslip/presentation/pages/payslip_page.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,16 +59,22 @@ class _HomePageState extends State<HomePage> {
                     if (state.data.hasEmployee)
                       Menu(
                         image: 'assets/svgs/manajemen.svg',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(ManagementPage.route());
+                        },
                       ),
                     Menu(
                       image: 'assets/svgs/payslip.svg',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(PayslipPage.route());
+                      },
                     ),
                     if (state.data.isAdmin)
                       Menu(
                         image: 'assets/svgs/admin.svg',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(AdminPage.route());
+                        },
                       ),
                     Menu(
                       image: 'assets/svgs/logout.svg',

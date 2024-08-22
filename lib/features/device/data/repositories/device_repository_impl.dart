@@ -57,4 +57,23 @@ class DeviceRepositoryImpl implements DeviceRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> resetDevice({
+    required String username,
+  }) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+
+      await deviceRemoteDatasource.resetDevice(
+        username: username,
+      );
+
+      return right(true);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

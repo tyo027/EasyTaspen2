@@ -4,7 +4,9 @@ class Api {
   static final String _baseUrl = dotenv.env['API_BASE_URL'] ?? '';
 
   static final String login = "$_baseUrl/loginAD/1.0/ApiLoginADPublic";
+
   static final String deviceId = "$_baseUrl/absensi/1.0/DeviceId";
+  static final String resetDeviceId = "$_baseUrl/absensi/1.0/DeleteDeviceId";
 
   static final String profile = "$_baseUrl/InternalSDM/1.0/ApiIdentitas";
   static final String position = "$_baseUrl/InternalSDM/1.0/ApiJabatan";

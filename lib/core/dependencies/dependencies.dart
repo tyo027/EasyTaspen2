@@ -9,6 +9,7 @@ import 'package:easy/features/account/domain/usecases/get_current_position.dart'
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
+import 'package:easy/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:easy/features/attendance/data/remote_datasources/attendance_remote_datasource.dart';
 import 'package:easy/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:easy/features/attendance/domain/repositories/attendance_repository.dart';
@@ -33,6 +34,7 @@ import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easy/features/device/data/remote_datasources/device_remote_datasource.dart';
 import 'package:easy/features/device/data/repositories/device_repository_impl.dart';
 import 'package:easy/features/device/domain/repositories/device_repository.dart';
+import 'package:easy/features/device/domain/usecases/reset_device.dart';
 import 'package:easy/features/home/data/repositories/home_repository_impl.dart';
 import 'package:easy/features/home/domain/repositories/home_repository.dart';
 import 'package:easy/features/home/domain/usecases/get_home_data.dart';

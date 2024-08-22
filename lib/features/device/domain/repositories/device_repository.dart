@@ -6,4 +6,8 @@ abstract interface class DeviceRepository {
     required String username,
     required String nik,
   });
+
+  Future<Either<Failure, bool>> resetDevice({
+    required String username,
+  });
 }

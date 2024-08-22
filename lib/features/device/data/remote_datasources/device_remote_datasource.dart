@@ -5,14 +5,19 @@ import 'package:easy/features/device/data/models/device_response_model.dart';
 import 'package:fca/fca.dart';
 
 abstract interface class DeviceRemoteDatasource {
-  Future<DeviceResponseModel> registerDevice(
-      {required String username,
-      required String nik,
-      required String uuid,
-      required String fcmToken,
-      required String deviceName,
-      required String appVersion,
-      required String osVersion});
+  Future<DeviceResponseModel> registerDevice({
+    required String username,
+    required String nik,
+    required String uuid,
+    required String fcmToken,
+    required String deviceName,
+    required String appVersion,
+    required String osVersion,
+  });
+
+  Future<void> resetDevice({
+    required String username,
+  });
 }
 
 class DeviceRemoteDatasourceImpl implements DeviceRemoteDatasource {
@@ -49,6 +54,27 @@ class DeviceRemoteDatasourceImpl implements DeviceRemoteDatasource {
       }
 
       return DeviceResponseModel.fromJson(jsonDecode(response.body));
+    } on ResponseException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> resetDevice({
+    required String username,
+  }) async {
+    try {
+      final response = await client.post(
+        Uri.parse("${Api.resetDeviceId}/$username"),
+      );
+
+      if (response.statusCode != 200) {
+        throw ResponseException(jsonDecode(response.body)['message']);
+      }
+
+      return;
     } on ResponseException catch (e) {
       throw ServerException(e.message);
     } catch (e) {

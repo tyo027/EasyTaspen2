@@ -13,6 +13,8 @@ Future<void> initDependencies() async {
   _initAttendance();
 
   _initPayslip();
+
+  _initAdmin();
 }
 
 _initCore() async {
@@ -47,6 +49,7 @@ _initDevice() {
   Dependency.addRepository<DeviceRepository>(
     DeviceRepositoryImpl(Dependency.get(), Dependency.get()),
   );
+  Dependency.addUsecase(ResetDevice(Dependency.get()));
 }
 
 _initAuth() {
@@ -191,4 +194,8 @@ _initPayslip() {
     GetPayslip(Dependency.get()),
   );
   Dependency.addBloc(PayslipBloc(Dependency.get()));
+}
+
+_initAdmin() {
+  Dependency.addBloc(AdminBloc(Dependency.get()));
 }
