@@ -53,7 +53,7 @@ class _PayslipPageState extends State<PayslipPage> {
         return [
           BaseConsumer<PayslipBloc, String>(
             builder: (context, state) {
-              if (state is SuccessState<String>) {
+              if (state is SuccessState<String> && _timeRange != null) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Html(
