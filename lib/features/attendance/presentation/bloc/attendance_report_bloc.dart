@@ -22,6 +22,7 @@ class AttendanceReportBloc extends BaseBloc<AttendanceReportEvent> {
     on<LoadDailyAttendance>(_dailyAttendance);
     on<LoadAttendanceRecap>(_attendanceRecap);
     on<LoadAttendanceDailyRecap>(_attendanceDailyRecap);
+    on<ResetAttendanceResult>((event, emit) => emit(InitialState()));
   }
 
   FutureOr<void> _dailyAttendance(

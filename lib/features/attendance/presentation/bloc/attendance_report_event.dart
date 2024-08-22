@@ -3,6 +3,8 @@ part of 'attendance_report_bloc.dart';
 @immutable
 sealed class AttendanceReportEvent {}
 
+final class ResetAttendanceResult extends AttendanceReportEvent {}
+
 final class LoadDailyAttendance extends AttendanceReportEvent {
   final String nik;
 
