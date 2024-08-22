@@ -161,14 +161,19 @@ _initAttendance() {
       Dependency.get(),
     ),
   );
-  Dependency.addUsecase(
-    GetRule(
-      Dependency.get(),
-    ),
-  );
-  Dependency.addBloc(
-    RuleBloc(
-      Dependency.get(),
-    ),
-  );
+  Dependency.addUsecase(GetRule(Dependency.get()));
+  Dependency.addUsecase(GetMyLocation(Dependency.get()));
+  Dependency.addUsecase(SubmitAttendance(Dependency.get()));
+  Dependency.addUsecase(GetDailyAttendance(Dependency.get()));
+  Dependency.addUsecase(GetAttendanceRecap(Dependency.get()));
+  Dependency.addUsecase(GetAttendanceDailyRecap(Dependency.get()));
+
+  Dependency.addBloc(RuleBloc(Dependency.get()));
+  Dependency.addBloc(MyLocationBloc(Dependency.get()));
+  Dependency.addBloc(AttendanceBloc(Dependency.get()));
+  Dependency.addBloc(AttendanceReportBloc(
+    Dependency.get(),
+    Dependency.get(),
+    Dependency.get(),
+  ));
 }

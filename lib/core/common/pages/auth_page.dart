@@ -12,6 +12,8 @@ import 'package:go_router/go_router.dart';
 
 class AuthPage extends StatefulWidget {
   final List<Widget> Function(BuildContext context, User user) builder;
+  final Widget Function(BuildContext context, User user)? bottomWidget;
+  final List<Widget> Function(BuildContext context, User user)? stackedWidget;
 
   final String? title;
   final bool canBack;
@@ -21,6 +23,8 @@ class AuthPage extends StatefulWidget {
     required this.builder,
     this.title,
     this.canBack = true,
+    this.bottomWidget,
+    this.stackedWidget,
   });
 
   @override
@@ -53,22 +57,40 @@ class _AuthPageState extends State<AuthPage> {
           if (state is AppUserLoggedIn) {
             return Scaffold(
               backgroundColor: Colors.white,
-              bottomNavigationBar: _bottomAppBar(),
+              bottomNavigationBar: _bottomAppBar(context, state.user),
               appBar: _appBar(),
               body: SafeArea(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 100, top: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        UserInfo(
-                          user: state.user,
-                        ),
-                        ...widget.builder(context, state.user)
-                      ],
+                child: Column(
+                  children: [
+                    UserInfo(
+                      user: state.user,
                     ),
-                  ),
+                    if (widget.stackedWidget != null)
+                      Container(
+                        padding: const EdgeInsets.only(top: 24, bottom: 12),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(color: AppPallete.border)),
+                        ),
+                        child: Column(
+                          children: [
+                            ...widget.stackedWidget!(context, state.user),
+                          ],
+                        ),
+                      ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: widget.stackedWidget != null ? 0 : 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [...widget.builder(context, state.user)],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -83,7 +105,7 @@ class _AuthPageState extends State<AuthPage> {
     return AppBar(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
-      shadowColor: AppPallete.shadow.withOpacity(.4),
+      elevation: 0,
       leadingWidth: 80,
       leading: widget.canBack
           ? Container(
@@ -118,18 +140,26 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  BottomAppBar _bottomAppBar() {
-    return BottomAppBar(
-      elevation: 0,
-      padding: const EdgeInsets.all(12),
-      notchMargin: 0,
-      color: Colors.white,
-      height: kBottomNavigationBarHeight,
-      child: Center(
-        child: Text(
-          "Powered by PT TASPEN(Persero) - ${dotenv.env['APP_VERSION']}",
-          style: const TextStyle(fontSize: 12),
-        ),
+  Widget _bottomAppBar(BuildContext context, User user) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      decoration: BoxDecoration(
+        border: widget.bottomWidget != null
+            ? const Border(top: BorderSide(color: AppPallete.border))
+            : null,
+        color: Colors.white,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.bottomWidget != null) widget.bottomWidget!(context, user),
+          if (widget.bottomWidget != null) const Gap(12),
+          Text(
+            "Powered by PT TASPEN(Persero) - ${dotenv.env['APP_VERSION']}",
+            style: const TextStyle(fontSize: 12),
+          ),
+          const Gap(12),
+        ],
       ),
     );
   }

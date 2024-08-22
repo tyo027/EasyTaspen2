@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 class TextFieldWidget extends StatefulWidget {
   final String placeholder;
 
+  final void Function(BuildContext context)? onTap;
   final TextEditingController? controller;
   final bool? isObscureText;
   final String? value;
@@ -35,6 +36,7 @@ class TextFieldWidget extends StatefulWidget {
     this.format,
     this.lines,
     this.isPassword,
+    this.onTap,
   });
 
   @override
@@ -44,6 +46,11 @@ class TextFieldWidget extends StatefulWidget {
 class _TextFieldWidgetState extends State<TextFieldWidget> {
   final FocusNode _focusNode = FocusNode();
   bool isPasswordHidden = true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -58,6 +65,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: widget.value,
       focusNode: _focusNode,
       controller: widget.controller,
       enabled: widget.enable,
@@ -66,6 +74,21 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       cursorColor: AppPallete.text,
       cursorErrorColor: AppPallete.red,
       keyboardType: widget.type,
+      onTapAlwaysCalled: widget.onTap != null,
+      enableInteractiveSelection: widget.onTap == null,
+      canRequestFocus: widget.onTap == null,
+      contextMenuBuilder: widget.onTap == null
+          ? (context, editableTextState) =>
+              AdaptiveTextSelectionToolbar.editableText(
+                editableTextState: editableTextState,
+              )
+          : (_, __) => Container(),
+      onTap: widget.onTap != null
+          ? () {
+              widget.onTap!(context);
+              _focusNode.unfocus();
+            }
+          : null,
       inputFormatters: [if (widget.format != null) widget.format!],
       minLines: widget.lines ?? 1,
       maxLines: widget.lines ?? 1,
@@ -77,7 +100,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         alignLabelWithHint: true,
         labelText: widget.placeholder,
         labelStyle: AppPallete.textStyle.copyWith(
-          color: widget.enable
+          color: widget.enable || widget.onTap != null
               ? AppPallete.text.withOpacity(.6)
               : AppPallete.textGray,
         ),

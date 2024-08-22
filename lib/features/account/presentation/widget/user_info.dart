@@ -37,8 +37,8 @@ class _UserInfoState extends State<UserInfo> {
       loading: false,
       builder: (context, state) {
         return Container(
-          padding: const EdgeInsets.all(20),
-          margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.only(left: 24, right: 24, top: 8),
           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.amber[300],
@@ -48,25 +48,25 @@ class _UserInfoState extends State<UserInfo> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Skeleton<SuccessState<Account>>(
-                height: 80,
-                width: 80,
-                radius: 80,
+                height: 68,
+                width: 68,
+                radius: 68,
                 load: state is SuccessState<Account>,
                 value: state,
                 builder: (value) {
                   return Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(80),
+                      borderRadius: BorderRadius.circular(68),
                     ),
                     child: SvgWidget(
                       'assets/svgs/${value.data.gender == 'LAKI-LAKI' ? 'male' : 'female'}.svg',
                       useDefaultColor: true,
-                      size: 80,
+                      size: 68,
                     ),
                   );
                 },
               ),
-              const Gap(24),
+              const Gap(16),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +87,7 @@ class _UserInfoState extends State<UserInfo> {
                         );
                       },
                     ),
-                    const Gap(5),
+                    const Gap(4),
                     Skeleton<SuccessState<Account>>(
                       height: 14 * 1.5,
                       width: 80,
@@ -100,7 +100,7 @@ class _UserInfoState extends State<UserInfo> {
                         );
                       },
                     ),
-                    const Gap(2),
+                    const Gap(1),
                     Skeleton<SuccessState<Account>>(
                       height: 14 * 1.5,
                       width: 100,

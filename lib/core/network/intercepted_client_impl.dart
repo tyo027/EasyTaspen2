@@ -61,15 +61,16 @@ class InterceptedClientImpl extends InterceptedClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     try {
-      // Add the Authorization header with the current token
       request.headers['Authorization'] =
           '$authorizationType ${await getToken()}';
+
       request.headers['Content-Type'] = 'application/json';
 
       final response = await client.send(request);
 
       return transforms(response);
     } on http.ClientException catch (e) {
+      print(e.uri);
       if (e.message == 'Failed to parse header value') {
         await refreshToken();
         final newRequest = http.Request(request.method, request.url)

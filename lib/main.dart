@@ -5,6 +5,9 @@ import 'package:easy/core/utils/messanging.dart';
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
+import 'package:easy/features/attendance/presentation/bloc/attendance_bloc.dart';
+import 'package:easy/features/attendance/presentation/bloc/attendance_report_bloc.dart';
+import 'package:easy/features/attendance/presentation/bloc/my_location_bloc.dart';
 import 'package:easy/features/attendance/presentation/bloc/rule_bloc.dart';
 import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easy/features/home/presentation/bloc/home_bloc.dart';
@@ -14,10 +17,14 @@ import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
+
   await dotenv.load(fileName: ".env");
+
   await initDependencies();
   await Messanging.initialize();
 
@@ -40,6 +47,9 @@ void main() async {
 
       // Attendance
       BlocProvider(create: (_) => Dependency.get<RuleBloc>()),
+      BlocProvider(create: (_) => Dependency.get<MyLocationBloc>()),
+      BlocProvider(create: (_) => Dependency.get<AttendanceBloc>()),
+      BlocProvider(create: (_) => Dependency.get<AttendanceReportBloc>()),
     ],
     child: const MyApp(),
   ));

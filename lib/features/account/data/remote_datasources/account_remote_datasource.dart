@@ -62,7 +62,7 @@ class AccountRemoteDatasourceImpl implements AccountRemoteDatasource {
 
       final res = jsonDecode(response.body);
 
-      return res['data']['is_admin'] == 1;
+      return res['data']['is_admin'] == "1";
     } on ResponseException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
