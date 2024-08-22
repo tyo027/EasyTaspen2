@@ -9,8 +9,7 @@ import 'package:gap/gap.dart';
 class PositionPage extends StatelessWidget {
   const PositionPage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const PositionPage());
+  static String route = '/account/position';
 
   @override
   Widget build(BuildContext context) {
@@ -40,26 +39,21 @@ class PositionPage extends StatelessWidget {
   }
 
   Widget laporanItem({required List<Position> positions}) {
-    return Padding(
+    return ListView.separated(
       padding: const EdgeInsets.only(
         left: 24,
         right: 24,
         bottom: 12,
       ),
-      child: ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: positions.length,
-        separatorBuilder: (BuildContext context, int index) {
-          return Container(
-            color: Colors.black45,
-            height: 1,
-          );
-        },
-        itemBuilder: (BuildContext context, int index) {
-          return position(position: positions[index]);
-        },
-      ),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: positions.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return const Gap(12);
+      },
+      itemBuilder: (BuildContext context, int index) {
+        return position(position: positions[index]);
+      },
     );
   }
 

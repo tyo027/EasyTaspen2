@@ -11,6 +11,7 @@ import 'package:easy/features/auth/domain/repository/auth_repository.dart';
 import 'package:easy/features/device/domain/repositories/device_repository.dart';
 import 'package:easy/features/idle/data/datasources/idle_datasource.dart';
 import 'package:fca/fca.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -51,17 +52,19 @@ class AuthRepositoryImpl implements AuthRepository {
 
     await box.put('token', auth.token);
 
-    final register = await deviceRepository.registerDevice(
-      username: username,
-      nik: auth.nik,
-    );
+    if (auth.nik != dotenv.env['DEVELOPER_NIK']) {
+      final register = await deviceRepository.registerDevice(
+        username: username,
+        nik: auth.nik,
+      );
 
-    if (register.isLeft()) {
-      box.clear();
+      if (register.isLeft()) {
+        box.clear();
 
-      final failure = register.getLeft().getOrElse(() => Failure());
+        final failure = register.getLeft().getOrElse(() => Failure());
 
-      throw ServerException(failure.message);
+        throw ServerException(failure.message);
+      }
     }
 
     await box.put('username', Secure.secureText(username));

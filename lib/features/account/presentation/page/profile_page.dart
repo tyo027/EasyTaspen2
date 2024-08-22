@@ -5,12 +5,12 @@ import 'package:easy/features/account/presentation/page/individu_page.dart';
 import 'package:easy/features/account/presentation/page/position_page.dart';
 import 'package:easy/core/common/entities/menu.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const ProfilePage());
+  static String route = '/account';
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +23,19 @@ class ProfilePage extends StatelessWidget {
               Menu(
                 image: 'assets/svgs/individu.svg',
                 onTap: () {
-                  Navigator.of(context).push(IndividuPage.route());
+                  context.push(IndividuPage.route);
                 },
               ),
               Menu(
                 image: 'assets/svgs/jabatan.svg',
                 onTap: () {
-                  Navigator.of(context).push(PositionPage.route());
+                  context.push(PositionPage.route);
                 },
               ),
               Menu(
                 image: 'assets/svgs/golongan.svg',
                 onTap: () {
-                  Navigator.of(context).push(GolonganPage.route());
+                  context.push(GolonganPage.route);
                 },
               ),
             ],

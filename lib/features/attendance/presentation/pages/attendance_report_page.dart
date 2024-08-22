@@ -23,8 +23,7 @@ import 'package:intl/intl.dart';
 class AttendanceReportPage extends StatefulWidget {
   const AttendanceReportPage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const AttendanceReportPage());
+  static String route = '/attendance/report';
 
   @override
   State<AttendanceReportPage> createState() => _AttendanceReportPageState();

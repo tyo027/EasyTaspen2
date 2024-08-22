@@ -11,12 +11,12 @@ import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 class AttendancePage extends StatelessWidget {
   const AttendancePage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const AttendancePage());
+  static String route = '/attendance';
 
   @override
   Widget build(BuildContext context) {
@@ -42,23 +42,28 @@ class AttendancePage extends StatelessWidget {
                       Menu(
                         image: 'assets/svgs/wfa.svg',
                         onTap: () {
-                          Navigator.of(context).push(
-                              SubmitAttendancePage.route(AttendanceType.wfa));
+                          context.push(
+                            SubmitAttendancePage.route,
+                            extra: AttendanceType.wfa,
+                          );
                         },
                       ),
                     if (state.data.isAllowWFO)
                       Menu(
                         image: 'assets/svgs/wfo.svg',
                         onTap: () {
-                          Navigator.of(context).push(
-                              SubmitAttendancePage.route(AttendanceType.wfo));
+                          context.push(
+                            SubmitAttendancePage.route,
+                            extra: AttendanceType.wfo,
+                          );
                         },
                       ),
                     Menu(
                       image: 'assets/svgs/laporan.svg',
                       onTap: () {
-                        Navigator.of(context)
-                            .push(AttendanceReportPage.route());
+                        context.push(
+                          AttendanceReportPage.route,
+                        );
                       },
                     ),
                   ],

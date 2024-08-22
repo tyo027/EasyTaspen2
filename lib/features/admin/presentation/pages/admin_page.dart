@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
 
-  static route() => MaterialPageRoute(builder: (context) => const AdminPage());
+  static String route = '/admin';
 
   @override
   State<AdminPage> createState() => _AdminPageState();

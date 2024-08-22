@@ -9,8 +9,7 @@ import 'package:gap/gap.dart';
 class GolonganPage extends StatelessWidget {
   const GolonganPage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const GolonganPage());
+  static String route = '/account/golongan';
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +50,7 @@ class GolonganPage extends StatelessWidget {
         shrinkWrap: true,
         itemCount: golongans.length,
         separatorBuilder: (BuildContext context, int index) {
-          return Gap(10);
+          return const Gap(10);
         },
         itemBuilder: (BuildContext context, int index) {
           return golongan(golongan: golongans[index]);

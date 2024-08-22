@@ -7,11 +7,13 @@ import 'package:easy/features/attendance/presentation/bloc/attendance_bloc.dart'
 import 'package:easy/features/attendance/presentation/bloc/my_location_bloc.dart';
 import 'package:easy/features/attendance/presentation/bloc/rule_bloc.dart';
 import 'package:easy/features/attendance/presentation/pages/submit_attendance_with_camera_page.dart';
+import 'package:easy/features/home/presentation/pages/home_page.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 class SubmitAttendancePage extends StatelessWidget {
   final AttendanceType type;
@@ -21,10 +23,7 @@ class SubmitAttendancePage extends StatelessWidget {
     required this.type,
   });
 
-  static route(AttendanceType type) => MaterialPageRoute(
-      builder: (context) => SubmitAttendancePage(
-            type: type,
-          ));
+  static String route = '/attendance/submit';
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +43,11 @@ class SubmitAttendancePage extends StatelessWidget {
                       CupertinoDialogAction(
                         child: const Text("YA"),
                         onPressed: () {
-                          Navigator.pushReplacement(context,
-                              SubmitAttendanceWithCameraPage.route(type));
+                          Navigator.pop(context);
+                          context.pushReplacement(
+                            SubmitAttendanceWithCameraPage.route,
+                            extra: type,
+                          );
                         },
                       ),
                       CupertinoDialogAction(
@@ -59,6 +61,14 @@ class SubmitAttendancePage extends StatelessWidget {
                 },
               );
             }
+          },
+          onSuccess: (data) {
+            showSnackBar(
+              context,
+              "Berhasil Absen",
+              indicatorColor: Colors.green,
+            );
+            context.go(HomePage.route);
           },
           builder: (context, state) {
             return BlocBuilder<MyLocationBloc, BaseState>(

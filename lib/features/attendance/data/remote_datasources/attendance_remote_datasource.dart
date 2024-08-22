@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:easy/core/constants/api.dart';
 import 'package:easy/features/attendance/data/models/attendance_model.dart';
@@ -10,7 +9,6 @@ import 'package:easy/features/attendance/data/models/rule_model.dart';
 import 'package:easy/features/attendance/domain/enums/attendance_type.dart';
 import 'package:fca/fca.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 
 abstract interface class AttendanceRemoteDatasource {
   Future<RuleModel> getRule(String codeCabang);
@@ -23,7 +21,7 @@ abstract interface class AttendanceRemoteDatasource {
     required double latitude,
     required double longitude,
     required AttendanceType type,
-    required File file,
+    required String filePath,
   });
 
   Future<List<AttendanceModel>> getDailyAttendance({
@@ -96,7 +94,7 @@ class AttendanceRemoteDatasourceImpl implements AttendanceRemoteDatasource {
     required double latitude,
     required double longitude,
     required AttendanceType type,
-    required File file,
+    required String filePath,
   }) async {
     try {
       var request =
@@ -111,14 +109,11 @@ class AttendanceRemoteDatasourceImpl implements AttendanceRemoteDatasource {
         "work_from": (type == AttendanceType.wfo ? 1 : 2).toString(),
       });
 
-      var fileStream = http.ByteStream(file.openRead());
-      var length = await file.length();
-      var multipartFile = http.MultipartFile('file', fileStream, length,
-          contentType: MediaType('image', 'png'));
+      var multipartFile = await http.MultipartFile.fromPath('file', filePath);
 
       request.files.add(multipartFile);
 
-      var response = await request.send();
+      var response = await client.send(request);
 
       var body = await response.stream.bytesToString();
 

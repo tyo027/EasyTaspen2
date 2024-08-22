@@ -8,8 +8,7 @@ import 'package:gap/gap.dart';
 class IndividuPage extends StatelessWidget {
   const IndividuPage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const IndividuPage());
+  static String route = '/account/individu';
 
   @override
   Widget build(BuildContext context) {

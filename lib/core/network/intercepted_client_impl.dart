@@ -70,7 +70,6 @@ class InterceptedClientImpl extends InterceptedClient {
 
       return transforms(response);
     } on http.ClientException catch (e) {
-      print(e.uri);
       if (e.message == 'Failed to parse header value') {
         await refreshToken();
         final newRequest = http.Request(request.method, request.url)

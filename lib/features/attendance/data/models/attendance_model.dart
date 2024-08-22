@@ -14,7 +14,8 @@ class AttendanceModel extends Attendance {
       sapFlag: json["sap_flag"],
       type: AttendanceType.values.firstWhere(
         (type) =>
-            type.name.toUpperCase() == json['work'].toString().toUpperCase(),
+            type.name.toUpperCase() ==
+            json['keterangan'].toString().toUpperCase(),
       ),
     );
   }

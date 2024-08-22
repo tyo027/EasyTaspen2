@@ -13,8 +13,7 @@ import 'package:intl/intl.dart';
 class PayslipPage extends StatefulWidget {
   const PayslipPage({super.key});
 
-  static route() =>
-      MaterialPageRoute(builder: (context) => const PayslipPage());
+  static String route = '/payslip';
 
   @override
   State<PayslipPage> createState() => _PayslipPageState();

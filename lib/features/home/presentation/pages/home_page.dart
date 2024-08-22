@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,34 +47,34 @@ class _HomePageState extends State<HomePage> {
                       Menu(
                         image: 'assets/svgs/profile.svg',
                         onTap: () {
-                          Navigator.of(context).push(ProfilePage.route());
+                          context.push(ProfilePage.route);
                         },
                       ),
                     if (user.canAccess)
                       Menu(
                         image: 'assets/svgs/absensi.svg',
                         onTap: () {
-                          Navigator.of(context).push(AttendancePage.route());
+                          context.push(AttendancePage.route);
                         },
                       ),
                     if (state.data.hasEmployee)
                       Menu(
                         image: 'assets/svgs/manajemen.svg',
                         onTap: () {
-                          Navigator.of(context).push(ManagementPage.route());
+                          context.push(ManagementPage.route);
                         },
                       ),
                     Menu(
                       image: 'assets/svgs/payslip.svg',
                       onTap: () {
-                        Navigator.of(context).push(PayslipPage.route());
+                        context.push(PayslipPage.route);
                       },
                     ),
                     if (state.data.isAdmin)
                       Menu(
                         image: 'assets/svgs/admin.svg',
                         onTap: () {
-                          Navigator.of(context).push(AdminPage.route());
+                          context.push(AdminPage.route);
                         },
                       ),
                     Menu(
