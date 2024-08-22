@@ -9,6 +9,7 @@ final class Authenticate extends AttendanceEvent {
   final double latitude;
   final double longitude;
   final AttendanceType type;
+  final String? filePath;
 
   Authenticate({
     required this.nik,
@@ -16,5 +17,6 @@ final class Authenticate extends AttendanceEvent {
     required this.latitude,
     required this.longitude,
     required this.type,
+    this.filePath,
   });
 }

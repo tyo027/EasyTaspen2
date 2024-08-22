@@ -30,6 +30,7 @@ abstract interface class AttendanceRepository {
     required double latitude,
     required double longitude,
     required AttendanceType type,
+    String? filePath,
   });
 
   Future<Either<Failure, List<Attendance>>> getDailyAttendance({

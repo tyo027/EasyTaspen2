@@ -146,21 +146,25 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
     required double latitude,
     required double longitude,
     required AttendanceType type,
+    String? filePath,
   }) async {
     try {
       if (!await (connectionChecker.isConnected)) {
         return left(Failure(Constants.noConnectionErrorMessage));
       }
 
-      final file = await biometricFile();
+      if (filePath == null) {
+        final file = await biometricFile();
+        filePath = file.path;
+      }
 
       await attendanceRemoteDatasource.submitAttendance(
-        file: file,
         nik: nik,
         latitude: latitude,
         longitude: longitude,
         kodeCabang: kodeCabang,
         type: type,
+        filePath: filePath,
       );
 
       return right(true);

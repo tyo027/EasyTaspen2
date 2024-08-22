@@ -24,8 +24,10 @@ class AttendanceBloc extends BaseBloc<AttendanceEvent> {
     emit(LoadingState());
 
     try {
-      await Biometric.authenticate(
-          reason: "Gunakan FaceID/Fingerprint untuk absen");
+      if (event.filePath == null) {
+        await Biometric.authenticate(
+            reason: "Gunakan FaceID/Fingerprint untuk absen");
+      }
 
       final response = await submitAttendance(
         SubmitAttendanceParams(
