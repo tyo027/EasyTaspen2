@@ -3,6 +3,8 @@ part of 'dependencies.dart';
 Future<void> initDependencies() async {
   await _initCore();
 
+  _initNotification();
+
   _initAccount();
   _initIdle();
   _initDevice();
@@ -55,6 +57,7 @@ _initDevice() {
 _initAuth() {
   Dependency.addRepository<AuthRepository>(
     AuthRepositoryImpl(
+      Dependency.get(),
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),
@@ -164,6 +167,7 @@ _initAttendance() {
     AttendanceRepositoryImpl(
       Dependency.get(),
       Dependency.get(),
+      Dependency.get(),
     ),
   );
   Dependency.addUsecase(GetRule(Dependency.get()));
@@ -198,4 +202,10 @@ _initPayslip() {
 
 _initAdmin() {
   Dependency.addBloc(AdminBloc(Dependency.get()));
+}
+
+_initNotification() {
+  Dependency.addDatasource<NotificationDatasource>(NotificationDatasourceImpl(
+    FlutterLocalNotificationsPlugin(),
+  ));
 }

@@ -37,6 +37,7 @@ class _UserInfoState extends State<UserInfo> {
       loading: false,
       builder: (context, state) {
         return Container(
+          height: 100,
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.only(left: 24, right: 24, top: 8),
           width: double.infinity,
@@ -67,53 +68,53 @@ class _UserInfoState extends State<UserInfo> {
                 },
               ),
               const Gap(16),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Skeleton<SuccessState<Account>>(
-                      height: 16 * 1.5,
-                      width: 160,
-                      load: state is SuccessState<Account>,
-                      value: state,
-                      builder: (value) {
-                        return Text(
-                          value.data.name.capitalize(),
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        );
-                      },
-                    ),
-                    const Gap(4),
-                    Skeleton<SuccessState<Account>>(
-                      height: 14 * 1.5,
-                      width: 80,
-                      load: state is SuccessState<Account>,
-                      value: state,
-                      builder: (value) {
-                        return Text(
-                          value.data.position.capitalize(),
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      },
-                    ),
-                    const Gap(1),
-                    Skeleton<SuccessState<Account>>(
-                      height: 14 * 1.5,
-                      width: 100,
-                      load: state is SuccessState<Account>,
-                      value: state,
-                      builder: (value) {
-                        return Text(
-                          value.data.unit.capitalize(),
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      },
-                    ),
-                  ],
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Skeleton<SuccessState<Account>>(
+                        height: 16 * 1.5,
+                        width: 160,
+                        load: state is SuccessState<Account>,
+                        value: state,
+                        builder: (value) {
+                          return Text(
+                            value.data.name.capitalize(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          );
+                        },
+                      ),
+                      const Gap(4),
+                      Skeleton<SuccessState<Account>>(
+                        height: 14 * 1.5,
+                        width: 80,
+                        load: state is SuccessState<Account>,
+                        value: state,
+                        builder: (value) {
+                          return Text(
+                            value.data.position.capitalize(),
+                          );
+                        },
+                      ),
+                      const Gap(1),
+                      Skeleton<SuccessState<Account>>(
+                        height: 14 * 1.5,
+                        width: 100,
+                        load: state is SuccessState<Account>,
+                        value: state,
+                        builder: (value) {
+                          return Text(
+                            value.data.unit.capitalize(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

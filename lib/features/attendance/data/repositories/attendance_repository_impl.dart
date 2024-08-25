@@ -10,6 +10,8 @@ import 'package:easy/features/attendance/domain/entities/my_location.dart';
 import 'package:easy/features/attendance/domain/entities/rule.dart';
 import 'package:easy/features/attendance/domain/enums/attendance_type.dart';
 import 'package:easy/features/attendance/domain/repositories/attendance_repository.dart';
+import 'package:easy/features/notification/data/datasources/notification_datasource.dart';
+import 'package:easy/features/notification/data/models/notification_model.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,10 +23,12 @@ import 'package:path_provider/path_provider.dart';
 class AttendanceRepositoryImpl implements AttendanceRepository {
   final AttendanceRemoteDatasource attendanceRemoteDatasource;
   final ConnectionChecker connectionChecker;
+  final NotificationDatasource notificationDatasource;
 
   AttendanceRepositoryImpl(
     this.attendanceRemoteDatasource,
     this.connectionChecker,
+    this.notificationDatasource,
   );
 
   @override
@@ -166,6 +170,19 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
         type: type,
         filePath: filePath,
       );
+
+      final now = DateTime.now();
+      if (now.hour >= 12) {
+        notificationDatasource.rescheduleNotification(
+          notifications: NotificationModel.eveningNotification(),
+          weekday: now.weekday,
+        );
+      } else {
+        notificationDatasource.rescheduleNotification(
+          notifications: NotificationModel.morningNotification(),
+          weekday: now.weekday,
+        );
+      }
 
       return right(true);
     } on ServerException catch (e) {

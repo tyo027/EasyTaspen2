@@ -31,9 +31,4 @@ class Messanging {
     }
     return FirebaseMessaging.instance.getToken();
   }
-
-  static Future<void> whenTokenUpdated(
-      String username, String uuid, String nik) async {
-    // FirebaseMessaging.instance.onTokenRefresh.listen((event) async {});
-  }
 }

@@ -5,6 +5,7 @@ import 'package:easy/core/utils/messanging.dart';
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
+import 'package:easy/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:easy/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:easy/features/attendance/presentation/bloc/attendance_report_bloc.dart';
 import 'package:easy/features/attendance/presentation/bloc/my_location_bloc.dart';
@@ -16,18 +17,24 @@ import 'package:easy/features/payslip/presentation/bloc/payslip_bloc.dart';
 import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await initializeDateFormatting('id_ID', null);
 
   await dotenv.load(fileName: ".env");
 
   await initDependencies();
   await Messanging.initialize();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
   runApp(MultiBlocProvider(
     providers: [
@@ -54,6 +61,9 @@ void main() async {
 
       // Payslip
       BlocProvider(create: (_) => Dependency.get<PayslipBloc>()),
+
+      // Admin
+      BlocProvider(create: (_) => Dependency.get<AdminBloc>()),
     ],
     child: const MyApp(),
   ));

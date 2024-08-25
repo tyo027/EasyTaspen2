@@ -10,6 +10,7 @@ import 'package:easy/features/auth/data/datasources/auth_remote_datasource.dart'
 import 'package:easy/features/auth/domain/repository/auth_repository.dart';
 import 'package:easy/features/device/domain/repositories/device_repository.dart';
 import 'package:easy/features/idle/data/datasources/idle_datasource.dart';
+import 'package:easy/features/notification/data/datasources/notification_datasource.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
@@ -22,6 +23,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AccountRemoteDatasource accountRemoteDatasource;
   final IdleDataSource idleDataSource;
   final DeviceRepository deviceRepository;
+  final NotificationDatasource notificationDatasource;
 
   AuthRepositoryImpl(
     this.box,
@@ -30,6 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
     this.accountRemoteDatasource,
     this.idleDataSource,
     this.deviceRepository,
+    this.notificationDatasource,
   );
 
   Future<UserModel> authenticate({
@@ -72,6 +75,10 @@ class AuthRepositoryImpl implements AuthRepository {
     await box.put('user', jsonEncode(user.toJson()));
 
     await idleDataSource.saveLastIdle(DateTime.now());
+
+    if (user.canAccess) {
+      notificationDatasource.scheduleAllDailyNotifications();
+    }
 
     return user;
   }
@@ -161,5 +168,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     await box.clear();
+    notificationDatasource.cancelAllNotification();
   }
 }
