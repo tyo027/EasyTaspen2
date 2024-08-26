@@ -27,7 +27,7 @@ class IdleDataSourceImpl implements IdleDataSource {
     }
 
     return DateTime.now().difference(lastIdleTime).inMilliseconds <=
-        const Duration(minutes: 1).inMilliseconds;
+        const Duration(minutes: 15).inMilliseconds;
   }
 
   @override
