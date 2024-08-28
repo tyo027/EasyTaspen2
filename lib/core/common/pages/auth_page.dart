@@ -109,6 +109,7 @@ class _AuthPageState extends State<AuthPage> {
       surfaceTintColor: Colors.white,
       elevation: 0,
       leadingWidth: 80,
+      centerTitle: true,
       leading: widget.canBack
           ? Container(
               height: 32,

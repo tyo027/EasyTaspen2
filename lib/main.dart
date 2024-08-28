@@ -14,6 +14,7 @@ import 'package:easy/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easy/features/home/presentation/bloc/home_bloc.dart';
 import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
 import 'package:easy/features/payslip/presentation/bloc/payslip_bloc.dart';
+import 'package:easy/permissions.dart';
 import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ void main() async {
   await initializeDateFormatting('id_ID', null);
 
   await dotenv.load(fileName: ".env");
+
+  await requestPermissions();
 
   await initDependencies();
   await Messanging.initialize();

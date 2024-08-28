@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'taspen-easy.appspot.com',
     iosBundleId: 'com.taspen.easy2',
   );
+
 }

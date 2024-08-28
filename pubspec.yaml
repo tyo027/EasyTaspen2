@@ -28,8 +28,6 @@ dependencies:
     device_uuid: ^0.0.4
     local_auth: ^2.3.0
     encrypt: ^5.0.3
-    firebase_messaging: ^14.7.10
-    firebase_core: ^2.24.2
     geolocator: ^13.0.1
     turf: ^0.0.10
     geocoding: ^3.0.0
@@ -42,6 +40,9 @@ dependencies:
     flutter_local_notifications: ^17.2.2
     timezone: ^0.9.4
     flutter_timezone: ^3.0.0
+    firebase_core: ^2.24.2
+    firebase_messaging: ^14.7.10
+    permission_handler: ^11.3.1
 
 dev_dependencies:
     flutter_test:
