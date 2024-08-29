@@ -58,8 +58,8 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   final formKey = GlobalKey<FormState>();
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  var username = '';
+  var password = '';
 
   Form _form() {
     return Form(
@@ -68,7 +68,11 @@ class _SignInPageState extends State<SignInPage> {
         children: [
           TextFieldWidget(
             'Username',
-            controller: usernameController,
+            onChange: (value) {
+              setState(() {
+                username = value;
+              });
+            },
             validator: (value) {
               if (value == null || value.isEmpty) return "Username kosong!";
               return null;
@@ -78,7 +82,11 @@ class _SignInPageState extends State<SignInPage> {
           TextFieldWidget(
             'Password',
             isPassword: true,
-            controller: passwordController,
+            onChange: (value) {
+              setState(() {
+                password = value;
+              });
+            },
             validator: (value) {
               if (value == null || value.isEmpty) return "Password kosong!";
               return null;
@@ -90,16 +98,18 @@ class _SignInPageState extends State<SignInPage> {
               Flexible(
                 child: ButtonWidget.primary(
                   "Login",
-                  onPressed: () {
-                    if (!formKey.currentState!.validate()) return;
+                  onPressed: username.isEmpty || password.isEmpty
+                      ? null
+                      : () {
+                          if (!formKey.currentState!.validate()) return;
 
-                    context.read<AuthBloc>().add(
-                          Authenticate(
-                            username: usernameController.text,
-                            password: passwordController.text,
-                          ),
-                        );
-                  },
+                          context.read<AuthBloc>().add(
+                                Authenticate(
+                                  username: username,
+                                  password: password,
+                                ),
+                              );
+                        },
                 ),
               ),
               if (widget.canUseBiometric != null && widget.canUseBiometric!)

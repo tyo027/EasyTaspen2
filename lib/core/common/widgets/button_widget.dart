@@ -101,12 +101,11 @@ class ButtonIcon extends StatelessWidget {
       onPressed: onPressed,
       label: SvgWidget(
         icon,
-        color: iconColor ?? Colors.amber.shade300,
       ),
       style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: AppPallete.text,
-          foregroundColor: Colors.amber.shade300,
+          backgroundColor: Colors.amber.shade300,
+          foregroundColor: Colors.amber,
           overlayColor: AppPallete.text,
           padding: const EdgeInsets.all(8),
           shape: RoundedRectangleBorder(
