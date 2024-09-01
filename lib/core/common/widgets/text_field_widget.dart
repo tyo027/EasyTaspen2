@@ -72,6 +72,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       style: AppPallete.textStyle,
       onChanged: widget.onChange,
       cursorColor: AppPallete.text,
+      autocorrect: false,
       cursorErrorColor: AppPallete.red,
       keyboardType: widget.type,
       onTapAlwaysCalled: widget.onTap != null,
