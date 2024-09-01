@@ -5,7 +5,6 @@ import 'package:easy/core/utils/messanging.dart';
 import 'package:easy/features/device/data/remote_datasources/device_remote_datasource.dart';
 import 'package:easy/features/device/domain/repositories/device_repository.dart';
 import 'package:fca/fca.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
 
 class DeviceRepositoryImpl implements DeviceRepository {
@@ -48,7 +47,7 @@ class DeviceRepositoryImpl implements DeviceRepository {
         osVersion: device.osVersion,
       );
 
-      if (register.status && nik != dotenv.env['DEVELOPER_NIK']) {
+      if (!register.status) {
         return left(Failure("Account already logged in other device!"));
       }
 
