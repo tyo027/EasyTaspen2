@@ -81,7 +81,9 @@ class _UserInfoState extends State<UserInfo> {
                         value: state,
                         builder: (value) {
                           return Text(
-                            value.data.name.capitalize(),
+                            value.data.name.isEmpty
+                                ? widget.user.nama.capitalize()
+                                : value.data.name.capitalize(),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -97,7 +99,9 @@ class _UserInfoState extends State<UserInfo> {
                         value: state,
                         builder: (value) {
                           return Text(
-                            value.data.position.capitalize(),
+                            value.data.position.isEmpty
+                                ? widget.user.jabatan.capitalize()
+                                : value.data.position.capitalize(),
                           );
                         },
                       ),
@@ -109,7 +113,9 @@ class _UserInfoState extends State<UserInfo> {
                         value: state,
                         builder: (value) {
                           return Text(
-                            value.data.unit.capitalize(),
+                            value.data.unit.isEmpty
+                                ? widget.user.unitKerja.capitalize()
+                                : value.data.unit.capitalize(),
                           );
                         },
                       ),
