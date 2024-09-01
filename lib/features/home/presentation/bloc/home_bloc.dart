@@ -11,6 +11,9 @@ class HomeBloc extends BaseBloc<HomeEvent> {
   final GetHomeData getHomeData;
   HomeBloc(this.getHomeData) : super() {
     on<LoadHomeData>(_loadHomeData);
+    on<ResetHome>(
+      (event, emit) => emit(InitialState()),
+    );
   }
 
   FutureOr<void> _loadHomeData(

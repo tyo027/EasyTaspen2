@@ -8,3 +8,5 @@ final class LoadHomeData extends HomeEvent {
 
   LoadHomeData({required this.nik});
 }
+
+final class ResetHome extends HomeEvent {}
