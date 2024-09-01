@@ -202,6 +202,11 @@ class _SubmitAttendanceWithCameraPageState
         return [
           BaseConsumer<AttendanceBloc, dynamic>(
             onSuccess: (data) {
+              showSnackBar(
+                context,
+                "Berhasil Absen",
+                indicatorColor: Colors.green,
+              );
               context.go(HomePage.route);
             },
             builder: (context, state) {
