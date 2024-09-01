@@ -1,8 +1,11 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
@@ -32,38 +35,31 @@ def keystoreProperties = new Properties()
    }
 
 android {
-    
-    compileSdkVersion 34
-    compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    namespace = "com.taspen.easy2"
+    compileSdk = 34
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
-        // Flag to enable support for the new language APIs
-        coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 8
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+
+        coreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.taspen.easy2"
+        applicationId = "com.taspen.easy2"
         // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 25
-        // minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 34
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-        multiDexEnabled true
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = 25
+        targetSdk = 34
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -82,34 +78,12 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    buildscript {
-
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
-
-    }}
-
-
 }
 
-
-
 flutter {
-    source '../..'
+    source = "../.."
 }
 
 dependencies {
-    implementation 'androidx.window:window:1.0.0'
-    implementation 'androidx.window:window-java:1.0.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"     // For RxJava2 integration
-    implementation "androidx.window:window-rxjava2:1.0.0"
-
-    // For RxJava3 integration
-    implementation "androidx.window:window-rxjava3:1.0.0"
-
-    // For testing
-    implementation "androidx.window:window-testing:1.0.0"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.1'
 }
