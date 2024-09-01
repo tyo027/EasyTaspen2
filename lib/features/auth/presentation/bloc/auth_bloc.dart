@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
+import 'package:easy/core/common/entities/user.dart';
 import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
 import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
@@ -89,11 +90,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     response.fold(
       (failure) => emit(FailureState(failure.message)),
-      (user) {
-        emit(SuccessState(user));
-        idleBloc.startIdleCheck();
-        _userCubit.updateUser(user);
-      },
+      (user) => _success(user, emit),
     );
   }
 
@@ -107,12 +104,18 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     response.fold(
       (failure) => emit(FailureState(failure.message)),
-      (user) {
-        emit(SuccessState(user));
-        idleBloc.startIdleCheck();
-        _userCubit.updateUser(user);
-      },
+      (user) => _success(user, emit),
     );
+  }
+
+  _success(User user, Emitter emit) {
+    emit(SuccessState(user));
+    idleBloc.startIdleCheck();
+    accountBloc.add(ResetAccount());
+    golonganBloc.add(ResetGolongan());
+    positionBloc.add(ResetPosition());
+    homeBloc.add(ResetHome());
+    _userCubit.updateUser(user);
   }
 
   FutureOr<void> _logout(
@@ -125,10 +128,6 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     _userCubit.updateUser(null);
     idleBloc.cancel();
-    accountBloc.add(ResetAccount());
-    golonganBloc.add(ResetGolongan());
-    positionBloc.add(ResetPosition());
-    homeBloc.add(ResetHome());
     router.go(SignInPage.route);
   }
 }

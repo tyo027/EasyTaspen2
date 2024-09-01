@@ -1,6 +1,5 @@
 import 'package:easy/core/common/pages/auth_page.dart';
 import 'package:easy/core/common/widgets/button_widget.dart';
-import 'package:easy/core/themes/app_pallete.dart';
 import 'package:easy/features/attendance/domain/entities/my_location.dart';
 import 'package:easy/features/attendance/domain/entities/rule.dart';
 import 'package:easy/features/attendance/domain/enums/attendance_type.dart';
