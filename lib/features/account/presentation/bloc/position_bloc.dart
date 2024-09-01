@@ -12,6 +12,7 @@ class PositionBloc extends BaseBloc<PositionEvent> {
 
   PositionBloc(this.getCurrentPosition) : super() {
     on<GetPosition>(_getPosition);
+    on<ResetPosition>((event, emit) => emit(InitialState()));
   }
 
   FutureOr<void> _getPosition(

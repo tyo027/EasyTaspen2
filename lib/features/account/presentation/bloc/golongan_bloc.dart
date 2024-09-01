@@ -12,6 +12,7 @@ class GolonganBloc extends BaseBloc<GolonganEvent> {
 
   GolonganBloc(this.getCurrentGolongan) : super() {
     on<GetGolongan>(_getGolongan);
+    on<ResetGolongan>((event, emit) => emit(InitialState()));
   }
 
   FutureOr<void> _getGolongan(

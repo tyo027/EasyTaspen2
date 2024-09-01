@@ -12,6 +12,8 @@ class AccountBloc extends BaseBloc<AccountEvent> {
 
   AccountBloc(this.getCurrentAccount) : super() {
     on<GetAccount>(_getAccount);
+
+    on<ResetAccount>((event, emit) => emit(InitialState()));
   }
 
   FutureOr<void> _getAccount(

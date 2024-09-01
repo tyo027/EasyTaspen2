@@ -8,3 +8,5 @@ final class GetAccount extends AccountEvent {
 
   GetAccount({required this.nik});
 }
+
+final class ResetAccount extends AccountEvent {}

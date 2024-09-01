@@ -8,3 +8,5 @@ final class GetGolongan extends GolonganEvent {
 
   GetGolongan({required this.nik});
 }
+
+final class ResetGolongan extends GolonganEvent {}

@@ -86,6 +86,9 @@ _initAuth() {
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),
+      Dependency.get(),
+      Dependency.get(),
+      Dependency.get(),
     ),
   );
 }

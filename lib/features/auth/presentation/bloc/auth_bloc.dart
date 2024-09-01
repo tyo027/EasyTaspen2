@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:easy/core/common/cubit/app_user_cubit.dart';
+import 'package:easy/features/account/presentation/bloc/account_bloc.dart';
+import 'package:easy/features/account/presentation/bloc/golongan_bloc.dart';
+import 'package:easy/features/account/presentation/bloc/position_bloc.dart';
 import 'package:easy/features/auth/domain/usecase/current_user.dart';
 import 'package:easy/features/auth/domain/usecase/logout.dart';
 import 'package:easy/features/auth/domain/usecase/re_authenticate.dart';
@@ -22,6 +25,9 @@ class AuthBloc extends BaseBloc<AuthEvent> {
   final ReAuthenticate _reAuthenticate;
   final Logout logout;
   final IdleBloc idleBloc;
+  final AccountBloc accountBloc;
+  final GolonganBloc golonganBloc;
+  final PositionBloc positionBloc;
 
   AuthBloc(
     this._userCubit,
@@ -30,6 +36,9 @@ class AuthBloc extends BaseBloc<AuthEvent> {
     this._reAuthenticate,
     this.logout,
     this.idleBloc,
+    this.accountBloc,
+    this.golonganBloc,
+    this.positionBloc,
   ) : super() {
     on<IsUserLogged>(_isUserLogged);
 
@@ -70,7 +79,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     final response = await _signIn(
       SignInParams(
-        username: event.username,
+        username: event.username.toLowerCase(),
         password: event.password,
       ),
     );
@@ -113,6 +122,9 @@ class AuthBloc extends BaseBloc<AuthEvent> {
 
     _userCubit.updateUser(null);
     idleBloc.cancel();
+    accountBloc.add(ResetAccount());
+    golonganBloc.add(ResetGolongan());
+    positionBloc.add(ResetPosition());
     router.go(SignInPage.route);
   }
 }

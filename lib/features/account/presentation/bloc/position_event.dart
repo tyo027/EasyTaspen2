@@ -8,3 +8,5 @@ final class GetPosition extends PositionEvent {
 
   GetPosition({required this.nik});
 }
+
+final class ResetPosition extends PositionEvent {}
