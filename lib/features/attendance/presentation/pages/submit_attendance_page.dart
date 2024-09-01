@@ -1,5 +1,6 @@
 import 'package:easy/core/common/pages/auth_page.dart';
 import 'package:easy/core/common/widgets/button_widget.dart';
+import 'package:easy/core/themes/app_pallete.dart';
 import 'package:easy/features/attendance/domain/entities/my_location.dart';
 import 'package:easy/features/attendance/domain/entities/rule.dart';
 import 'package:easy/features/attendance/domain/enums/attendance_type.dart';
@@ -115,7 +116,19 @@ class SubmitAttendancePage extends StatelessWidget {
         }
         return [
           BaseConsumer<RuleBloc, Rule>(
+            onFailure: (context, message) {},
             builder: (context, state) {
+              if (state is FailureState) {
+                final height = MediaQuery.of(context).size.height;
+                return SizedBox(
+                  height: height / 2,
+                  child: Center(
+                    child: Text(
+                      state.message,
+                    ),
+                  ),
+                );
+              }
               if (state is! SuccessState<Rule>) {
                 return const Gap(0);
               }

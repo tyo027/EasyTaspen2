@@ -26,7 +26,13 @@ class GolonganPage extends StatelessWidget {
             builder: (context, state) {
               if (state is SuccessState<List<Golongan>>) {
                 if (state.data.isEmpty) {
-                  return const Center(child: Text("Data Belum Tersedia"));
+                  final height = MediaQuery.of(context).size.height;
+                  return SizedBox(
+                    height: height / 2,
+                    child: const Center(
+                      child: Text("Data Belum Tersedia"),
+                    ),
+                  );
                 }
                 return laporanItem(golongans: state.data);
               }
