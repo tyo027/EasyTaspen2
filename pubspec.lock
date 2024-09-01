@@ -261,10 +261,10 @@ packages:
     dependency: "direct main"
     description:
       name: fca
-      sha256: ecd4856d6ce6221a8a76b8ecbbf1862b82f684b11a71308dc62f621252b16005
+      sha256: ee60e85538b910b7a9d5c4d59665d7d622e970e424213231a6c1bd3e63818f9a
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.10"
+    version: "0.0.11"
   ffi:
     dependency: transitive
     description:
