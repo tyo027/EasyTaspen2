@@ -17,5 +17,5 @@ class User {
 
   bool get canAccess => !["BOD", "BOC", "SBOC"].contains(perty);
 
-  bool get haveManagementAccess => ["BOD"].contains(perty);
+  bool get haveManagementAccess => !["BOC", "SBOC"].contains(perty);
 }
