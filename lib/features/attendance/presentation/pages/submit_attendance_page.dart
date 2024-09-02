@@ -146,59 +146,80 @@ class SubmitAttendancePage extends StatelessWidget {
                 ),
               );
 
-              return BaseConsumer<MyLocationBloc, MyLocation>(
-                onFailure: (context, message) {},
-                builder: (context, state) {
-                  if (state is FailureState) {
-                    final height = MediaQuery.of(context).size.height;
-                    return SizedBox(
-                      height: height / 2,
-                      child: Center(
-                        child: Text(
-                          state.message,
-                        ),
-                      ),
-                    );
-                  }
-                  if (state is! SuccessState<MyLocation>) {
-                    return const Gap(0);
-                  }
+              return Column(
+                children: [
+                  BaseConsumer<MyLocationBloc, MyLocation>(
+                    onFailure: (context, message) {},
+                    builder: (context, state) {
+                      if (state is FailureState) {
+                        final height = MediaQuery.of(context).size.height;
+                        return SizedBox(
+                          height: height / 2,
+                          child: Center(
+                            child: Text(
+                              state.message,
+                            ),
+                          ),
+                        );
+                      }
+                      if (state is! SuccessState<MyLocation>) {
+                        return const Gap(0);
+                      }
 
-                  return Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 24),
-                        width: 400,
-                        height: 200,
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Image.network(
-                          state.data.imageSrc,
-                          fit: BoxFit.cover,
+                      return Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                            width: 400,
+                            height: 200,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Image.network(
+                              state.data.imageSrc,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const Gap(24),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                            width: 400,
+                            decoration: BoxDecoration(
+                                color: Colors.amberAccent,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    "Work From ${type == AttendanceType.wfo ? 'Office' : 'Anywhere'}"),
+                                Text("Longitude : ${state.data.longitude}"),
+                                Text("Latitude  : ${state.data.latitude}"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const Gap(24),
+                  ButtonWidget.primary(
+                    "Refresh location",
+                    onPressed: () {
+                      myLocationBloc.add(
+                        GetCurrentLocation(
+                          centerLatitude: state.data.lat,
+                          centerLongitude: state.data.long,
+                          radius: state.data.jarak,
+                          kodeCabang: user.ba,
+                          type: type,
+                          nik: user.nik,
+                          allowMockLocation: state.data.isAllowMockLocation,
                         ),
-                      ),
-                      const Gap(24),
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        margin: const EdgeInsets.symmetric(horizontal: 24),
-                        width: 400,
-                        decoration: BoxDecoration(
-                            color: Colors.amberAccent,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "Work From ${type == AttendanceType.wfo ? 'Office' : 'Anywhere'}"),
-                            Text("Longitude : ${state.data.longitude}"),
-                            Text("Latitude  : ${state.data.latitude}"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                      );
+                    },
+                  )
+                ]
               );
             },
           )
