@@ -147,44 +147,57 @@ class SubmitAttendancePage extends StatelessWidget {
               );
 
               return BaseConsumer<MyLocationBloc, MyLocation>(
+                onFailure: (context, message) {},
                 builder: (context, state) {
-                  if (state is SuccessState<MyLocation>) {
-                    return Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 24),
-                          width: 400,
-                          height: 200,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Image.network(
-                            state.data.imageSrc,
-                            fit: BoxFit.cover,
-                          ),
+                  if (state is FailureState) {
+                    final height = MediaQuery.of(context).size.height;
+                    return SizedBox(
+                      height: height / 2,
+                      child: Center(
+                        child: Text(
+                          state.message,
                         ),
-                        const Gap(24),
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          margin: const EdgeInsets.symmetric(horizontal: 24),
-                          width: 400,
-                          decoration: BoxDecoration(
-                              color: Colors.amberAccent,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  "Work From ${type == AttendanceType.wfo ? 'Office' : 'Anywhere'}"),
-                              Text("Longitude : ${state.data.longitude}"),
-                              Text("Latitude  : ${state.data.latitude}"),
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     );
                   }
-                  return const Gap(0);
+                  if (state is! SuccessState<MyLocation>) {
+                    return const Gap(0);
+                  }
+
+                  return Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 24),
+                        width: 400,
+                        height: 200,
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Image.network(
+                          state.data.imageSrc,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const Gap(24),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        margin: const EdgeInsets.symmetric(horizontal: 24),
+                        width: 400,
+                        decoration: BoxDecoration(
+                            color: Colors.amberAccent,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "Work From ${type == AttendanceType.wfo ? 'Office' : 'Anywhere'}"),
+                            Text("Longitude : ${state.data.longitude}"),
+                            Text("Latitude  : ${state.data.latitude}"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
                 },
               );
             },
