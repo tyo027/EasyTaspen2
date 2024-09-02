@@ -35,6 +35,14 @@ class _UserInfoState extends State<UserInfo> {
   Widget build(BuildContext context) {
     return BaseConsumer<AccountBloc, Account>(
       loading: false,
+      onFailure: (context, message) {
+        showSnackBar(
+          context,
+          message,
+        );
+
+        context.read<AccountBloc>().add(GetAccount(nik: widget.user.nik));
+      },
       builder: (context, state) {
         return Container(
           height: 100,
