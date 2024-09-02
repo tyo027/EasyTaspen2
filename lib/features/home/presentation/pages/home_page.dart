@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                           context.push(AttendancePage.route);
                         },
                       ),
-                    if (state.data.hasEmployee)
+                    if (state.data.hasEmployee && user.haveManagementAccess)
                       Menu(
                         image: 'assets/svgs/manajemen.svg',
                         onTap: () {
