@@ -40,17 +40,18 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
         emit(IdleLoading());
         final result = await activateIdle(NoParams());
 
-        result.fold((_) => _unAuthenticate(emit), (idleStatus) {
-          if (idleStatus.isIdle) {
-            emit(IdleActive());
-          } else {
-            _expired(emit);
-          }
-        });
+        result.fold(
+          (_) => _unAuthenticate(emit),
+          (idleStatus) {
+            if (idleStatus.isIdle) {
+              emit(IdleActive());
+            } else {
+              _expired(emit);
+            }
+          },
+        );
       },
     );
-
-    startIdleCheck();
   }
 
   void _expired(Emitter<IdleState> emit) {
@@ -71,9 +72,12 @@ class IdleBloc extends Bloc<IdleEvent, IdleState> {
   }
 
   void startIdleCheck() {
-    _idleTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      add(CheckIdle());
-    });
+    _idleTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (timer) {
+        add(CheckIdle());
+      },
+    );
   }
 
   cancel() {

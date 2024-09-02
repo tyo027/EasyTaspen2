@@ -75,16 +75,7 @@ class NotificationDatasourceImpl implements NotificationDatasource {
         );
   }
 
-  Future<void> _requireAndroidPermission() async {
-    await _notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-    await _notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestExactAlarmsPermission();
-  }
+  Future<void> _requireAndroidPermission() async {}
 
   @override
   Future<void> showNotification({

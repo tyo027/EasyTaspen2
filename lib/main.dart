@@ -26,6 +26,10 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   await initializeDateFormatting(
     'id_ID',
   );
@@ -36,10 +40,6 @@ void main() async {
 
   await initDependencies();
   await Messanging.initialize();
-
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
 
   runApp(MultiBlocProvider(
     providers: [

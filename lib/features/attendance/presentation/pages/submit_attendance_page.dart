@@ -132,19 +132,17 @@ class SubmitAttendancePage extends StatelessWidget {
                 return const Gap(0);
               }
 
-              final myLocationBloc = context.read<MyLocationBloc>();
-
-              myLocationBloc.add(
-                GetCurrentLocation(
-                  centerLatitude: state.data.lat,
-                  centerLongitude: state.data.long,
-                  radius: state.data.jarak,
-                  kodeCabang: user.ba,
-                  type: type,
-                  nik: user.nik,
-                  allowMockLocation: state.data.isAllowMockLocation,
-                ),
-              );
+              context.read<MyLocationBloc>().add(
+                    GetCurrentLocation(
+                      centerLatitude: state.data.lat,
+                      centerLongitude: state.data.long,
+                      radius: state.data.jarak,
+                      kodeCabang: user.ba,
+                      type: type,
+                      nik: user.nik,
+                      allowMockLocation: state.data.isAllowMockLocation,
+                    ),
+                  );
 
               return Column(children: [
                 BaseConsumer<MyLocationBloc, MyLocation>(
@@ -202,26 +200,37 @@ class SubmitAttendancePage extends StatelessWidget {
                   },
                 ),
                 const Gap(24),
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: ButtonWidget.primary(
-                      "Refresh location",
-                      backgroundColor: Colors.indigo,
-                      foregroundColor: Colors.white,
-                      onPressed: () {
-                        myLocationBloc.add(
-                          GetCurrentLocation(
-                            centerLatitude: state.data.lat,
-                            centerLongitude: state.data.long,
-                            radius: state.data.jarak,
-                            kodeCabang: user.ba,
-                            type: type,
-                            nik: user.nik,
-                            allowMockLocation: state.data.isAllowMockLocation,
-                          ),
-                        );
-                      },
-                    ))
+                BlocBuilder<MyLocationBloc, BaseState>(
+                  builder: (context, locationState) {
+                    if (locationState is! InitialState &&
+                        locationState is! LoadingState) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: ButtonWidget.primary(
+                          "Refresh location",
+                          backgroundColor: Colors.indigo,
+                          foregroundColor: Colors.white,
+                          onPressed: () {
+                            context.read<MyLocationBloc>().add(
+                                  GetCurrentLocation(
+                                    centerLatitude: state.data.lat,
+                                    centerLongitude: state.data.long,
+                                    radius: state.data.jarak,
+                                    kodeCabang: user.ba,
+                                    type: type,
+                                    nik: user.nik,
+                                    allowMockLocation:
+                                        state.data.isAllowMockLocation,
+                                  ),
+                                );
+                          },
+                        ),
+                      );
+                    }
+
+                    return const SizedBox();
+                  },
+                )
               ]);
             },
           )
