@@ -6,22 +6,10 @@ import 'package:flutter/foundation.dart';
 class Messanging {
   static bool _hasInit = false;
 
-  static initialize() async {
+  static Future<void> initialize() async {
     try {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
-      );
-
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-      await messaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
       );
 
       _hasInit = true;
