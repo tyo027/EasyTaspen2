@@ -203,21 +203,24 @@ class SubmitAttendancePage extends StatelessWidget {
                     },
                   ),
                   const Gap(24),
-                  ButtonWidget.primary(
-                    "Refresh location",
-                    onPressed: () {
-                      myLocationBloc.add(
-                        GetCurrentLocation(
-                          centerLatitude: state.data.lat,
-                          centerLongitude: state.data.long,
-                          radius: state.data.jarak,
-                          kodeCabang: user.ba,
-                          type: type,
-                          nik: user.nik,
-                          allowMockLocation: state.data.isAllowMockLocation,
-                        ),
-                      );
-                    },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: ButtonWidget.primary(
+                      "Refresh location",
+                      onPressed: () {
+                        myLocationBloc.add(
+                          GetCurrentLocation(
+                            centerLatitude: state.data.lat,
+                            centerLongitude: state.data.long,
+                            radius: state.data.jarak,
+                            kodeCabang: user.ba,
+                            type: type,
+                            nik: user.nik,
+                            allowMockLocation: state.data.isAllowMockLocation,
+                          ),
+                        );
+                      },
+                    )
                   )
                 ]
               );
