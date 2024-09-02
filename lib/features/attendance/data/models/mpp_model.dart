@@ -16,7 +16,7 @@ class MppModel {
       isCustom: json['data']['custom'] == 1,
       long: double.tryParse(json['data']['long'].toString()) ?? 0,
       lat: double.tryParse(json['data']['lat'].toString()) ?? 0,
-      radius: json['data']['radius'],
+      radius: int.tryParse(json['data']['radius'].toString()) ?? 0,
     );
   }
 }
