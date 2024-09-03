@@ -165,6 +165,8 @@ class NotificationDatasourceImpl implements NotificationDatasource {
       playSound: true,
       enableVibration: true,
       enableLights: true,
+      category: AndroidNotificationCategory.alarm,
+      visibility: NotificationVisibility.public,
     );
 
     const iosNotificationDetail = DarwinNotificationDetails();
@@ -224,7 +226,7 @@ class NotificationDatasourceImpl implements NotificationDatasource {
       dateTime,
       notificationDetails(),
       // Requires SCHEDULE_EXACT_ALARM permission
-      androidScheduleMode: AndroidScheduleMode.alarmClock,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.dateAndTime,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,

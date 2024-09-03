@@ -123,6 +123,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final user = UserModel.fromJson(jsonDecode(userData));
 
+      if (user.canAccess) {
+        notificationDatasource.scheduleAllDailyNotifications();
+      }
+
       return right(user);
     } on ServerException catch (e) {
       return left(Failure(e.message));
