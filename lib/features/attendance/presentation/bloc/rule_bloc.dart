@@ -12,6 +12,7 @@ class RuleBloc extends BaseBloc<RuleEvent> {
 
   RuleBloc(this.getRule) : super() {
     on<GetRuleData>(_getRuleData);
+    on<ResetRule>((event, emit) => emit(InitialState())) ;
   }
 
   FutureOr<void> _getRuleData(

@@ -9,9 +9,8 @@ Future<void> initDependencies() async {
   _initIdle();
   _initDevice();
   _initHome();
-  _initAuth();
-
   _initAttendance();
+  _initAuth();
 
   _initPayslip();
 
@@ -79,6 +78,7 @@ _initAuth() {
   );
   Dependency.addBloc(
     AuthBloc(
+      Dependency.get(),
       Dependency.get(),
       Dependency.get(),
       Dependency.get(),

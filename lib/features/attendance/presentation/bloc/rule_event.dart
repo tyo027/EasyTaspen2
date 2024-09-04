@@ -12,3 +12,5 @@ final class GetRuleData extends RuleEvent {
     required this.nik,
   });
 }
+
+final class ResetRule extends RuleEvent {}

@@ -12,6 +12,7 @@ import 'package:easy/features/auth/domain/usecase/sign_in.dart';
 import 'package:easy/features/auth/presentation/page/sign_in_page.dart';
 import 'package:easy/features/home/presentation/bloc/home_bloc.dart';
 import 'package:easy/features/idle/presentation/bloc/idle_bloc.dart';
+import 'package:easy/features/attendance/presentation/bloc/rule_bloc.dart';
 import 'package:easy/router.dart';
 import 'package:fca/fca.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
   final GolonganBloc golonganBloc;
   final PositionBloc positionBloc;
   final HomeBloc homeBloc;
+  final RuleBloc ruleBloc;
 
   AuthBloc(
     this._userCubit,
@@ -43,6 +45,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
     this.golonganBloc,
     this.positionBloc,
     this.homeBloc,
+    this.ruleBloc,
   ) : super() {
     on<IsUserLogged>(_isUserLogged);
 
@@ -115,6 +118,7 @@ class AuthBloc extends BaseBloc<AuthEvent> {
     golonganBloc.add(ResetGolongan());
     positionBloc.add(ResetPosition());
     homeBloc.add(ResetHome());
+    ruleBloc.add(ResetRule());
     _userCubit.updateUser(user);
   }
 
