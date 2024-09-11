@@ -1,7 +1,9 @@
 extension StringExtension on String {
   String capitalize() {
     if (isEmpty) return this;
-    return split(" ")
+
+    return replaceAll(RegExp(' +'), ' ')
+        .split(" ")
         .map((e) => "${e[0].toUpperCase()}${e.substring(1).toLowerCase()}")
         .join(" ");
   }
